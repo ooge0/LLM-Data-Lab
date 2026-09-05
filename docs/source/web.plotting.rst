@@ -28,6 +28,22 @@ web.plotting.cluster\_charts module
    :undoc-members:
    :show-inheritance:
 
+web.plotting.hypothesis\_charts module
+--------------------------------------
+
+.. automodule:: web.plotting.hypothesis_charts
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+web.plotting.knowledge\_graph\_charts module
+--------------------------------------------
+
+.. automodule:: web.plotting.knowledge_graph_charts
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 web.plotting.model\_evo\_charts module
 --------------------------------------
 

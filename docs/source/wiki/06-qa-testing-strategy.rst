@@ -76,18 +76,15 @@ old silent, indistinguishable ``verdict=False``. This is the regression-fence pa
 what it exists for: the fence held until the real fix landed by deliberate decision, not by an
 unrelated edit quietly drifting past it.
 
-Coverage: measured for real, with a stated, deliberate exclusion
+Coverage: measured for real, no exclusions left
 ------------------------------------------------------------------------
 
-``.coveragerc`` omits exactly three files from the coverage measurement:
+``.coveragerc`` originally omitted exactly three files from coverage measurement --
 ``core/service/neo4j_service.py``, ``core/tabs/knowledge_graph.py``,
-``utils/other/neo4j_services.py`` -- the Neo4j/knowledge-graph subsystem CLAUDE.md SS1 puts out of
-scope "not even import-path-touched." This is a deliberate, narrow exclusion stated in one config
-file, not a broad carve-out -- everything else in ``core/``, ``api/``, ``cli/``, ``web/``, ``utils/``
-is measured, and :doc:`../qa` reports the real resulting percentage rather than an aspirational one.
-Reporting a 0%-covered number on code nobody is supposed to touch would be noise, not signal; the
-exclusion is stated explicitly here and in ``.coveragerc`` itself specifically so it reads as a
-documented decision, not a hidden gap discovered later.
+``utils/other/neo4j_services.py`` -- the Neo4j/knowledge-graph subsystem CLAUDE.md SS1 put out of
+scope. **Update, 2026-09-05:** that subsystem is fully migrated and all three files are deleted; the
+omit list is empty now. Everything in ``core/``, ``api/``, ``cli/``, ``web/``, ``utils/`` is
+measured with no carve-outs, and :doc:`../qa` reports the real resulting percentage.
 
 What "code-verification approach" does *not* yet mean here
 --------------------------------------------------------------------

@@ -6,11 +6,16 @@ Wires :class:`core.adapters.neo4j_repo.Neo4jGraphRepo` (the failure-mode/cascade
 a real page + real endpoints -- promoted 2026-09-05 from the legacy Neo4j subsystem
 (``core/tabs/knowledge_graph.py``) into the layered architecture, by explicit author decision (see
 :class:`core.domain.interfaces.GraphRepository`'s own docstring for the exact scope of that
-decision). This covers only the failure-mode graph, its 3 root-cause queries, and (2026-09-05,
-later the same day) Stages 4/5 of ``docs/source/wiki/08-graph-representation-learning.rst`` (Leiden
-community detection, node-similarity analogy/anomaly) -- the original Archetype/Bias co-occurrence
-graph and the PageRank scripts remain on the existing Streamlit entry point
-(``run_knowledge_graph.py``), untouched, per CLAUDE.md SS1.
+decision). This covers the failure-mode graph, its 3 root-cause queries, Stages 4/5 of
+``docs/source/wiki/08-graph-representation-learning.rst`` (Leiden community detection,
+node-similarity analogy/anomaly), and (2026-09-05, later still) the plain Archetype/Bias
+co-occurrence graph + PageRank -- the full remaining Neo4j-touching part of the legacy
+``core/tabs/knowledge_graph.py``, migrated and fixed (see
+:meth:`core.domain.interfaces.GraphRepository.archetype_bias_pagerank`'s own docstring for the two
+real bugs found in the original PageRank scripts). Hypothesis Testing / Uncertainty Analysis --
+pure pandas/scipy, never touched Neo4j -- moved separately to ``api/routers/hypothesis_testing.py``,
+not here. ``run_knowledge_graph.py``/``core/tabs/knowledge_graph.py`` are retired entirely as of
+this migration -- there is no longer a separate Streamlit entry point for any of this.
 
 Every endpoint here degrades to a clear inline error rather than a raw 500 when Neo4j isn't
 reachable -- this app's other pages don't depend on Neo4j at all, and this one shouldn't take the
@@ -25,6 +30,7 @@ from loguru import logger
 from api._paths import TEMPLATES_DIR
 from core.adapters.jsonl_store import JSONLStore
 from core.adapters.neo4j_repo import Neo4jGraphRepo
+from web.plotting.knowledge_graph_charts import build_archetype_bias_network_html
 
 router = APIRouter(prefix="/knowledge_graph", tags=["knowledge_graph"])
 templates = Jinja2Templates(directory=str(TEMPLATES_DIR))
@@ -149,3 +155,31 @@ def structural_similarity(request: Request) -> HTMLResponse:
         return templates.TemplateResponse(
             request, "_knowledge_graph_status.html", {"error": f"Error running query: {exc}"}
         )
+
+
+@router.get("/archetype_bias_pagerank", response_class=HTMLResponse)
+def archetype_bias_pagerank(request: Request) -> HTMLResponse:
+    """Migrated from core/tabs/knowledge_graph.py's PageRank scripts 1/4, fixed (weighted
+    projection, not the two originals' zero-edge/uniform-score bugs) rather than ported as-is."""
+    try:
+        rows = _graph_repo.archetype_bias_pagerank()
+        return templates.TemplateResponse(
+            request, "_knowledge_graph_table.html", {"title": "Archetype/Bias PageRank", "rows": rows}
+        )
+    except Exception as exc:
+        logger.error(f"archetype_bias_pagerank query failed: {exc}")
+        return templates.TemplateResponse(
+            request, "_knowledge_graph_status.html", {"error": f"Error running query: {exc}"}
+        )
+
+
+@router.get("/archetype_bias_network", response_class=HTMLResponse)
+def archetype_bias_network(request: Request) -> HTMLResponse:
+    """Migrated from PageRank script-3's pyvis/NetworkX diagram. Returns a complete, self-contained
+    HTML document (not wrapped in the app shell) -- knowledge_graph.html embeds it via an iframe."""
+    try:
+        data = _graph_repo.archetype_bias_graph_data()
+        return HTMLResponse(build_archetype_bias_network_html(data))
+    except Exception as exc:
+        logger.error(f"archetype_bias_graph_data query failed: {exc}")
+        return HTMLResponse(f"<p>Error building network visualization: {exc}</p>")

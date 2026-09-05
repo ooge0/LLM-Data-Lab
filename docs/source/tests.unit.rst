@@ -100,6 +100,14 @@ tests.unit.test\_hallucination\_check module
    :undoc-members:
    :show-inheritance:
 
+tests.unit.test\_hypothesis\_testing module
+-------------------------------------------
+
+.. automodule:: tests.unit.test_hypothesis_testing
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 tests.unit.test\_jsonl\_store module
 ------------------------------------
 
@@ -112,6 +120,14 @@ tests.unit.test\_metrics\_engine module
 ---------------------------------------
 
 .. automodule:: tests.unit.test_metrics_engine
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+tests.unit.test\_neo4j\_repo module
+-----------------------------------
+
+.. automodule:: tests.unit.test_neo4j_repo
    :members:
    :undoc-members:
    :show-inheritance:

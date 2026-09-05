@@ -155,99 +155,20 @@ Not gimmicks, not micro-optimizations — habits from people who actually unders
 - Interpretable linguistic metrics (TTR, ARI, coherence, modality, self-focus, etc.).
 
 **Out of scope for v1 (backlog — do NOT start or extend these without explicit approval):**
-- Neo4j / knowledge graph. NOTE: legacy Neo4j code already exists in the tree
-  (`core/service/neo4j_service.py`, `core/tabs/knowledge_graph.py`,
-  `utils/other/neo4j_services.py`, `results/knowledge_graph_analyses/`). As of Stage 16 it is
-  reached via `run_knowledge_graph.py` (a small standalone Streamlit script extracted from the
-  original monolith, itself now archived at `legacy/streamlit_app.py`) rather than being removed —
-  the author decided to keep it running standalone, not sunset it. Do not build on it or extend it
-  further. See §5.
-  **"Untouched" scope, precisely defined:** no refactoring, no re-layering behind a `core.domain`
-  interface, no logic/behavior changes, no import-path moves — none of that applies to this
-  subsystem, ever, without a separate explicit decision. The one standing, narrow exception is
-  **docstring/comment clarifications that add historical or architectural context without changing
-  behavior** — e.g. `core/tabs/knowledge_graph.py`'s class docstring gained an "Implementation
-  status" note (2026-08-22) explaining *why* it still says "Streamlit tab" and pointing at
-  `run_knowledge_graph.py`, precisely so a future reader doesn't mistake settled, deliberate scope
-  for an oversight. If a change would alter what the code *does* — not just what it *says* — the
-  "do not build on it or extend it" rule above still applies without exception.
-
-  **Second standing exception, 2026-09-05, explicit and narrow (same precedent as SS4/SS6's judge
-  fix):** a resume-claims audit found a real, author-disclosed bug — 3 of 4 PageRank scripts in
-  `KnowledgeGraph.knowledge_graph_tab` failed with `Procedure.ProcedureNotFound` against this
-  project's own documented Neo4j setup (the GDS plugin was installed but never unrestricted/
-  allowlisted in `neo4j.conf` — a config gap, not a missing dependency) — plus zero test coverage.
-  Author asked for a real, working fix with technical proof, not just a diagnosis. Fixed: the
-  `neo4j.conf` procedure-security config (outside this repo, on the local Neo4j install — not a
-  code change), and one real code bug in `core/tabs/knowledge_graph.py` (script-4 called
-  `gds.pageRank.stream` with no exists-check/projection guard, unlike scripts 1/3 — now matches
-  their pattern). Added `tests/unit/test_knowledge_graph.py` (4 tests, mocked `py2neo.Graph`, no
-  live server — this project has no Docker/disposable-test-database story, so this checks
-  query-construction/ordering, not that a real Neo4j+GDS deployment works). Real end-to-end proof
-  captured by driving the actual `run_knowledge_graph.py` Streamlit app via Playwright against real
-  run data (sync + all 4 PageRank scripts, screenshots + real PageRank output saved) — see
-  `docs/source/wiki/07-knowledge-graph-results.rst` for the full record, root cause, and honest
-  limitations (GDS's graph catalog doesn't survive a Neo4j restart; tabs 5/6 never touch Neo4j at
-  all — pure pandas/scipy on the in-memory DataFrame). Explicitly **not** done: no refactor, no
-  move behind a `core.domain` interface, no promotion into the rewrite's own testing/architecture
-  discipline — the subsystem now demonstrably works and has some real coverage, but stays exactly
-  where CLAUDE.md SS1 already puts it.
-
-  **Same exception, extended same day:** a follow-up request asked for the most useful real
-  scenario for this subsystem, grounded in real data-lineage/AIOps root-cause practice (researched,
-  not invented — see the wiki page's sources). Added a second, additive sync building a
-  failure-mode/cascade-lineage graph (`Response` → which `Layer0`/`Layer1`/`Layer2`/`Judge` outcome
-  it actually reached, `Model`/`Archetype`/`Bias`/`Run` context, RAG-chunk provenance recovered from
-  the persisted `rag_context` string) plus 3 real root-cause Cypher queries, exposed as a new
-  "Root Cause (Failure-Mode Graph)" tab — does not touch or replace the original Archetype/Bias/
-  PageRank graph. Two real things found and fixed before this shipped, not assumed correct: a
-  classic Neo4j `MERGE`-on-anonymous-node pitfall that silently duplicated `CascadeStage` reference
-  nodes (caught by a synthetic smoke test against the live database before writing it into the app),
-  and a real pipeline-semantics subtlety (Layer 2's hallucination check runs unconditionally on echo
-  status, so an echo-rejected response can still show `layer2_checked=True` — `reached_judge` is
-  computed explicitly as `layer0==VALID and not echo`, never inferred from "reached a later stage").
-  7 new tests (11 total for this module). Real proof captured the same way as the PageRank fix —
-  driving the actual Streamlit app via Playwright against a real 500-response, RAG-enabled run —
-  with genuinely actionable findings (e.g. one student model echoing its own bias instruction back
-  more than 2x as often as another; one RAG knowledge category linked to 36 of the run's echo
-  failures). Full record: `docs/source/wiki/07-knowledge-graph-results.rst`. Same explicit
-  boundaries as before: no refactor into `core.domain`, no promotion into the rewrite's own
-  architecture/testing discipline.
-
-  **Fourth entry, 2026-09-05, a real reversal this time, not another narrow exception:** the
-  author explicitly decided to promote the failure-mode/cascade-lineage graph specifically (not
-  the original Archetype/Bias co-occurrence graph, not the PageRank scripts, not Hypothesis
-  Testing/Uncertainty Analysis) out of this quarantine and into the layered architecture, full
-  depth (a real `core.domain` interface + adapter, matching `LLMClient`/`Judge`/`Repository`/
-  `KnowledgeBase`), explicitly to leave room to grow toward the graph-representation-learning
-  roadmap (`docs/source/wiki/08-graph-representation-learning.rst`) without a later redesign.
-  Shipped: `core.domain.interfaces.GraphRepository` (4 methods: `sync_failure_mode_graph`,
-  `echo_rejections_by_model`, `terminal_stage_by_archetype`, `rag_chunks_linked_to_echo`),
-  `core.adapters.neo4j_repo.Neo4jGraphRepo` (Cypher ported verbatim from the Streamlit version,
-  not redesigned — reads its own `[neo4j]` config directly rather than importing the untouched
-  `Neo4jService`, keeping the new layer independent of the legacy one its one covered capability
-  was promoted out of), `api/routers/knowledge_graph.py` + `web/templates/knowledge_graph.html`
-  (a real `/knowledge_graph` page, linked from `_nav.html` under `[corpus]`). The corresponding
-  code was then **removed** from `core/tabs/knowledge_graph.py` (the "Root Cause (Failure-Mode
-  Graph)" tab it briefly carried) — verified live parity first (identical real numbers — 27 vs. 12
-  echo-rejections by model, 36 echo-rejections linked to the `paranoid`/`Behavior` RAG category —
-  through the new FastAPI page against the same live Neo4j data) before deleting the Streamlit
-  duplicate, matching the Stage-16 precedent for every other tab this project has ever retired.
-  20 tests (11 unit for the adapter, 9 integration for the router — no live server needed, mocked
-  `py2neo.Graph`). What's still on the Streamlit script (`run_knowledge_graph.py`) and still fully
-  under the original quarantine, unchanged: the plain Archetype/Bias co-occurrence sync, all 4
-  PageRank scripts, Hypothesis Testing, Uncertainty Analysis.
-
-  **Same day, later: Stages 4 and 5 of the roadmap shipped into `GraphRepository`/`Neo4jGraphRepo`.**
-  `behavioral_communities()` — Leiden community detection over Archetype/Bias/Model/CascadeOutcome
-  (connected via a materialized `CO_OCCURS_WITH` co-occurrence edge, since they're never directly
-  connected otherwise); `structural_similarity()` — `gds.fastRP.mutate` + `gds.knn.stream` for
-  analogy/anomaly over the same graph, which independently agreed with Leiden's own communities on
-  real synced data. Two new buttons on `/knowledge_graph`, both reporting GDS's own real numbers
-  (modularity; similarity scores) as validation, not eyeballed results. 10 new tests total (23
-  unit, 13 integration). Full detail, a real `gds.nodeSimilarity`/`gds.knn` correction found while
-  implementing, and what's still open (Stage 6, the NMI cross-check against UMAP/HDBSCAN):
-  `docs/source/wiki/08-graph-representation-learning.rst`.
+- ~~Neo4j / knowledge graph~~ **Resolved, 2026-09-05: fully migrated into the layered
+  architecture — no legacy Streamlit remnant left.** `core.domain.interfaces.GraphRepository` +
+  `core.adapters.neo4j_repo.Neo4jGraphRepo`, exposed at `/knowledge_graph`: the failure-mode/
+  cascade-lineage graph + 3 root-cause queries, Leiden community detection, node-similarity
+  analogy/anomaly, and the Archetype/Bias PageRank — fixed, not ported as-is (the originals had
+  two real bugs: a zero-edge single-label projection, and unweighted-graph PageRank uniformity on
+  this project's balanced-factorial experiment design; see `archetype_bias_pagerank`'s own
+  docstring). Hypothesis Testing / Uncertainty Analysis moved separately to `/hypothesis_testing`
+  (`core/services/hypothesis_testing.py`) — pure pandas/scipy, never touched Neo4j.
+  `core/tabs/knowledge_graph.py`, `run_knowledge_graph.py`, `core/service/neo4j_service.py`, and
+  `utils/other/neo4j_services.py` are all deleted; §12 no longer lists a legacy section for any of
+  this. Full migration history (the narrow exceptions that preceded this, the graph-representation-
+  learning Stage 4/5 work, every bug found along the way): `docs/source/wiki/07-knowledge-graph-
+  results.rst` and `docs/source/wiki/08-graph-representation-learning.rst`.
 - Authentication.
 - Hosted inference migration (stay on local Ollama for now).
 - Any product/marketing/"client-facing metrics" layer.
@@ -274,11 +195,11 @@ tests/         # see §6
 docs/          # Sphinx + myst-parser (source only; build output is gitignored)
 ```
 
-`core/service/`, `core/tabs/`, and the legacy Streamlit scripts (`legacy/streamlit_app.py`,
-`streamlit_app_lang_localization.py`) are the only pieces still outside this layout — the Neo4j
-subsystem, kept deliberately untouched per §1, and `streamlit_app_.py`/
-`streamlit_app_lang_localization.py`, both still under author investigation (see §5). Everything
-else (`core/analysis`, the old `core/rag/`) has already been migrated in.
+`core/service/` and `core/tabs/` no longer exist (the Neo4j subsystem they held was fully migrated
+2026-09-05, see §1). The legacy Streamlit scripts (`legacy/streamlit_app.py`,
+`streamlit_app_lang_localization.py`, `streamlit_app_.py`) are the only pieces still outside this
+layout — `streamlit_app_.py`/`streamlit_app_lang_localization.py` remain under author investigation
+(see §5). Everything else (`core/analysis`, the old `core/rag/`) has already been migrated in.
 
 Rule: `web`/`api` → `services` → `domain`. `adapters` implement `domain` interfaces; `domain`
 knows nothing about them.
@@ -423,19 +344,21 @@ These are actual issues visible in the current file structure. Surface them; do 
   the two were functionally identical (`_old.py` lacked only docstrings and had one unused validator
   param); `data_contract.py` is the one every caller imports, `_old.py` had zero importers and has
   been deleted.
-- **`core/service/neo4j_service.py` AND `utils/other/neo4j_services.py` are NOT duplicates** —
-  despite the similar names, they do unrelated jobs and both are live: `neo4j_service.py` is a
-  `Neo4jService` class (py2neo client wrapper — load credentials, connect, health-check), used by
-  `run_knowledge_graph.py` (and, historically, `legacy/streamlit_app.py`) and
-  `core/tabs/knowledge_graph.py`; `neo4j_services.py` is free functions (`start_neo4j`,
-  `neo4j_running`, `find_neo4j_bin`) that launch the Neo4j server *process* via subprocess, used
-  only by `run_knowledge_graph.py`. Do not delete either on the assumption they're redundant —
-  one's a client, the other's a process launcher.
+- ~~**`core/service/neo4j_service.py` AND `utils/other/neo4j_services.py` are NOT duplicates**~~
+  **Both deleted, 2026-09-05:** they were real, distinct, non-duplicate code (a py2neo client
+  wrapper; a subprocess process-launcher) while their only callers (`run_knowledge_graph.py`,
+  `core/tabs/knowledge_graph.py`) existed — once those were retired by the full Neo4j migration
+  (§1), both became dead code and were removed with them. `core.adapters.neo4j_repo.Neo4jGraphRepo`
+  reads its own `[neo4j]` config directly rather than reusing either. One real, disclosed capability
+  loss, not silently dropped: `neo4j_services.start_neo4j`'s auto-launch-if-not-running behavior has
+  no equivalent in the FastAPI app — `/knowledge_graph` degrades to a clear inline error if Neo4j
+  isn't already running, it does not start it for you.
 - ~~**Neo4j subsystem present despite being out of scope for v1**~~ **Resolved (Stage 16):** the
   author chose to keep it running standalone rather than remove it — `tab_knowledge_graph` was
   extracted from the original monolith into its own small script, `run_knowledge_graph.py`, reusing
   `JSONLStore` to read whichever run the FastAPI app or CLI generated. The Neo4j subsystem itself
-  (`neo4j_service.py`/`neo4j_services.py`/`knowledge_graph.py`) remains untouched, per §1.
+  (`neo4j_service.py`/`neo4j_services.py`/`knowledge_graph.py`) remained untouched, per §1 —
+  **superseded 2026-09-05: all three deleted, fully migrated instead, see §1's current Neo4j entry.**
 - **`knowledge/rag/` still uses raw clinical terms** (`epileptoid.txt`, `hysteroid.txt`,
   `paranoid.txt`, `schizoid.txt`). This contradicts the deliberate "behavioral archetype"
   relabeling (de-risking) decision — the soft naming has not reached the data files.
@@ -560,15 +483,15 @@ python3.12 -m venv .venv && source .venv/bin/activate
 pip install -r requirements-base.txt -r requirements-linux.txt
 ```
 
-**Run the app** (three front ends, see §12 — the first two share one `ExperimentRunner`):
+**Run the app** (two front ends, sharing one `ExperimentRunner` — see §12):
 ```bash
 uvicorn api.app:app --reload                          # FastAPI web app — primary
 python -m cli.run_experiment --config cli/example_config.toml   # headless batch runner
-streamlit run run_knowledge_graph.py                   # Neo4j knowledge-graph explorer only
 ```
 `legacy/streamlit_app.py` (the pre-rewrite monolith) is still on disk and still technically
-runnable, but is reference-only as of Stage 16 — every tab it has besides `tab_knowledge_graph` now
-has a tested FastAPI/CLI equivalent.
+runnable, but is reference-only — every tab it ever had, including the Neo4j knowledge-graph one,
+now has a tested FastAPI/CLI equivalent (§1's Neo4j entry has the full migration record). There is
+no longer a separate Streamlit entry point for anything.
 
 **Operational console** (`cli/manage.py`, added 2026-08-25 — distinct from `cli/run_experiment.py`
 above, which runs one experiment; this is day-to-day ops without the web UI up):
@@ -645,7 +568,8 @@ Stage 16 did cutover/cleanup). What's actually on disk today:
 **Primary (FastAPI rewrite):**
 - **`api/`** — FastAPI app (`app.py`) + routers (`experiments`, `runs`, `analytics`, `nlp`,
   `clusters`, `model_evo`, `benchmark`, `monitor`, `faq`, `demo`, `db_export`, `api_status`,
-  `knowledge_graph`). `api/_paths.py` centralizes absolute `TEMPLATES_DIR`/`STATIC_DIR`/`REPO_ROOT`.
+  `knowledge_graph`, `hypothesis_testing`). `api/_paths.py` centralizes absolute
+  `TEMPLATES_DIR`/`STATIC_DIR`/`REPO_ROOT`.
 - **`web/`** — Jinja2 templates + HTMX (`web/templates/`), Plotly/matplotlib chart-building
   (`web/plotting/`, one module per tab), vendored `htmx`/`plotly.min.js` (`web/static/vendor/`, no
   CDN dependency).
@@ -657,7 +581,9 @@ Stage 16 did cutover/cleanup). What's actually on disk today:
 - **`core/services/`** — `ExperimentRunner` (orchestration), `MetricsEngine` (Stage 7),
   `cluster_discovery.py` (Stage 10's `run_plain_hdbscan`/`run_behavioral_topology`/
   `compute_fit_indices`), `_sse.py` (the asyncio-queue bridge shared by the web app and reused
-  internally by the CLI's own `asyncio.run()` wrapper).
+  internally by the CLI's own `asyncio.run()` wrapper), `hypothesis_testing.py` (mean-shift
+  comparison + bootstrap epistemic/aleatoric variance/KL-divergence, migrated 2026-09-05 from the
+  retired Neo4j subsystem — pure pandas/scipy, never touched Neo4j, see §1).
 - **`core/adapters/`** — `OllamaClient` (native `/api/chat`, real token/timing telemetry),
   `JSONLStore`/`SQLiteRepo` (both implement `Repository`), `StructuredJudge` (CLAUDE.md §4),
   `NaivePromptStrategy`, `rag/` (moved here from `core/rag/` in Stage 3:
@@ -673,22 +599,14 @@ Stage 16 did cutover/cleanup). What's actually on disk today:
   behind `domain` interfaces via `core/services/experiment_runner.py`.
 
 **Legacy (untouched, or reference-only — see §1/§5):**
-- **`core/service/neo4j_service.py`** and **`utils/other/neo4j_services.py`** — the Neo4j client
-  and process-launcher, untouched per §1, now used by `run_knowledge_graph.py`.
-- **`core/tabs/knowledge_graph.py`** — Streamlit tab rendering for the (out-of-scope) knowledge
-  graph: the plain Archetype/Bias co-occurrence sync, all 4 PageRank scripts, Hypothesis Testing,
-  Uncertainty Analysis. Untouched, per §1 — the failure-mode graph this file briefly also carried
-  was promoted out to `core/adapters/neo4j_repo.py`/`api/routers/knowledge_graph.py` 2026-09-05
-  (see §1's fourth Neo4j entry) and removed from here once real parity was verified.
-- **`run_knowledge_graph.py`** (repo root) — Stage 16's small standalone script: loads a run via
-  `JSONLStore`, calls `KnowledgeGraph.knowledge_graph_tab(df)`. The only live Streamlit entry point,
-  now covering only what's still listed above (the failure-mode graph is reachable at the FastAPI
-  app's `/knowledge_graph` page instead).
 - **`legacy/streamlit_app.py`** — the original ~3,400-line monolith, moved here at Stage 16
-  (`git mv`, history preserved). Reference-only; every tab besides `tab_knowledge_graph` has a
-  tested FastAPI/CLI equivalent now.
+  (`git mv`, history preserved). Reference-only; every tab, including the Neo4j knowledge-graph
+  one, has a tested FastAPI/CLI equivalent now (§1's Neo4j entry).
 - **`streamlit_app_.py`** (repo root) and **`streamlit_app_lang_localization.py`** (repo root) —
   both still under author investigation as of Stage 16, not yet triaged; see §5 for what was found.
+  `streamlit_app_.py` also imports the now-deleted `core.tabs.knowledge_graph` (in addition to the
+  already-known `core.tabs.failure_taxonomy` import) — already non-functional before this
+  migration for that separate, pre-existing reason, so deleting the module didn't newly break it.
 
 **Supporting:**
 - **`utils/`** — grab-bag of app helpers: `config_loader_short.py`/`config_loader_long.py` (read

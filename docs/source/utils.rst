@@ -38,6 +38,14 @@ utils.config\_loader\_short module
    :undoc-members:
    :show-inheritance:
 
+utils.generate\_qa\_roster module
+---------------------------------
+
+.. automodule:: utils.generate_qa_roster
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 utils.generate\_tag\_cloud module
 ---------------------------------
 

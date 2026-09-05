@@ -650,3 +650,10 @@ Not part of this migration
 (``core/service/neo4j_service.py``, ``utils/other/neo4j_services.py``,
 ``core/tabs/knowledge_graph.py``) exactly as it is today, untouched --
 revisited only as a separate future plan after this one lands.
+
+.. note::
+   **Superseded, 2026-09-05.** That separate future plan happened, the same day, in two steps: the
+   failure-mode graph was promoted into the layered architecture first, then the rest of this
+   subsystem (PageRank, network viz, Hypothesis Testing/Uncertainty Analysis) followed later the
+   same day. All three files named above are now deleted. Full record: CLAUDE.md SS1's Neo4j entry,
+   :doc:`wiki/07-knowledge-graph-results`, :doc:`wiki/08-graph-representation-learning`.

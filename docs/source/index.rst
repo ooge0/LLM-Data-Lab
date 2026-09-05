@@ -12,17 +12,17 @@ signal.
 It started as a single ~3,400-line Streamlit script and was rebuilt, stage by stage (Stages 0-15,
 see :doc:`roadmap`), into the layered FastAPI application described in :doc:`architecture`. As of
 Stage 16, that rewrite is the primary way to run the app -- the original script now lives at
-``legacy/streamlit_app.py`` (kept for reference, superseded everywhere except
-``tab_knowledge_graph``, extracted into its own small standalone script,
-``run_knowledge_graph.py`` -- see *UI layers* below). The rebuild itself is part of what's being
-demonstrated -- staged, tested, documented software engineering, not a one-shot script. It is not a
-product and isn't meant to scale past one user on one machine.
+``legacy/streamlit_app.py``, kept purely for reference. **Update, 2026-09-05:** every tab, including
+the Neo4j knowledge-graph one that stayed on its own separate Streamlit entry point the longest, now
+has a tested FastAPI/CLI equivalent -- there is no more separate Streamlit UI to run. The rebuild
+itself is part of what's being demonstrated -- staged, tested, documented software engineering, not
+a one-shot script. It is not a product and isn't meant to scale past one user on one machine.
 
 UI layers
 ------------
 
-Two separate UIs currently run side by side -- the new one doesn't replace the old one yet (see
-:doc:`roadmap` for what's ported so far, :doc:`features` for what's reachable today).
+One UI now, the FastAPI app below, plus the CLI for headless batch runs (see :doc:`roadmap` for how
+it got there, :doc:`features` for what's reachable today).
 
 **New (FastAPI + Jinja2 + HTMX)** -- start with ``uvicorn api.app:app --reload``, then open:
 
@@ -90,6 +90,12 @@ Two separate UIs currently run side by side -- the new one doesn't replace the o
    * - Export to DB
      - http://127.0.0.1:8000/db_export
      - Copy any run's JSONL data into ``results/nn_lab.db`` (``SQLiteRepo``) on demand -- pick a run, click Send to DB
+   * - Knowledge Graph
+     - http://127.0.0.1:8000/knowledge_graph
+     - Failure-mode graph + root-cause queries, Leiden communities, structural similarity, Archetype/Bias PageRank + network viz -- needs a real Neo4j server, degrades to a clear error otherwise
+   * - Hypothesis Testing
+     - http://127.0.0.1:8000/hypothesis_testing
+     - Mean-shift comparison + bootstrap uncertainty analysis between two archetypes -- pure pandas/scipy, no Neo4j
    * - FAQ
      - http://127.0.0.1:8000/faq
      - ``tab_faq`` -- user guide and metric methodology (English / Українська)
@@ -104,16 +110,10 @@ Anchor links (``#adherence``, ``#nlp-1``, ``#kmeans-pca``, etc.) only resolve on
 is selected -- the sub-tab headings they point to are part of the server-rendered chart content,
 not present in the empty state.
 
-**Legacy (Streamlit, Neo4j knowledge graph only)** -- start with ``streamlit run
-run_knowledge_graph.py``, opens at http://localhost:8501 by default. The only remaining reason to
-run Streamlit: ``tab_knowledge_graph`` stays on its Neo4j code path (CLAUDE.md constraint 1),
-extracted into this small standalone script (Stage 16) rather than the full original monolith.
-Loads a run's persisted responses via the same ``JSONLStore`` the FastAPI app and CLI both use, so
-any run generated through either front end is reachable here too. The full original script is
-still on disk at ``legacy/streamlit_app.py`` (and still technically runnable) but is kept purely
-for reference -- every other tab it has now has a tested FastAPI/CLI equivalent.
+``legacy/streamlit_app.py`` is still on disk (and still technically runnable) but is kept purely
+for reference -- every tab it ever had now has a tested FastAPI/CLI equivalent.
 
-**CLI (headless batch runner, Stage 15)** -- a third way to run an experiment, no browser needed::
+**CLI (headless batch runner, Stage 15)** -- a second way to run an experiment, no browser needed::
 
     python -m cli.run_experiment --config cli/example_config.toml
 

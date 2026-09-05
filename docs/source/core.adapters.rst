@@ -20,6 +20,14 @@ core.adapters.jsonl\_store module
    :undoc-members:
    :show-inheritance:
 
+core.adapters.neo4j\_repo module
+--------------------------------
+
+.. automodule:: core.adapters.neo4j_repo
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 core.adapters.ollama\_client module
 -----------------------------------
 

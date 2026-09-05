@@ -1,0 +1,21 @@
+{# Fragment returned by POST /hypothesis_testing/compare, swapped into #hypothesis-comparison-result. #}
+{% if error %}
+<p class="status-fail">{{ error }}</p>
+{% else %}
+<table class="kv-table">
+  <tbody>
+    <tr><th>Average {{ result.metric }} for {{ result.archetype_a }}</th><td class="num">{{ "%.3f"|format(result.mean_a) }} (n={{ result.n_a }})</td></tr>
+    <tr><th>Average {{ result.metric }} for {{ result.archetype_b }}</th><td class="num">{{ "%.3f"|format(result.mean_b) }} (n={{ result.n_b }})</td></tr>
+    <tr>
+      <th>Relative shift</th>
+      <td class="num">{% if result.relative_shift is not none %}{{ "%.2f"|format(result.relative_shift * 100) }}%{% else %}cannot compute (mean B is 0){% endif %}</td>
+    </tr>
+  </tbody>
+</table>
+{% if result.shift_over_50 %}
+<p class="status-ok">Hypothesis confirmed: {{ result.archetype_a }} shows &gt;50% higher {{ result.metric }} than {{ result.archetype_b }}.</p>
+{% else %}
+<p class="hint">Hypothesis not confirmed: shift &le;50%.</p>
+{% endif %}
+{{ chart | safe }}
+{% endif %}

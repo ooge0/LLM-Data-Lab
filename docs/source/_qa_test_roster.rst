@@ -359,6 +359,89 @@ run data involved in this tab at all).
    * - ``test_faq_page_includes_language_switch_links``
      - The rendered page includes links for both known languages, matching the legacy segmented control's options.
 
+``tests/integration/test_hypothesis_testing_api.py`` (8 tests)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Functional API tests for :mod:`api.routers.hypothesis_testing` -- migrated
+2026-09-05 from ``core/tabs/knowledge_graph.py``'s "Hypothesis
+Testing"/"Uncertainty Analysis" tabs. Through the real FastAPI app, with
+``hypothesis_testing._repository`` swapped for a fake -- no live Neo4j server
+involved at all, this page never touches it (see the module's own docstring).
+
+.. list-table::
+   :widths: 45 55
+   :header-rows: 1
+
+   * - Test
+     - Description
+   * - ``test_page_with_no_runs_shows_empty_state``
+     - Description is missing
+   * - ``test_page_with_a_run_lists_its_archetypes``
+     - Description is missing
+   * - ``test_archetypes_fragment_for_unknown_run_returns_404_with_a_clear_message``
+     - Description is missing
+   * - ``test_compare_renders_the_real_mean_shift_and_a_chart``
+     - Description is missing
+   * - ``test_compare_for_an_unknown_run_shows_a_clear_error_not_a_500``
+     - Description is missing
+   * - ``test_compare_with_an_archetype_missing_the_metric_shows_a_clear_error_not_a_500``
+     - Description is missing
+   * - ``test_uncertainty_renders_distribution_shift_and_charts``
+     - Description is missing
+   * - ``test_uncertainty_for_an_unknown_run_shows_a_clear_error_not_a_500``
+     - Description is missing
+
+``tests/integration/test_knowledge_graph_api.py`` (17 tests)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Functional API tests for :mod:`api.routers.knowledge_graph` -- through the
+real FastAPI app, with both ``knowledge_graph._repository`` and
+``knowledge_graph._graph_repo`` swapped for fakes so no real disk data or live
+Neo4j server is required. Real Neo4j+GDS behavior was verified manually, once,
+driving this exact router against a live install -- see
+``docs/source/wiki/07-knowledge-graph-results.rst``.
+
+.. list-table::
+   :widths: 45 55
+   :header-rows: 1
+
+   * - Test
+     - Description
+   * - ``test_page_with_no_runs_shows_empty_state``
+     - Description is missing
+   * - ``test_page_with_a_run_lists_it_and_its_archetypes``
+     - Description is missing
+   * - ``test_sync_calls_the_graph_repo_with_the_real_run_id_and_responses``
+     - Description is missing
+   * - ``test_sync_for_a_run_with_no_responses_shows_a_clear_error_not_a_500``
+     - Description is missing
+   * - ``test_sync_when_neo4j_is_unreachable_shows_a_clear_error_not_a_500``
+     - Description is missing
+   * - ``test_echo_by_model_renders_the_real_query_result``
+     - Description is missing
+   * - ``test_terminal_stage_passes_the_archetype_and_renders_the_result``
+     - Description is missing
+   * - ``test_rag_chunks_echo_renders_the_real_query_result``
+     - Description is missing
+   * - ``test_query_when_neo4j_is_unreachable_shows_a_clear_error_not_a_500``
+     - Description is missing
+   * - ``test_behavioral_communities_renders_modularity_and_the_community_rows``
+     - Description is missing
+   * - ``test_behavioral_communities_when_neo4j_is_unreachable_shows_a_clear_error_not_a_500``
+     - Description is missing
+   * - ``test_structural_similarity_renders_the_top_pairs_and_the_anomaly``
+     - Description is missing
+   * - ``test_structural_similarity_when_neo4j_is_unreachable_shows_a_clear_error_not_a_500``
+     - Description is missing
+   * - ``test_archetype_bias_pagerank_renders_the_real_query_result``
+     - Description is missing
+   * - ``test_archetype_bias_pagerank_when_neo4j_is_unreachable_shows_a_clear_error_not_a_500``
+     - Description is missing
+   * - ``test_archetype_bias_network_returns_a_self_contained_html_document``
+     - Description is missing
+   * - ``test_archetype_bias_network_when_neo4j_is_unreachable_shows_a_clear_inline_error_not_a_500``
+     - Description is missing
+
 ``tests/integration/test_model_evo_api.py`` (7 tests)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -1046,6 +1129,40 @@ party model still gets a pinned-fixture test.
    * - ``test_contradiction_score_is_a_probability_in_zero_one_range``
      - Description is missing
 
+``tests/unit/test_hypothesis_testing.py`` (10 tests)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Unit tests for :mod:`core.services.hypothesis_testing` -- migrated 2026-09-05
+from ``core/tabs/knowledge_graph.py``'s "Hypothesis Testing"/"Uncertainty
+Analysis" tabs. Pure pandas/numpy/scipy, no Neo4j and no live server needed.
+
+.. list-table::
+   :widths: 45 55
+   :header-rows: 1
+
+   * - Test
+     - Description
+   * - ``test_compare_archetype_means_computes_the_real_mean_and_shift``
+     - Description is missing
+   * - ``test_compare_archetype_means_flags_a_real_over_50_percent_shift``
+     - Description is missing
+   * - ``test_compare_archetype_means_relative_shift_is_none_when_mean_b_is_zero``
+     - Matches the legacy tab's own explicit division-by-zero guard.
+   * - ``test_compare_archetype_means_ignores_null_metric_values``
+     - Description is missing
+   * - ``test_compare_archetype_means_raises_when_archetype_a_has_no_responses_at_all``
+     - Description is missing
+   * - ``test_compare_archetype_means_raises_when_archetype_b_has_only_null_metric_values``
+     - Real, deliberate improvement over the legacy tab: a NaN mean would previously just print as literal "nan" text -- this now raises a clear, catchable error instead.
+   * - ``test_run_uncertainty_analysis_is_deterministic_given_a_seed``
+     - Description is missing
+   * - ``test_run_uncertainty_analysis_returns_one_variance_row_per_archetype_per_metric``
+     - Description is missing
+   * - ``test_run_uncertainty_analysis_computes_a_real_nonnegative_kl_divergence``
+     - Description is missing
+   * - ``test_run_uncertainty_analysis_skips_an_archetype_with_zero_real_values_for_a_metric``
+     - Matches the legacy tab's own `if len(df_arch) == 0: continue` -- one missing metric/archetype combination shouldn't raise or block the rest, unlike compare_archetype_means's stricter guard.
+
 ``tests/unit/test_jsonl_store.py`` (8 tests)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -1076,57 +1193,6 @@ write/read against a temp directory (no shared state with the real
    * - ``test_list_runs_on_empty_store_returns_empty_list``
      - list_runs() on a fresh directory with no runs returns [] rather than erroring.
 
-``tests/unit/test_knowledge_graph.py`` (11 tests)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Unit tests for :mod:`core.tabs.knowledge_graph` -- the legacy, CLAUDE.md
-SS1-quarantined Neo4j subsystem, exercised here for the first time (previously
-zero test coverage, confirmed by a 2026-09-05 audit). Runs the real
-:meth:`KnowledgeGraph.knowledge_graph_tab` Streamlit UI headlessly via
-``streamlit.testing.v1.AppTest`` and a fake, in-memory ``py2neo.Graph`` stand-
-in (:class:`_FakeGraph`) -- no live Neo4j server, no Docker (this project has
-neither, by design).
-
-This does not (and cannot, without a live server) prove the real Cypher/GDS
-calls succeed against an actual Neo4j+GDS install -- that was verified
-manually, once, for real, during the same audit (see
-``docs/source/wiki/07-knowledge-graph-results.rst`` for the captured real
-output). What these tests lock in instead is the thing a live-server test
-can't cheaply guard against regressing: the *query construction and call
-ordering* -- which Cypher text is sent, with which parameters, and in which
-sequence -- since that's exactly the class of bug the 2026-09-05 audit found
-(script-4 called ``gds.pageRank.stream`` without first checking/creating its
-graph projection, unlike scripts 1/3).
-
-.. list-table::
-   :widths: 45 55
-   :header-rows: 1
-
-   * - Test
-     - Description
-   * - ``test_sync_button_sends_the_real_merge_cypher_with_every_row``
-     - "Sync history to Neo4j" sends one UNWIND/MERGE/MERGE/MERGE Cypher statement carrying every DataFrame row as the `$rows` parameter -- the exact query the real, manually-verified run used.
-   * - ``test_pagerank_script_1_projects_the_graph_only_when_it_does_not_already_exist``
-     - gds.graph.project is called before gds.pageRank.stream when archetypeGraph doesn't exist yet -- and is skipped (not re-projected) when it already does, matching GDS's own "project once, query many times" catalog model.
-   * - ``test_pagerank_script_4_now_projects_before_streaming_regression_fence``
-     - Regression fence for the real bug found in the 2026-09-05 audit: script-4 used to call gds.pageRank.stream('experimentGraph') with no exists-check/projection guard at all, unlike scripts 1/3 -- meaning it only ever worked by accident, if script-3 happened to run first in the same GDS session. Fixed to match the same exists-check-then-project pattern; this test fails loudly if that guard is ever removed again.
-   * - ``test_pagerank_script_2_enriches_metadata_with_a_separate_merge_set_cypher``
-     - "Run PageRank script-2" writes archetype/bias metadata via MERGE+SET (no GDS involved -- plain Cypher property writes) and then reads it back via a separate MATCH query.
-   * - ``test_parse_rag_chunks_recovers_archetype_and_category_from_the_real_serialized_format``
-     - Matches the exact format ExperimentRunner._run_one writes: f"[{archetype} \| {category}]\n{text}", blocks joined by "\n\n".
-   * - ``test_parse_rag_chunks_handles_empty_none_and_malformed_input``
-     - Description is missing
-   * - ``test_build_rows_layer0_rejected_response_reaches_nothing_past_layer0``
-     - A Layer-0-rejected response never reaches Layer1/Layer2/Judge in the real pipeline (ExperimentRunner._run_one's early-return) -- its row must reflect that, not default to 'reached' just because v_ok/teacher fields exist on every row regardless.
-   * - ``test_build_rows_echo_rejected_response_can_still_reach_layer2_but_never_the_judge``
-     - Real, non-obvious pipeline behavior, confirmed by reading ExperimentRunner._run_one directly: Layer 2's hallucination check runs BEFORE the echo-vs-real-judge branch and is unconditional on echo status -- so an echo-rejected response can have layer2_checked=True even though it never reaches a real judge call (the verdict is synthesized, not from self._judge.evaluate(...)). reached_judge must stay False regardless of layer2_checked.
-   * - ``test_build_rows_a_response_that_reaches_a_real_judge_call_is_marked_correctly``
-     - Description is missing
-   * - ``test_build_rows_parses_real_rag_chunks_only_when_rag_enabled``
-     - Description is missing
-   * - ``test_sync_failure_mode_graph_button_sends_the_bootstrap_and_the_unwind_sync``
-     - The new "Sync failure-mode graph" button (distinct from the original "Sync history to Neo4j" button, which only ever wrote the plain Archetype-Bias co-occurrence graph) sends two real Cypher statements: the one-time CascadeStage/PRECEDES bootstrap, then the per-response UNWIND/MERGE sync carrying the resolved cascade-lineage rows.
-
 ``tests/unit/test_metrics_engine.py`` (7 tests)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -1155,6 +1221,84 @@ drift).
      - A run where every response was Layer-0-rejected (word_count never computed) has real responses on disk but nothing to average -- delta must be None, not a ZeroDivisionError.
    * - ``test_compare_judging_modes_without_run_metadata_reports_unknown_labels_not_a_crash``
      - list_runs() returning nothing for a run_id (e.g. metadata not yet indexed) degrades to self_critic=None/teacher_model=None rather than raising.
+
+``tests/unit/test_neo4j_repo.py`` (28 tests)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Unit tests for :mod:`core.adapters.neo4j_repo` -- the ``GraphRepository``
+implementation promoted 2026-09-05 from the legacy Neo4j subsystem into the
+layered architecture (see :class:`core.domain.interfaces.GraphRepository`'s
+own docstring for the exact scope of that decision). No live Neo4j server, no
+Docker (this project has neither, by design) -- a fake, in-memory stand-in for
+``py2neo.Graph`` records every Cypher string + params sent, in order, and
+returns query-shape-appropriate canned data. This checks query
+construction/ordering and the row-building logic, not that a real Neo4j+GDS
+deployment works -- that was verified manually, once, for real, driving the
+actual FastAPI app against a live Neo4j install (see
+``docs/source/wiki/07-knowledge-graph-results.rst``).
+
+.. list-table::
+   :widths: 45 55
+   :header-rows: 1
+
+   * - Test
+     - Description
+   * - ``test_parse_rag_chunks_recovers_archetype_and_category_from_the_real_serialized_format``
+     - Description is missing
+   * - ``test_parse_rag_chunks_handles_empty_and_none_input``
+     - Description is missing
+   * - ``test_build_rows_layer0_rejected_response_reaches_nothing_past_layer0``
+     - Description is missing
+   * - ``test_build_rows_echo_rejected_response_can_still_reach_layer2_but_never_the_judge``
+     - Real, non-obvious pipeline behavior: Layer 2's hallucination check runs unconditionally on echo status, so an echo-rejected response can have layer2_checked=True even though it never reaches a real judge call -- reached_judge must stay False regardless.
+   * - ``test_build_rows_a_response_that_reaches_a_real_judge_call_is_marked_correctly``
+     - Description is missing
+   * - ``test_build_rows_parses_real_rag_chunks_only_when_rag_enabled``
+     - Description is missing
+   * - ``test_summarize_similarity_pairs_dedupes_directed_rows_keeping_the_max_similarity``
+     - gds.knn.stream returns each real-world pair twice (once from each node's own top-K list), with slightly different scores possible -- must collapse to one row, keeping the higher score.
+   * - ``test_summarize_similarity_pairs_excludes_self_pairs``
+     - Description is missing
+   * - ``test_summarize_similarity_pairs_caps_at_five_sorted_descending``
+     - Description is missing
+   * - ``test_summarize_similarity_pairs_flags_the_node_whose_best_match_is_weakest_as_anomalous``
+     - Real Stage 5 finding, not invented: a node can have a merely-ordinary similarity to one neighbor while its overall *best* match is still far weaker than every other node's best match -- that's the real anomaly signal, not just "the lowest number that appears anywhere".
+   * - ``test_summarize_similarity_pairs_handles_empty_input``
+     - Description is missing
+   * - ``test_sync_sends_the_bootstrap_and_the_unwind_sync_and_returns_the_real_count``
+     - Description is missing
+   * - ``test_sync_with_zero_responses_does_not_send_the_unwind_query_and_returns_zero``
+     - Description is missing
+   * - ``test_echo_rejections_by_model_returns_the_real_query_shape``
+     - Description is missing
+   * - ``test_terminal_stage_by_archetype_passes_the_archetype_param``
+     - Description is missing
+   * - ``test_rag_chunks_linked_to_echo_returns_the_real_query_shape``
+     - Description is missing
+   * - ``test_behavioral_communities_returns_modularity_count_and_rows``
+     - Description is missing
+   * - ``test_behavioral_communities_materializes_cooccurrence_then_projects_before_running_leiden``
+     - Description is missing
+   * - ``test_behavioral_communities_drops_the_projected_graph_both_before_and_after``
+     - Real GDS behavior: a stale in-memory graph catalog entry from a previous call would make a second gds.graph.project call fail outright -- drop-if-exists must run before projecting, and the projection must not leak GDS catalog memory across calls (a real, disclosed limitation -- see docs/source/wiki/07-knowledge-graph-results.rst), so it must also be dropped after use.
+   * - ``test_behavioral_communities_still_drops_the_graph_when_leiden_itself_raises``
+     - Description is missing
+   * - ``test_structural_similarity_returns_the_summarized_shape``
+     - Description is missing
+   * - ``test_structural_similarity_mutates_embeddings_before_running_knn``
+     - Description is missing
+   * - ``test_structural_similarity_still_drops_the_graph_when_knn_itself_raises``
+     - Description is missing
+   * - ``test_archetype_bias_pagerank_returns_the_real_query_shape``
+     - Description is missing
+   * - ``test_archetype_bias_pagerank_deletes_weightless_edges_before_projecting``
+     - Real, self-caught bug: a weight-less ASSOCIATED_WITH edge makes gds.pageRank.stream's relationshipWeightProperty silently return NaN for every connected node, not an error -- confirmed live against a real database contaminated by unrelated ad-hoc testing. The cleanup must run before the graph is projected, every time, not just once.
+   * - ``test_archetype_bias_pagerank_drops_the_projected_graph_both_before_and_after``
+     - Description is missing
+   * - ``test_archetype_bias_graph_data_returns_deduplicated_nodes_and_real_edges``
+     - Description is missing
+   * - ``test_archetype_bias_graph_data_also_deletes_weightless_edges_first``
+     - Description is missing
 
 ``tests/unit/test_neuro_metrics.py`` (5 tests)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

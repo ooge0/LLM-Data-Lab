@@ -31,9 +31,33 @@ one real code bug fix, tests, and this writeup -- not a rewrite, not a move into
    still accurate (nothing was redesigned, only moved -- see ``core/adapters/neo4j_repo.py``'s own
    docstring for the one real change, an explicit ``run_id`` parameter instead of a DataFrame
    column), but the *code paths and screenshots* referencing the Streamlit "Root Cause" tab
-   describe a tab that no longer exists. Part 1 (the PageRank fix) is unaffected -- PageRank, the
-   plain Archetype/Bias sync, Hypothesis Testing, and Uncertainty Analysis all remain on
-   ``run_knowledge_graph.py`` exactly as Part 1 describes.
+   describe a tab that no longer exists. **At the time this note was written, Part 1 (the PageRank
+   fix) was still unaffected -- see the superseding note below, written later still the same day.**
+
+.. admonition:: Update, 2026-09-05 (later still) -- Part 1 has moved too, nothing legacy remains
+   :class: important
+
+   The note above turned out to describe a temporary state, not a final one. The author decided to
+   migrate the *entire remainder* of this page's subsystem the same day: the plain Archetype/Bias
+   PageRank (fixed, not ported as-is -- two real bugs found, see below), the network visualization,
+   and Hypothesis Testing/Uncertainty Analysis (moved to their own new page, ``/hypothesis_testing``
+   -- they never touched Neo4j at all). ``run_knowledge_graph.py``, ``core/tabs/knowledge_graph.py``,
+   ``core/service/neo4j_service.py``, and ``utils/other/neo4j_services.py`` are all deleted. Part 1
+   below is now a **historical record** of the real bugs found and fixed in the *original* Streamlit
+   scripts -- genuinely useful as evidence of the diagnostic work, but the code paths, screenshots,
+   and "Run with: streamlit run run_knowledge_graph.py" instructions it describes no longer exist.
+   The current, real implementation: :meth:`core.domain.interfaces.GraphRepository
+   .archetype_bias_pagerank` / :meth:`~core.domain.interfaces.GraphRepository
+   .archetype_bias_graph_data`, and their own docstrings, which document two bugs the original
+   scripts had that this page's Part 1 did **not** catch at the time: script-1's single-label graph
+   projection had **zero edges** (``ASSOCIATED_WITH`` always points to ``Bias``, excluded from an
+   ``Archetype``-only projection), so every PageRank score was an identical, meaningless baseline --
+   confirmed live, not assumed; and script-4's real edges were unweighted, which on this project's
+   balanced-factorial experiment design (every archetype crossed with every bias, roughly equally)
+   makes PageRank mathematically guaranteed to score every node in a label class identically,
+   regardless of real data. Both fixed in the migrated version -- weighted co-occurrence, plus a
+   defensive guard (a weight-less edge silently makes ``gds.pageRank.stream`` return NaN, not an
+   error -- a real, self-caught bug during the migration itself, from unrelated leftover test data).
 
 Root cause, found by checking the real install, not guessing
 ------------------------------------------------------------------

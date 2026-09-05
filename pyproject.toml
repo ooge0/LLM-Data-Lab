@@ -6,9 +6,6 @@ extend-exclude = '''
     | ^/streamlit_app_\.py$
     | ^/streamlit_app_lang_localization\.py$
     | ^/tmp/
-    | ^/core/tabs/knowledge_graph\.py$
-    | ^/core/service/
-    | ^/utils/other/neo4j_services\.py$
     | ^/\.venv\.old-bak/
 )
 '''
@@ -20,9 +17,6 @@ exclude = [
     "streamlit_app_.py",
     "streamlit_app_lang_localization.py",
     "tmp",
-    "core/tabs/knowledge_graph.py",
-    "core/service",
-    "utils/other/neo4j_services.py",
     ".venv.old-bak",
 ]
 
@@ -33,9 +27,6 @@ exclude = [
     "streamlit_app_\\.py",
     "streamlit_app_lang_localization\\.py",
     "^tmp/",
-    "core/tabs/knowledge_graph\\.py",
-    "core/service/",
-    "utils/other/neo4j_services\\.py",
     "\\.venv\\.old-bak/",
 ]
 

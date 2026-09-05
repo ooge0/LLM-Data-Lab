@@ -10,9 +10,7 @@ Subpackages
    core.adapters
    core.analysis
    core.domain
-   core.service
    core.services
-   core.tabs
 
 Module contents
 ---------------

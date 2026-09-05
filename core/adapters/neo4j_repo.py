@@ -218,6 +218,44 @@ _KNN_STREAM_CYPHER = """
     ORDER BY similarity DESC
 """
 
+# Migrated 2026-09-05 from core/tabs/knowledge_graph.py's PageRank scripts 1/2/3/4, fixed rather
+# than ported as-is (see GraphRepository.archetype_bias_pagerank's own docstring for the two real
+# bugs found: script-1's zero-edge projection, script-4's unweighted-graph uniformity). Derives
+# purely from Archetype/Bias/CONDITIONED_ON already created by _SYNC_FAILURE_MODE_CYPHER -- no
+# separate "sync history" ingestion step, unlike the legacy tab's own extra button.
+_MATERIALIZE_ARCHETYPE_BIAS_CYPHER = """
+    MATCH (r:Response)-[:CONDITIONED_ON]->(a:Archetype), (r)-[:CONDITIONED_ON]->(b:Bias)
+    WITH a, b, count(DISTINCT r) AS weight
+    MERGE (a)-[co:ASSOCIATED_WITH]->(b)
+    SET co.weight = weight
+"""
+# Defensive, not redundant: a real, self-caught bug during implementation -- a weight-less
+# ASSOCIATED_WITH edge (from any source, not just the query above) makes gds.pageRank.stream's
+# relationshipWeightProperty silently return NaN for every connected node, not an error. Confirmed
+# live against this exact database (leftover unweighted edges from ad-hoc exploration produced 5 of
+# 11 NaN scores). Removing any such edge before every projection guards against this permanently,
+# not just this one incident.
+_DELETE_WEIGHTLESS_ASSOCIATED_WITH_CYPHER = "MATCH ()-[co:ASSOCIATED_WITH]->() WHERE co.weight IS NULL DELETE co"
+_PAGERANK_GRAPH_NAME = "archetype-bias-pagerank"
+_PROJECT_PAGERANK_GRAPH_CYPHER = """
+    CALL gds.graph.project(
+        $graph_name,
+        ['Archetype', 'Bias'],
+        {ASSOCIATED_WITH: {orientation: 'UNDIRECTED', properties: 'weight'}}
+    )
+"""
+_PAGERANK_STREAM_CYPHER = """
+    CALL gds.pageRank.stream($graph_name, {relationshipWeightProperty: 'weight'})
+    YIELD nodeId, score
+    WITH gds.util.asNode(nodeId) AS node, score
+    RETURN labels(node)[0] AS node_type, node.name AS name, score
+    ORDER BY score DESC
+"""
+_ARCHETYPE_BIAS_GRAPH_DATA_CYPHER = """
+    MATCH (a:Archetype)-[co:ASSOCIATED_WITH]->(b:Bias)
+    RETURN a.name AS archetype, b.name AS bias, co.weight AS weight
+"""
+
 
 def _summarize_similarity_pairs(raw_pairs: list[dict]) -> dict:
     """Reduces ``gds.knn.stream``'s raw per-node top-K neighbor rows (directed -- a node's own
@@ -415,3 +453,30 @@ class Neo4jGraphRepo:
         finally:
             graph.run(_DROP_GRAPH_IF_EXISTS_CYPHER, graph_name=_GRAPH_NAME)
         return _summarize_similarity_pairs(raw_pairs)
+
+    def archetype_bias_pagerank(self) -> list[dict]:
+        """See :meth:`core.domain.interfaces.GraphRepository.archetype_bias_pagerank`."""
+        graph = self._get_graph()
+        graph.run(_MATERIALIZE_ARCHETYPE_BIAS_CYPHER)
+        graph.run(_DELETE_WEIGHTLESS_ASSOCIATED_WITH_CYPHER)
+        graph.run(_DROP_GRAPH_IF_EXISTS_CYPHER, graph_name=_PAGERANK_GRAPH_NAME)
+        graph.run(_PROJECT_PAGERANK_GRAPH_CYPHER, graph_name=_PAGERANK_GRAPH_NAME)
+        try:
+            rows = graph.run(_PAGERANK_STREAM_CYPHER, graph_name=_PAGERANK_GRAPH_NAME).data()
+        finally:
+            graph.run(_DROP_GRAPH_IF_EXISTS_CYPHER, graph_name=_PAGERANK_GRAPH_NAME)
+        return rows
+
+    def archetype_bias_graph_data(self) -> dict:
+        """See :meth:`core.domain.interfaces.GraphRepository.archetype_bias_graph_data`."""
+        graph = self._get_graph()
+        graph.run(_MATERIALIZE_ARCHETYPE_BIAS_CYPHER)
+        graph.run(_DELETE_WEIGHTLESS_ASSOCIATED_WITH_CYPHER)
+        edge_rows = graph.run(_ARCHETYPE_BIAS_GRAPH_DATA_CYPHER).data()
+        nodes: dict[tuple[str, str], dict] = {}
+        edges = []
+        for row in edge_rows:
+            nodes[("Archetype", row["archetype"])] = {"name": row["archetype"], "node_type": "Archetype"}
+            nodes[("Bias", row["bias"])] = {"name": row["bias"], "node_type": "Bias"}
+            edges.append({"source": row["archetype"], "target": row["bias"], "weight": row["weight"]})
+        return {"nodes": list(nodes.values()), "edges": edges}

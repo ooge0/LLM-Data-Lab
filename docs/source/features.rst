@@ -1022,10 +1022,24 @@ rejections; where the cascade chain actually terminates for one archetype; which
 categories precede echo rejections. Degrades to a clear inline error, not a 500, if Neo4j isn't
 reachable -- no other page in this app depends on it.
 
-**Deliberately not included here**: the original Archetype/Bias co-occurrence graph, the 4
-PageRank scripts, Hypothesis Testing, and Uncertainty Analysis all remain on the separate
-``streamlit run run_knowledge_graph.py`` entry point, untouched, per CLAUDE.md SS1 -- only the
-failure-mode graph specifically was promoted into this app.
+**Update, 2026-09-05 (later the same day): fully migrated, no Streamlit entry point left.** The
+paragraph above originally said the plain Archetype/Bias co-occurrence graph and the 4 PageRank
+scripts stayed on a separate ``streamlit run run_knowledge_graph.py`` entry point -- that script,
+``core/tabs/knowledge_graph.py``, ``core/service/neo4j_service.py``, and
+``utils/other/neo4j_services.py`` are all deleted now. **Archetype/Bias PageRank** and **Network
+visualization** (an embedded, self-contained pyvis diagram, ``cdn_resources="in_line"`` so it needs
+no live CDN) are two more buttons on this same page, fixed rather than ported as-is: the original
+PageRank script-1 projected only the ``Archetype`` label, so its graph had zero edges and every
+score was an identical, meaningless baseline; script-4's two-label projection had real edges but no
+relationship weight, so on this project's balanced-factorial experiment design PageRank was
+mathematically guaranteed to score every node in a label class identically regardless of real data
+-- confirmed live before shipping, not assumed (see
+:meth:`~core.domain.interfaces.GraphRepository.archetype_bias_pagerank`'s own docstring). PageRank
+script-2 (metadata enrichment via ``dimension``/``category``/``severity``/``bias_type`` fields) was
+**not** ported -- none of those fields exist in real current response data, confirmed directly, not
+assumed. Hypothesis Testing and Uncertainty Analysis moved to their own new page instead of here --
+see :doc:`../wiki/00-getting-started`'s UI-layers table or ``/hypothesis_testing`` directly; they
+never touched Neo4j, so they don't belong behind this page's ``GraphRepository`` interface.
 
 A 4th "structural analysis" query, added the same day: **Behavioral communities (Leiden)** --
 Stage 4 of :doc:`../wiki/08-graph-representation-learning` graduating from design doc into real
@@ -1042,6 +1056,25 @@ strongest node-to-node analogies and the single most structurally anomalous node
 *closest* match is still weakest). On real synced data, this independently agreed with Stage 4's
 Leiden communities -- two different algorithms landing on the same grouping, real convergent
 evidence rather than a coincidence of one method.
+
+Hypothesis Testing (``/hypothesis_testing``)
+--------------------------------------------------
+
+Added 2026-09-05, migrated from ``core/tabs/knowledge_graph.py``'s "Hypothesis Testing" and
+"Uncertainty Analysis" tabs -- the only two capabilities in that file that never touched Neo4j at
+all (pure pandas/numpy/scipy over one run's already-persisted responses), so they moved to their
+own page rather than behind :class:`~core.domain.interfaces.GraphRepository`. Business logic lives
+in :mod:`core.services.hypothesis_testing`, charts in :mod:`web.plotting.hypothesis_charts`.
+
+Given a run and two archetypes: a mean-shift comparison for one chosen metric (flags a >50%
+relative shift, matching the legacy tab's own threshold), plus a fuller "Extended Analysis" across
+all three metrics (``cognitive_load``, ``sentiment``, ``lexical_density`` -- confirmed to exist in
+real current response data, unlike the fields PageRank script-2 referenced) -- bootstrap epistemic
+vs. aleatoric variance, and KL-divergence distribution shift with an overlapping-histogram chart.
+
+One real, disclosed improvement over the legacy version: an archetype with zero real values for
+the chosen comparison metric now raises a clear, caught error instead of silently computing and
+displaying a NaN mean as literal ``"nan"`` text.
 
 Not yet built
 ----------------

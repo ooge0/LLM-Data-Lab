@@ -97,17 +97,15 @@ validity gates) and Layer 1 (``is_echo_response``, embedding-based echo detectio
 per-response cascade (CLAUDE.md SS3a), wired into ``ExperimentRunner._run_one`` ahead of the other
 metrics and the judge call.
 
-Legacy -- untouched by this rewrite (CLAUDE.md constraint 1)
+Legacy -- reference-only
 ------------------------------------------------------------------
 
-- ``core/service/neo4j_service.py`` -- ``Neo4jService``, the py2neo client wrapper.
-- ``core/tabs/knowledge_graph.py`` -- ``KnowledgeGraph``, the Neo4j sync/PageRank/visualization
-  logic. See its own module docstring for a detailed "why this looks frozen" note.
-- ``utils/other/neo4j_services.py`` -- free functions that launch the Neo4j server *process*.
-- ``run_knowledge_graph.py`` (repo root) -- the small Stage 16 script that calls
-  ``KnowledgeGraph.knowledge_graph_tab`` today; the only live Streamlit entry point.
 - ``legacy/streamlit_app.py`` -- the original ~3,400-line monolith, moved here at Stage 16,
-  reference-only.
+  reference-only. **Update, 2026-09-05:** its last remaining live descendant,
+  ``core/tabs/knowledge_graph.py`` (reached via ``run_knowledge_graph.py``), is now fully migrated
+  and deleted -- along with ``core/service/neo4j_service.py`` and
+  ``utils/other/neo4j_services.py``, both dead once their only callers were gone. See CLAUDE.md
+  SS1's Neo4j entry and :doc:`wiki/07-knowledge-graph-results` for the full migration record.
 
 Supporting
 --------------

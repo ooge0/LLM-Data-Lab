@@ -50,6 +50,14 @@ class _FakeGraphRepo:
             ],
             "most_anomalous": {"node_type": "Bias", "name": "personalization", "best_similarity": 0.0},
         }
+        self.pagerank_result = [
+            {"node_type": "Bias", "name": "toxic", "score": 2.73},
+            {"node_type": "Archetype", "name": "Detached", "score": 0.61},
+        ]
+        self.graph_data_result = {
+            "nodes": [{"name": "Detached", "node_type": "Archetype"}, {"name": "toxic", "node_type": "Bias"}],
+            "edges": [{"source": "Detached", "target": "toxic", "weight": 100}],
+        }
         self.raise_on_query = False
 
     def sync_failure_mode_graph(self, run_id, responses):
@@ -82,6 +90,16 @@ class _FakeGraphRepo:
         if self.raise_on_query:
             raise RuntimeError("Cannot open connection to bolt://localhost:7687")
         return self.structural_similarity_result
+
+    def archetype_bias_pagerank(self):
+        if self.raise_on_query:
+            raise RuntimeError("Cannot open connection to bolt://localhost:7687")
+        return self.pagerank_result
+
+    def archetype_bias_graph_data(self):
+        if self.raise_on_query:
+            raise RuntimeError("Cannot open connection to bolt://localhost:7687")
+        return self.graph_data_result
 
 
 def _make_run(run_id, started_at, total_tasks=2):
@@ -216,3 +234,32 @@ def test_structural_similarity_when_neo4j_is_unreachable_shows_a_clear_error_not
     response = client.get("/knowledge_graph/structural_similarity")
     assert response.status_code == 200
     assert "Error running query" in response.text
+
+
+def test_archetype_bias_pagerank_renders_the_real_query_result(client):
+    response = client.get("/knowledge_graph/archetype_bias_pagerank")
+    assert response.status_code == 200
+    assert "toxic" in response.text and "2.73" in response.text
+    assert "Detached" in response.text and "0.61" in response.text
+
+
+def test_archetype_bias_pagerank_when_neo4j_is_unreachable_shows_a_clear_error_not_a_500(client, fake_graph_repo):
+    fake_graph_repo.raise_on_query = True
+    response = client.get("/knowledge_graph/archetype_bias_pagerank")
+    assert response.status_code == 200
+    assert "Error running query" in response.text
+
+
+def test_archetype_bias_network_returns_a_self_contained_html_document(client):
+    response = client.get("/knowledge_graph/archetype_bias_network")
+    assert response.status_code == 200
+    assert response.headers["content-type"].startswith("text/html")
+    assert "<html>" in response.text
+    assert "Detached" in response.text
+
+
+def test_archetype_bias_network_when_neo4j_is_unreachable_shows_a_clear_inline_error_not_a_500(client, fake_graph_repo):
+    fake_graph_repo.raise_on_query = True
+    response = client.get("/knowledge_graph/archetype_bias_network")
+    assert response.status_code == 200
+    assert "Error building network visualization" in response.text

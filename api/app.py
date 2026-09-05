@@ -40,6 +40,7 @@ from api.routers import (
     demo,
     experiments,
     faq,
+    hypothesis_testing,
     knowledge_graph,
     model_evo,
     monitor,
@@ -87,6 +88,7 @@ def create_app() -> FastAPI:
     app.include_router(db_export.router)
     app.include_router(api_status.router)
     app.include_router(knowledge_graph.router)
+    app.include_router(hypothesis_testing.router)
 
     @app.get("/", response_class=HTMLResponse)
     async def index(request: Request) -> HTMLResponse:

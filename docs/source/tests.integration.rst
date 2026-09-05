@@ -12,6 +12,14 @@ tests.integration.test\_analytics\_api module
    :undoc-members:
    :show-inheritance:
 
+tests.integration.test\_api\_status\_api module
+-----------------------------------------------
+
+.. automodule:: tests.integration.test_api_status_api
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 tests.integration.test\_benchmark\_api module
 ---------------------------------------------
 
@@ -56,6 +64,22 @@ tests.integration.test\_faq\_api module
 ---------------------------------------
 
 .. automodule:: tests.integration.test_faq_api
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+tests.integration.test\_hypothesis\_testing\_api module
+-------------------------------------------------------
+
+.. automodule:: tests.integration.test_hypothesis_testing_api
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+tests.integration.test\_knowledge\_graph\_api module
+----------------------------------------------------
+
+.. automodule:: tests.integration.test_knowledge_graph_api
    :members:
    :undoc-members:
    :show-inheritance:

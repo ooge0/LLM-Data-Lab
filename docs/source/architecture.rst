@@ -6,15 +6,17 @@ High-level component diagram
 
 Two front ends (the web UI and the CLI batch runner) both drive one
 ``ExperimentRunner``/``MetricsEngine`` service layer, which only ever talks to
-``core.domain`` interfaces -- never directly to Ollama, SQLite, or JSONL
-files. The legacy Neo4j/knowledge-graph subsystem is drawn deliberately
-disconnected: it stays on its own existing code path (now reached via the
-small standalone ``run_knowledge_graph.py`` script, Stage 16) and is not part
-of this layered rewrite.
+``core.domain`` interfaces -- never directly to Ollama, SQLite, JSONL files, or Neo4j.
 
 As of Stage 16 this is no longer just a *target* -- every box below has a
 real implementation behind it and is the primary way to run the app (see
-:doc:`roadmap`).
+:doc:`roadmap`). **Update, 2026-09-05:** the Neo4j/knowledge-graph subsystem, previously drawn as a
+disconnected "untouched legacy" box reached via a separate ``run_knowledge_graph.py`` Streamlit
+script, is now fully inside this diagram -- ``GraphRepository``/``Neo4jGraphRepo`` like every other
+adapter, no disconnected legacy box left. That script, ``core/tabs/knowledge_graph.py``,
+``core/service/neo4j_service.py``, and ``utils/other/neo4j_services.py`` are all deleted; full
+migration record in :doc:`wiki/07-knowledge-graph-results` and
+:doc:`wiki/08-graph-representation-learning`.
 
 .. uml::
 
@@ -29,7 +31,7 @@ real implementation behind it and is the primary way to run the app (see
    }
 
    package "api/  (FastAPI)" {
-     [Routers\n(experiments, runs, analytics, nlp, clusters,\nmodel_evo, benchmark, monitor, faq,\ndb_export, api_status, knowledge_graph)] as ROUTERS
+     [Routers\n(experiments, runs, analytics, nlp, clusters,\nmodel_evo, benchmark, monitor, faq,\ndb_export, api_status, knowledge_graph,\nhypothesis_testing)] as ROUTERS
      [SSE endpoint\n(EventSourceResponse)] as SSE
    }
 
@@ -37,6 +39,7 @@ real implementation behind it and is the primary way to run the app (see
      [ExperimentRunner] as RUNNER
      [MetricsEngine] as METRICS
      [cluster_discovery] as CLUSTERSVC
+     [hypothesis_testing\n(pure pandas/scipy, no Neo4j)] as HYPOTHESIS
    }
 
    package "core.domain/  (interfaces + entities, zero framework imports)" {
@@ -66,10 +69,6 @@ real implementation behind it and is the primary way to run the app (see
      database Neo4j as NEO4J
    }
 
-   package "Untouched legacy  (not part of this rewrite)" #FFDDDD {
-     [run_knowledge_graph.py\n(PageRank scripts, plain Archetype/Bias\nsync, Hypothesis Testing,\nUncertainty Analysis only)] as KGSCRIPT
-   }
-
    WEB --> ROUTERS
    WEB ..> SSE : SSE
    CLI --> RUNNER
@@ -77,6 +76,7 @@ real implementation behind it and is the primary way to run the app (see
    ROUTERS --> METRICS
    ROUTERS --> CLUSTERSVC
    ROUTERS --> IGRAPH
+   ROUTERS --> HYPOTHESIS
    SSE ..> RUNNER : progress events
    RUNNER --> ILLM
    RUNNER --> IJUDGE
@@ -99,9 +99,6 @@ real implementation behind it and is the primary way to run the app (see
    ASQLITE --> SQLITE
    ARAG --> KB
    AGRAPH --> NEO4J
-
-   KGSCRIPT ..> AJSONL : reads runs via
-   KGSCRIPT --> NEO4J
    @enduml
 
 Entity-relationship diagram
@@ -359,15 +356,14 @@ overview, complementing the component/class/ER diagrams above (which answer "how
 traced directly against ``web/templates/_nav.html`` and each router, not invented for the
 diagram. Colors group the same three CLAUDE.md SS3a/SS3b-derived categories the sidebar itself uses
 (``[req]``/``[corpus]``/``[sys]``), plus a fourth for the per-response cascade specifically, since
-it's a cross-cutting concept, not one page. Updated 2026-09-05 with a fifth branch for the separate
-Neo4j knowledge-graph entry point (``run_knowledge_graph.py``, its own standalone Streamlit process,
-not reachable from ``_nav.html`` at all) -- omitted until now, which meant this "what can I do here"
-map was silently incomplete for anyone who didn't already know that page existed. Updated again the
-same day, later: the failure-mode graph (four root-cause capabilities) was promoted out of that
-Streamlit-only branch into the main ``[corpus]``-colored section as ``Knowledge Graph
-/knowledge_graph``, matching its real new location in ``_nav.html`` -- the orange Streamlit branch
-now shows only what's still there (the original Archetype/Bias co-occurrence graph, PageRank-1..4,
-and the two pandas/scipy-only sub-tabs).
+it's a cross-cutting concept, not one page. 2026-09-05 saw three updates in one day: a fifth branch
+was added for the then-separate Neo4j knowledge-graph entry point (its own standalone Streamlit
+process, not reachable from ``_nav.html`` at all -- a real gap in this map, since it existed but
+wasn't shown); later the same day the failure-mode graph was promoted into the main
+``[corpus]``-colored section as ``Knowledge Graph /knowledge_graph``; and later still, the entire
+rest of the legacy Neo4j subsystem (the plain Archetype/Bias PageRank, the network visualization,
+Hypothesis Testing/Uncertainty Analysis) was migrated in too, retiring the separate Streamlit
+branch entirely -- there is no longer a fifth branch, everything lives under ``[corpus]`` now.
 
 .. uml::
 
@@ -414,17 +410,18 @@ and the two pandas/scipy-only sub-tabs).
    ***[#3a7d5c] Echo-rejections by model
    ***[#3a7d5c] Terminal cascade stage by archetype
    ***[#3a7d5c] RAG chunk categories vs. echo
+   ***[#3a7d5c] Behavioral communities (Leiden)
+   ***[#3a7d5c] Structural similarity (analogy / anomaly)
+   ***[#3a7d5c] Archetype/Bias PageRank
+   ***[#3a7d5c] Network visualization (pyvis)
+   **[#3a7d5c] Hypothesis Testing /hypothesis_testing
+   ***[#3a7d5c] Mean-shift comparison
+   ***[#3a7d5c] Uncertainty analysis\n(epistemic/aleatoric variance, KL divergence)
    **[#6b6b6b] System Monitor /monitor
    ***[#6b6b6b] Schema / dtype inspector
    **[#6b6b6b] Service status
    ***[#6b6b6b] Ollama / NLTK / spaCy
    **[#6b6b6b] FAQ /faq
-   right side
-   **[#b5651d] Knowledge Graph (Neo4j, separate script)
-   ***[#b5651d] streamlit run run_knowledge_graph.py
-   ***[#b5651d] Sync history to Neo4j\n(Archetype<->Bias co-occurrence)
-   ***[#b5651d] PageRank-1..4 (GDS)
-   ***[#b5651d] Hypothesis Testing / Uncertainty Analysis\n(pandas/scipy, no graph queries)
    @endmindmap
 
 Tag cloud
@@ -495,55 +492,47 @@ in the corpus-level confirmatory-analysis stage (CLAUDE.md SS3b).
    stop
    @enduml
 
-Neo4j knowledge-graph flow (legacy, CLAUDE.md SS1 -- two narrow, explicit, dated exceptions)
+Neo4j knowledge-graph flow -- fully migrated into the FastAPI app, 2026-09-05
 -------------------------------------------------------------------------------------------------
 
-Not part of the layered rewrite, and CLAUDE.md SS1's quarantine (no refactor, no re-layering behind
-a ``core.domain`` interface, no promotion into this project's testing/architecture discipline)
-stands unchanged. But this subsystem is **not entirely untouched** as of 2026-09-05 -- two narrow,
-explicit, author-requested exceptions landed, same precedent as the earlier judge-fix exception
-(CLAUDE.md SS4/SS6): (1) a real, disclosed GDS configuration bug (not a code bug -- ``neo4j.conf``
-never unrestricted/allowlisted ``gds.*``, even though the plugin was installed) was found and fixed,
-verified live; and (2) a second, additive sync + 3 root-cause queries were added, modeling the
-actual per-response cascade as an explicit lineage graph. Full record, real captured proof
-(screenshots, real query output), and the exact scope of what changed vs. what stayed untouched:
-:doc:`wiki/07-knowledge-graph-results`.
+**Update, 2026-09-05 (later the same day): the quarantine below is fully lifted, not just
+narrowed.** This section originally described a legacy, CLAUDE.md SS1-quarantined subsystem with
+two narrow, dated exceptions (a GDS config fix; an additive failure-mode-graph sync). Later the
+same day the author decided to migrate the *entire* remainder too -- the plain Archetype/Bias
+PageRank, the network visualization, Hypothesis Testing, Uncertainty Analysis -- retiring
+``run_knowledge_graph.py``, ``core/tabs/knowledge_graph.py``, ``core/service/neo4j_service.py``,
+and ``utils/other/neo4j_services.py`` entirely. There is no more "untouched legacy" Neo4j code in
+this repository. Full record: :doc:`wiki/07-knowledge-graph-results` and
+:doc:`wiki/08-graph-representation-learning`.
 
-Original sync + PageRank flow (scripts 1-3 untouched; script 4 got a real bug fix)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Current PageRank + network-visualization flow
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. uml::
 
    @startuml
    skinparam backgroundColor transparent
    skinparam shadowing false
-   skinparam activity {
-     BackgroundColor #fdf0e8
-     BorderColor #b5651d
-   }
 
    start
-   :run_knowledge_graph.py\n(standalone Streamlit entry point);
-   :JSONLStore.load_responses(run_id)\n(same Repository the FastAPI app/CLI write to);
-   :pandas DataFrame (+ run_id column,\nadded 2026-09-05 -- needed by the\nfailure-mode graph below);
-   :KnowledgeGraph.knowledge_graph_tab(df);
+   :GET/POST /knowledge_graph/...\n(api/routers/knowledge_graph.py);
+   :Neo4jGraphRepo.archetype_bias_pagerank()\nor .archetype_bias_graph_data();
 
-   partition "Neo4jService (py2neo)" {
-     :load_neo4j_creds\n(config/config.ini [neo4j]);
-     :Graph(uri, auth=(user, password));
+   partition "Neo4jGraphRepo (own [neo4j] config, no legacy Neo4jService)" {
+     :MATCH Response-CONDITIONED_ON->Archetype/Bias\nMERGE weighted ASSOCIATED_WITH edge\n(derived from the already-synced failure-mode graph,\nno separate ingestion step);
+     :DELETE any weight-less ASSOCIATED_WITH edge;
+     note right: Real bug found while implementing, fixed as a\npermanent guard: a weight-less edge makes\ngds.pageRank.stream's relationshipWeightProperty\nsilently return NaN, not an error.
+     :CALL gds.graph.project (2-label, weighted);
+     if (PageRank?) then (yes)
+       :CALL gds.pageRank.stream;
+       note right: Fixes two real bugs found in the original scripts,\nnot ported as-is: script-1's single-label projection\nhad zero edges (uniform, meaningless scores);\nscript-4's unweighted graph made PageRank\nmathematically uniform per label on this project's\nbalanced-factorial experiment design.
+     else (network viz)
+       :web.plotting.knowledge_graph_charts\n.build_archetype_bias_network_html\n(pyvis, cdn_resources="in_line" --\nself-contained, no CDN dependency);
+     endif
+     :CALL gds.graph.drop;
    }
 
-   if ("Sync history to Neo4j" clicked?) then (yes)
-     :UNWIND $rows AS row\nMERGE (a:Archetype) MERGE (b:Bias)\nMERGE (a)-[:ASSOCIATED_WITH]->(b);
-   endif
-
-   partition "PageRank scripts 1-4 (GDS)" {
-     :CALL gds.graph.project\n(archetypeGraph / experimentGraph);
-     :CALL gds.pageRank.stream;
-     note right: Fixed 2026-09-05, verified live: the plugin was\ninstalled but neo4j.conf never unrestricted/\nallowlisted gds.* -- a config gap, not a missing\ndependency. Script-4 also had a real code bug\n(no exists-check/projection guard, unlike 1/3) --\nfixed to match their pattern. See wiki/07 for the\nreal PageRank output captured after the fix.
-   }
-
-   :Streamlit bar chart / table\n(rendered in-process, not via the FastAPI app);
+   :Jinja2 fragment, or a self-contained HTML\ndocument embedded via <iframe> for the network view;
    stop
    @enduml
 

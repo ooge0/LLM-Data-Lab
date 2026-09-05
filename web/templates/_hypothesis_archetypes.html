@@ -1,0 +1,54 @@
+{# Fragment returned by GET /hypothesis_testing/archetypes, swapped into #hypothesis-archetypes.
+   Both actions below share the same archetype A/B selectors -- neither is inside the other's
+   <form> (a form can only have one action), each button instead hx-includes the shared
+   #hypothesis-inputs block by id, matching the db_export bulk-select precedent for referencing
+   inputs outside a button's own form. #}
+<div id="hypothesis-archetypes">
+  {% if not has_data %}
+  <p>No responses found for run <code>{{ selected_run_id }}</code>.</p>
+  {% else %}
+  <div id="hypothesis-inputs">
+    <input type="hidden" name="run_id" value="{{ selected_run_id }}">
+    <label>
+      Archetype A
+      <select name="archetype_a">
+        {% for a in archetypes %}
+        <option value="{{ a }}">{{ a }}</option>
+        {% endfor %}
+      </select>
+    </label>
+    <label>
+      Archetype B
+      <select name="archetype_b">
+        {% for a in archetypes %}
+        <option value="{{ a }}" {% if loop.index0 == 1 %}selected{% endif %}>{{ a }}</option>
+        {% endfor %}
+      </select>
+    </label>
+    <label>
+      Metric (mean-shift comparison only)
+      <select name="metric">
+        {% for m in metrics %}
+        <option value="{{ m }}">{{ m }}</option>
+        {% endfor %}
+      </select>
+    </label>
+  </div>
+
+  <button type="button" hx-post="/hypothesis_testing/compare" hx-include="#hypothesis-inputs"
+          hx-target="#hypothesis-comparison-result" hx-swap="innerHTML"
+          hx-indicator="#compare-spinner" hx-disabled-elt="this">
+    Run hypothesis test
+    <span id="compare-spinner" class="htmx-indicator spinner" aria-hidden="true"></span>
+  </button>
+  <div id="hypothesis-comparison-result"></div>
+
+  <button type="button" hx-post="/hypothesis_testing/uncertainty" hx-include="#hypothesis-inputs"
+          hx-target="#hypothesis-uncertainty-result" hx-swap="innerHTML"
+          hx-indicator="#uncertainty-spinner" hx-disabled-elt="this">
+    Run Extended Analysis
+    <span id="uncertainty-spinner" class="htmx-indicator spinner" aria-hidden="true"></span>
+  </button>
+  <div id="hypothesis-uncertainty-result"></div>
+  {% endif %}
+</div>

@@ -82,7 +82,7 @@ project's no-Docker constraint). Full story, real captured proof, and the honest
 (no refactor, no promotion into this project's own testing/architecture discipline):
 :doc:`wiki/07-knowledge-graph-results`.
 
-.. list-table:: Test suite breakdown (359 tests)
+.. list-table:: Test suite breakdown (411 tests -- re-measured 2026-09-05, was 359)
    :widths: 40 15 45
    :header-rows: 1
 
@@ -90,14 +90,14 @@ project's no-Docker constraint). Full story, real captured proof, and the honest
      - Count
      - Share
    * - Unit (``tests/unit``)
-     - 224
-     - 62%
+     - 251
+     - 61%
    * - Integration / API (``tests/integration``)
-     - 90
-     - 25%
+     - 115
+     - 28%
    * - Legacy RAG suite (``tests/legacy_rag``)
      - 29
-     - 8%
+     - 7%
    * - E2E, Playwright (``tests/e2e``)
      - 16
      - 4%
@@ -111,19 +111,22 @@ syntactic complexity (``test_syntactic_complexity.py``), the benchmark leaderboa
 (``test_benchmark_charts.py``), the judging-mode pass-rate delta
 (new cases in ``test_metrics_engine.py``), the docs-search-over-HTTP wrapper
 (``test_serve_docs.py``), the JSONL-to-SQLite export service's 9-scenario matrix
-(``test_db_export.py``, plus a new case in ``test_sqlite_repo.py``), and the quarantined Neo4j
-subsystem's first-ever coverage, added 2026-09-05 (``test_knowledge_graph.py`` -- mocked
-``py2neo.Graph`` query-construction/ordering checks, not a live-server integration test; see
-:doc:`wiki/07-knowledge-graph-results`) (27 files, 224 tests).
+(``test_db_export.py``, plus a new case in ``test_sqlite_repo.py``), the
+now-fully-migrated-and-fixed ``GraphRepository``/``Neo4jGraphRepo`` (``test_neo4j_repo.py``, 28
+tests -- the failure-mode graph, Leiden communities, structural similarity, and the fixed
+Archetype/Bias PageRank; replaces the deleted ``test_knowledge_graph.py``, which covered the
+now-deleted Streamlit tab's query construction/ordering), and Hypothesis Testing/Uncertainty
+Analysis (``test_hypothesis_testing.py``, 10 tests -- pure pandas/scipy, no Neo4j; migrated the
+same day as a separate, new page, not part of ``GraphRepository``) (27 files, 251 tests).
 **Integration / API** -- through the real
 FastAPI app via ``TestClient`` (``test_analytics_api.py``, ``test_api_status_api.py``,
 ``test_benchmark_api.py``, ``test_clusters_api.py``, ``test_db_export_api.py``, ``test_demo_api.py``,
-``test_experiments_api.py``, ``test_faq_api.py``, ``test_model_evo_api.py``,
+``test_experiments_api.py``, ``test_faq_api.py``, ``test_hypothesis_testing_api.py``,
+``test_knowledge_graph_api.py`` (17 tests -- root-cause queries, Leiden, structural similarity, and
+the fixed PageRank/network-viz endpoints), ``test_model_evo_api.py``,
 ``test_monitor_api.py``, ``test_nlp_api.py``, ``test_runs_api.py``
-(now including the judging-comparison endpoint), ``test_status_api.py``; 13 files, 90 tests --
-``test_api_status_api.py`` was already on disk before this refresh but had never actually been
-counted in this page's own figures until now, found while re-deriving every number directly rather
-than trusting the previous count). **Legacy
+(now including the judging-comparison endpoint), ``test_status_api.py``; 15 files, 115 tests).
+**Legacy
 RAG suite** -- predates the FastAPI rewrite entirely (``test_contract.py``,
 ``test_ingestion_robustness.py``, ``test_rag.py``, ``test_rag_logic.py``; 4 files, 29 tests; a 5th
 file, ``rag_audit.py``, is a manual audit script living alongside them -- its one ``test_``-prefixed
@@ -155,12 +158,15 @@ Wired via ``pytest-cov`` (``tox.ini``'s ``py312`` env: ``--cov=core --cov=api --
 ``tox.ini``'s scope during this QA refresh -- both packages exist now (Stages 10-16) and had been
 completely unmeasured (Stage 0's original ``--cov`` flags predate them).
 
-The untouched Neo4j subsystem (``core/service/neo4j_service.py``, ``core/tabs/knowledge_graph.py``,
-``utils/other/neo4j_services.py``) is explicitly excluded from the measured scope via
-``.coveragerc``'s ``omit`` list -- CLAUDE.md SS1 quarantines it as out of scope for this migration,
-so a "0%" reading on code nobody is meant to touch would be noise, not signal.
+**Update, 2026-09-05:** the Neo4j subsystem this paragraph originally excluded via ``.coveragerc``'s
+``omit`` list (``core/service/neo4j_service.py``, ``core/tabs/knowledge_graph.py``,
+``utils/other/neo4j_services.py``) is fully migrated and deleted -- see CLAUDE.md SS1's Neo4j entry.
+The omit list is empty now; there's nothing left to carve out of coverage measurement.
 
-**Overall: 71% (1595 / 2240 statements).**
+**Overall: 78% (2503 / 3225 statements)** -- re-measured 2026-09-05 after the Neo4j subsystem
+migration (was 71% / 1595 of 2240) -- both the scope shrinking (the deleted legacy files are gone,
+not just omitted) and the newly-added, fully-tested ``hypothesis_testing.py``/``neo4j_repo.py``/
+``knowledge_graph_charts.py`` moved the real number, not a stale carry-forward.
 
 .. list-table:: Coverage by package
    :widths: 30 15 15 15

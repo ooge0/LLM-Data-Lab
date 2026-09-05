@@ -73,7 +73,7 @@ avoid the two copies drifting apart.
    status checks, ...), a fresh clone that skips this step fails to even start ``uvicorn`` --
    confirmed directly, not assumed: this was found while verifying that a fresh clone of this
    repository actually reaches a working state. The example file's real, working defaults need no
-   edits beyond the ``[neo4j]`` password, and only if ``run_knowledge_graph.py`` is ever used.
+   edits beyond the ``[neo4j]`` password, and only if you're using ``/knowledge_graph``.
 
 **Verify the install**::
 
@@ -107,13 +107,11 @@ resembling a long-running check.
 
     python -m cli.run_experiment --config cli/example_config.toml
 
-**4. (Optional) Legacy Neo4j knowledge-graph explorer** -- a second, separate process, only needed
-for this one page (see section 4 below for Neo4j itself)::
-
-    streamlit run run_knowledge_graph.py
-
-Opens at http://localhost:8501. Reads runs via the same ``JSONLStore`` the FastAPI app and CLI both
-write to, so anything generated through either front end is reachable here too.
+**Update, 2026-09-05:** the Neo4j knowledge-graph explorer used to be a separate Streamlit process
+(``streamlit run run_knowledge_graph.py``). It's fully migrated now -- ``/knowledge_graph`` is a
+page in the same FastAPI app as everything else, no second process to start. It still needs a real
+Neo4j server running (see section 4 below), and degrades to a clear inline error if that server
+isn't reachable, but there is no longer a separate UI to launch for it.
 
 For an actual walkthrough of *using* the running app -- filling in the experiment form, watching
 live progress, reading the result -- see :doc:`../operations`'s two full scenarios (UI and raw API).
@@ -134,7 +132,7 @@ This page stops at "the process is up and responding."
 Windows: check the process is actually up with ``Get-Process ollama``. Linux/macOS:
 ``ps aux | grep ollama``, ``pkill ollama`` to kill a stuck one.
 
-**Neo4j** -- only needed for ``run_knowledge_graph.py`` above; every other page works without it.
+**Neo4j** -- only needed for the ``/knowledge_graph`` page; every other page works without it.
 Full install/config/troubleshooting steps (community-edition install, ``config/config.ini``'s
 ``[neo4j]`` section, connectivity verification, stop/status commands for both OSes) are in
 README.MD's **Services -> Neo4j setup** section -- not duplicated here since it's a self-contained,
@@ -216,16 +214,17 @@ comes from concurrent residents, not needless swapping.
        ``Stop-Process -Name ollama -Force`` if unresponsive, then ``ollama serve`` again.
        Linux/macOS: ``pkill ollama``, then ``ollama serve``.
    * - Neo4j
-     - Only relevant if you're running ``run_knowledge_graph.py``. Full stop/status commands for
+     - Only relevant if you're using the ``/knowledge_graph`` page. Full stop/status commands for
        both OSes are in README.MD's **Services -> Neo4j setup** section (step 4,
        troubleshooting) -- not duplicated here.
 
-**One more thing worth knowing before you go looking for a log file**: this app currently has **no
-persistent log file** -- everything prints only to whichever console launched ``uvicorn``, and
-nothing is written to disk (unlike the legacy Streamlit app, which does write
-``logs/lab_debug.log`` -- that file only ever reflects the *old* app, never this one). If you hit an
-error and want to be able to look at it afterward, redirect output when you launch instead of
-relying on the console scrollback::
+**Update, 2026-09-05: this app now has a real persistent log file.** ``api/app.py`` wires up a
+loguru file sink at import time (``logs/lab_debug.log``, 10 MB rotation, 10-day retention -- the
+same convention the legacy Streamlit app already used, so both eras share one place and format).
+It does **not** call ``logger.remove()`` first, so console output (visible in whichever terminal
+launched ``uvicorn``) keeps working alongside the file -- you don't lose live scrollback to get
+persistence. Redirecting output at launch is no longer necessary just to keep a record, though it's
+still a reasonable thing to do for a specific investigation::
 
     uvicorn api.app:app --reload > app_output.log 2>&1
 

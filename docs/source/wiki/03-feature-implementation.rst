@@ -6,11 +6,12 @@ features that mechanism actually serves, as data flows, and then names the real 
 duplication in the current tree plainly -- not to apologize for it, but because a project whose
 whole premise is measurement honesty should audit itself with the same standard.
 
-Out of scope for this page, on purpose: the Neo4j knowledge-graph subsystem
-(``core/service/neo4j_service.py``, ``core/tabs/knowledge_graph.py``,
-``run_knowledge_graph.py``) is explicitly excluded from the FastAPI rewrite by CLAUDE.md SS1 --
-"not ported, not adapted, not even import-path-touched." It is a real, still-running part of the
-application, but not part of the architecture this wiki is documenting.
+**Update, 2026-09-05:** the paragraph below described a real exclusion at the time it was written --
+it no longer holds. The Neo4j knowledge-graph subsystem is fully migrated into the FastAPI
+architecture this wiki documents (``core.domain.interfaces.GraphRepository`` +
+``core.adapters.neo4j_repo.Neo4jGraphRepo``, ``/knowledge_graph``); ``core/service/neo4j_service.py``,
+``core/tabs/knowledge_graph.py``, and ``run_knowledge_graph.py`` are all deleted. See CLAUDE.md
+SS1's Neo4j entry and :doc:`07-knowledge-graph-results` for the full record.
 
 Feature: generating and judging a conditioned response
 --------------------------------------------------------------

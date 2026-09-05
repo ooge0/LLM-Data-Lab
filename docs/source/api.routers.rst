@@ -12,6 +12,14 @@ api.routers.analytics module
    :undoc-members:
    :show-inheritance:
 
+api.routers.api\_status module
+------------------------------
+
+.. automodule:: api.routers.api_status
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 api.routers.benchmark module
 ----------------------------
 
@@ -56,6 +64,22 @@ api.routers.faq module
 ----------------------
 
 .. automodule:: api.routers.faq
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+api.routers.hypothesis\_testing module
+--------------------------------------
+
+.. automodule:: api.routers.hypothesis_testing
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+api.routers.knowledge\_graph module
+-----------------------------------
+
+.. automodule:: api.routers.knowledge_graph
    :members:
    :undoc-members:
    :show-inheritance:

@@ -13,9 +13,9 @@ signal.
 It started as a single ~3,400-line Streamlit script and was rebuilt, stage by stage (Stages 0-15,
 see [Migration Roadmap](#migration-roadmap)), into a layered FastAPI application. As of Stage 16,
 that rewrite is the primary way to run the app — the original script now lives at
-[`legacy/streamlit_app.py`](legacy/streamlit_app.py), kept for reference, superseded everywhere
-except `tab_knowledge_graph` (Neo4j), which was extracted into its own small standalone script,
-[`run_knowledge_graph.py`](run_knowledge_graph.py) (see [Services](#services) below). The rebuild
+[`legacy/streamlit_app.py`](legacy/streamlit_app.py), kept purely for reference. **Update
+2026-09-05:** `tab_knowledge_graph` (Neo4j), the last tab still on its own separate Streamlit entry
+point, is fully migrated too — there is no longer a separate Streamlit UI to run at all. The rebuild
 itself is part of what's being demonstrated — staged, tested, documented software engineering, not
 a one-shot script.
 
@@ -194,9 +194,9 @@ cp config/config.ini.example config/config.ini
 `config/config.ini` is gitignored (it can hold a real Neo4j password) and
 `utils/config_loader_short.py` raises `FileNotFoundError` at **import time** if it's missing --
 nearly the whole app (`uvicorn`, the CLI, `pytest`) fails to even start without it, not just the
-Neo4j knowledge-graph explorer. The example file's `[OLLAMA]`/`[DIRECTORIES]`/`[FILES]`/
+`/knowledge_graph` page. The example file's `[OLLAMA]`/`[DIRECTORIES]`/`[FILES]`/
 `[EXPERIMENT]` sections work as-is; only `[neo4j]`'s placeholder password needs a real value, and
-only if you plan to run `run_knowledge_graph.py` (see **Neo4j setup** below).
+only if you plan to use `/knowledge_graph` (see **Neo4j setup** below).
 
 ### Dependency Architecture
 
@@ -216,8 +216,7 @@ pip-compile requirements.in --output-file=requirements-linux.txt   # must run on
 
 ### Running the app
 
-Three separate front ends exist. Only the third is a different codebase (the pre-rewrite legacy
-script); the first two share one `ExperimentRunner`.
+Two front ends, sharing one `ExperimentRunner`.
 
 **1. FastAPI web app** — start with:
 ```bash
@@ -234,18 +233,10 @@ Reuses the same `ExperimentRunner` and real adapters (`OllamaClient`, `JSONLStor
 printed to stdout, an identical-shaped JSONL out. See `cli/example_config.toml` for the full field
 reference (mirrors `ExperimentConfig` exactly).
 
-**3. Legacy Neo4j knowledge-graph explorer** (Stage 16) — the *only* remaining reason to run
-Streamlit at all:
-```bash
-streamlit run run_knowledge_graph.py
-```
-Opens at http://localhost:8501 by default. Loads a run's persisted responses via the same
-`JSONLStore` the FastAPI app and CLI both use (so any run generated through either front end is
-reachable here), then renders `tab_knowledge_graph`'s Neo4j sync/PageRank/visualization exactly as
-it worked before the rewrite. `legacy/streamlit_app.py` (the full original script) still exists on
-disk and is still technically runnable (`streamlit run legacy/streamlit_app.py`), but every tab it
-has besides `tab_knowledge_graph` now has a tested FastAPI/CLI equivalent — treat it as historical
-reference, not a live entry point.
+`legacy/streamlit_app.py` (the full original script) still exists on disk and is still technically
+runnable (`streamlit run legacy/streamlit_app.py`), but every tab it ever had — including the Neo4j
+knowledge-graph one, migrated 2026-09-05 — now has a tested FastAPI/CLI equivalent. Treat it as
+historical reference, not a live entry point; there is no separate Streamlit UI to run anymore.
 
 #### UI layers
 
@@ -272,6 +263,8 @@ reference, not a live entry point.
 | Benchmark | http://127.0.0.1:8000/benchmark | `tab_benchmark` — overview, pass-rate/quality charts, weighted leaderboard |
 | Raw data / schema | http://127.0.0.1:8000/monitor | Scoped from `tab_monitor`+`tab_debug` — every response as a real table, plus column dtypes |
 | Export to DB | http://127.0.0.1:8000/db_export | Copy any run's JSONL data into `results/nn_lab.db` (`SQLiteRepo`) on demand — pick a run, click Send to DB |
+| Knowledge Graph | http://127.0.0.1:8000/knowledge_graph | Failure-mode graph + root-cause queries, Leiden communities, structural similarity, Archetype/Bias PageRank + network viz — needs a real Neo4j server |
+| Hypothesis Testing | http://127.0.0.1:8000/hypothesis_testing | Mean-shift comparison + bootstrap uncertainty analysis between two archetypes — pure pandas/scipy, no Neo4j |
 | FAQ | http://127.0.0.1:8000/faq | `tab_faq` — user guide and metric methodology (English / Українська) |
 | API docs (Swagger) | http://127.0.0.1:8000/docs | Auto-generated, interactive, from the routers |
 | API docs (ReDoc) | http://127.0.0.1:8000/redoc | Same schema, read-only long-scroll format |
@@ -309,12 +302,13 @@ ps aux | grep ollama    # check running processes
 pkill ollama             # kill a stuck process
 ```
 
-### Neo4j setup (for the standalone knowledge-graph explorer)
+### Neo4j setup (for the `/knowledge_graph` page)
 
-`run_knowledge_graph.py` (and, historically, `legacy/streamlit_app.py`'s `tab_knowledge_graph`) uses
-Neo4j to store relationships between archetypes, biases, and evaluation artifacts. If Neo4j isn't
-configured, every other part of the app continues to function normally — this section only matters
-if you want the knowledge-graph page.
+`api/routers/knowledge_graph.py` (`core.adapters.neo4j_repo.Neo4jGraphRepo`) uses Neo4j to store
+relationships between archetypes, biases, models, and cascade outcomes. If Neo4j isn't configured,
+every other part of the app continues to function normally — this section only matters if you want
+the knowledge-graph page, which degrades to a clear inline error rather than a 500 if Neo4j isn't
+reachable.
 
 **1. Install Neo4j Community Edition**
 
@@ -427,15 +421,15 @@ way and deliberately *not* carried forward, lives in the
 | 15 | `cli/` config-driven batch runner | ✅ Done |
 | 16 | Cutover, sunset legacy duplicates, docs consolidation | ✅ Done |
 
-`tab_knowledge_graph` was explicitly **not** part of this migration — it stays on its current Neo4j
-code path indefinitely (now as `run_knowledge_graph.py`, see [Services](#services) above),
-revisited only as a separate future plan.
+`tab_knowledge_graph` was explicitly **not** part of this migration — it stayed on its own Neo4j
+code path (`run_knowledge_graph.py`) for a while, until a separate, later decision (2026-09-05)
+migrated it fully into this same architecture (`/knowledge_graph`, see
+[UI layers](#ui-layers) above); `run_knowledge_graph.py` no longer exists.
 
 ### Target Architecture (FastAPI, current)
 
 Two front ends drive one service layer that only ever talks to `domain` interfaces — never directly
-to Ollama, SQLite, or JSONL. The legacy Neo4j/knowledge-graph subsystem stays on its own code path,
-untouched, and is not part of this rewrite.
+to Ollama, SQLite, JSONL, or Neo4j.
 
 ```mermaid
 flowchart TB
@@ -444,13 +438,14 @@ flowchart TB
         CLI["cli/ -- config-driven batch runner"]
     end
     subgraph API["api/ -- FastAPI"]
-        ROUTERS["Routers (experiments, runs, analytics, clusters, model_evo, benchmark, monitor, faq, ...)"]
+        ROUTERS["Routers (experiments, runs, analytics, clusters, model_evo, benchmark, monitor, faq, knowledge_graph, hypothesis_testing, ...)"]
         SSE["SSE endpoint (EventSourceResponse)"]
     end
     subgraph SERVICES["core/services/ -- orchestration"]
         RUNNER["ExperimentRunner"]
         METRICS["MetricsEngine"]
         CLUSTER["cluster_discovery"]
+        HYPOTHESIS["hypothesis_testing (no Neo4j)"]
     end
     subgraph DOMAIN["core/domain/ -- interfaces + entities"]
         ILLM["LLMClient"]
@@ -458,23 +453,22 @@ flowchart TB
         IPROMPT["PromptStrategy"]
         IREPO["Repository"]
         IKB["KnowledgeBase"]
+        IGRAPH["GraphRepository"]
     end
     subgraph ADAPTERS["core/adapters/"]
         AOLLAMA["OllamaClient"]
         AJSONL["JSONLStore"]
         ASQLITE["SQLiteRepo"]
         ARAG["RAG adapters"]
-        AJUDGE["NaiveJudge (author replaces later)"]
+        AJUDGE["StructuredJudge"]
         APROMPT["NaivePromptStrategy"]
+        AGRAPH["Neo4jGraphRepo"]
     end
     subgraph EXTERNAL["External systems"]
         OLLAMA[("Ollama")]
         SQLITE[("SQLite")]
         JSONL[("JSONL files")]
         KB[("knowledge/rag/*.txt")]
-    end
-    subgraph LEGACY["Untouched legacy"]
-        KGSCRIPT["run_knowledge_graph.py"]
         NEO4J[("Neo4j")]
     end
     WEB --> ROUTERS
@@ -483,6 +477,8 @@ flowchart TB
     ROUTERS --> RUNNER
     ROUTERS --> METRICS
     ROUTERS --> CLUSTER
+    ROUTERS --> IGRAPH
+    ROUTERS --> HYPOTHESIS
     SSE -.progress.-> RUNNER
     RUNNER --> ILLM & IJUDGE & IPROMPT & IREPO & IKB
     METRICS --> IREPO
@@ -492,12 +488,12 @@ flowchart TB
     IPROMPT -.impl.-> APROMPT
     IREPO -.impl.-> AJSONL & ASQLITE
     IKB -.impl.-> ARAG
+    IGRAPH -.impl.-> AGRAPH
+    AGRAPH --> NEO4J
     AOLLAMA --> OLLAMA
     AJSONL --> JSONL
     ASQLITE --> SQLITE
     ARAG --> KB
-    KGSCRIPT -.reads via.-> AJSONL
-    KGSCRIPT --> NEO4J
 ```
 
 ### Deployment and Operations Architecture
@@ -527,7 +523,8 @@ Development         Testing    Development         Testing
 ```text
 api/                             # FastAPI app: routers, pydantic DTOs, SSE endpoint
   routers/                       # analytics, benchmark, clusters, demo, experiments, faq,
-                                  #   model_evo, monitor, nlp, runs
+                                  #   model_evo, monitor, nlp, runs, db_export, api_status,
+                                  #   knowledge_graph, hypothesis_testing
 web/                              # Jinja2 + HTMX templates, Plotly/matplotlib presentation
   templates/
   plotting/                      # chart-building functions, one module per tab
@@ -537,12 +534,12 @@ cli/                              # config-driven batch runner (Stage 15)
   example_config.toml
 core/
   domain/                        # entities.py, interfaces.py -- zero framework imports
-  services/                      # ExperimentRunner, MetricsEngine, cluster_discovery -- orchestration
-  adapters/                      # OllamaClient, JSONLStore, SQLiteRepo, NaiveJudge, RAG adapters
+  services/                      # ExperimentRunner, MetricsEngine, cluster_discovery,
+                                  #   hypothesis_testing -- orchestration
+  adapters/                      # OllamaClient, JSONLStore, SQLiteRepo, StructuredJudge,
+                                  #   Neo4jGraphRepo, RAG adapters
   analysis/                      # PsychScientist, NeuroMetrics, calculate_advanced_linguistic_metrics,
                                   #   ClusterDiscovery (KMeans/PCA), ModelEvaluation, LabDataBridge
-  service/                       # Neo4jService -- legacy, untouched (CLAUDE.md constraint 1)
-  tabs/                          # knowledge_graph.py -- legacy, untouched
 utils/                            # config loaders, app_utils, RAG embedding view, project audit
 config/                           # config.ini ([OLLAMA]/[neo4j]/[rag]/[DIRECTORIES]/[FILES]/[EXPERIMENT]), config.toml
 knowledge/                        # RAG knowledge-base text files, sys_prompts_defined.json
@@ -550,7 +547,6 @@ tests/                            # unit + functional/API test suites (see Tests
 docs/source/                      # Sphinx source (see API Reference below)
 results/                          # experiment outputs (lab_experiment_results/), coverage/allure reports
 legacy/                           # streamlit_app.py -- the pre-rewrite monolith, kept for reference
-run_knowledge_graph.py            # standalone Neo4j KG explorer (Stage 16)
 requirements.in                   # master dependency declaration
 requirements-base.txt             # compiled cross-platform lock file
 requirements-linux.txt            # compiled Ubuntu-only lock file

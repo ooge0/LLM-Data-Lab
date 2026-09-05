@@ -68,6 +68,20 @@ class _FakeGraph:
                     },
                 ]
             )
+        if "gds.pageRank.stream" in q:
+            return _FakeResult(
+                [
+                    {"node_type": "Bias", "name": "toxic", "score": 2.73},
+                    {"node_type": "Archetype", "name": "Detached", "score": 0.61},
+                ]
+            )
+        if "RETURN a.name AS archetype" in q:
+            return _FakeResult(
+                [
+                    {"archetype": "Detached", "bias": "toxic", "weight": 100},
+                    {"archetype": "Neutral", "bias": "toxic", "weight": 100},
+                ]
+            )
         return _FakeResult()
 
 
@@ -484,3 +498,73 @@ def test_structural_similarity_still_drops_the_graph_when_knn_itself_raises():
 
     drop_calls = [c for c in fake_graph.calls if "gds.graph.drop" in c["query"]]
     assert len(drop_calls) == 2, "the projected graph must still be dropped even when KNN itself fails"
+
+
+# --- Neo4jGraphRepo.archetype_bias_pagerank / archetype_bias_graph_data ------------------------
+# (migrated from core/tabs/knowledge_graph.py's PageRank scripts, fixed rather than ported as-is)
+
+
+def test_archetype_bias_pagerank_returns_the_real_query_shape():
+    fake_graph = _FakeGraph()
+    repo = Neo4jGraphRepo(graph=fake_graph)
+
+    rows = repo.archetype_bias_pagerank()
+
+    assert rows == [
+        {"node_type": "Bias", "name": "toxic", "score": 2.73},
+        {"node_type": "Archetype", "name": "Detached", "score": 0.61},
+    ]
+
+
+def test_archetype_bias_pagerank_deletes_weightless_edges_before_projecting():
+    """Real, self-caught bug: a weight-less ASSOCIATED_WITH edge makes gds.pageRank.stream's
+    relationshipWeightProperty silently return NaN for every connected node, not an error --
+    confirmed live against a real database contaminated by unrelated ad-hoc testing. The cleanup
+    must run before the graph is projected, every time, not just once."""
+    fake_graph = _FakeGraph()
+    repo = Neo4jGraphRepo(graph=fake_graph)
+
+    repo.archetype_bias_pagerank()
+
+    queries = [c["query"] for c in fake_graph.calls]
+    materialize_idx = next(i for i, q in enumerate(queries) if "SET co.weight = weight" in q)
+    delete_idx = next(i for i, q in enumerate(queries) if "WHERE co.weight IS NULL DELETE co" in q)
+    project_idx = next(i for i, q in enumerate(queries) if "gds.graph.project" in q)
+    assert materialize_idx < delete_idx < project_idx
+
+
+def test_archetype_bias_pagerank_drops_the_projected_graph_both_before_and_after():
+    fake_graph = _FakeGraph()
+    repo = Neo4jGraphRepo(graph=fake_graph)
+
+    repo.archetype_bias_pagerank()
+
+    drop_calls = [c for c in fake_graph.calls if "gds.graph.drop" in c["query"]]
+    assert len(drop_calls) == 2
+    for c in drop_calls:
+        assert c["params"] == {"graph_name": "archetype-bias-pagerank"}
+
+
+def test_archetype_bias_graph_data_returns_deduplicated_nodes_and_real_edges():
+    fake_graph = _FakeGraph()
+    repo = Neo4jGraphRepo(graph=fake_graph)
+
+    data = repo.archetype_bias_graph_data()
+
+    assert {"name": "Detached", "node_type": "Archetype"} in data["nodes"]
+    assert {"name": "Neutral", "node_type": "Archetype"} in data["nodes"]
+    assert {"name": "toxic", "node_type": "Bias"} in data["nodes"]
+    assert len(data["nodes"]) == 3, "toxic must appear once even though it's the target of both edges"
+    assert data["edges"] == [
+        {"source": "Detached", "target": "toxic", "weight": 100},
+        {"source": "Neutral", "target": "toxic", "weight": 100},
+    ]
+
+
+def test_archetype_bias_graph_data_also_deletes_weightless_edges_first():
+    fake_graph = _FakeGraph()
+    repo = Neo4jGraphRepo(graph=fake_graph)
+
+    repo.archetype_bias_graph_data()
+
+    assert any("WHERE co.weight IS NULL DELETE co" in c["query"] for c in fake_graph.calls)

@@ -137,6 +137,36 @@
     </button>
     <div id="kg-similarity"></div>
   </fieldset>
+
+  <h2>Archetype / Bias co-occurrence</h2>
+  <p class="hint">
+    Migrated from the retired Streamlit PageRank scripts -- derived from whichever runs are already
+    synced into the failure-mode graph above, no separate ingestion step.
+  </p>
+
+  <fieldset>
+    <legend>PageRank</legend>
+    <button type="button" hx-get="/knowledge_graph/archetype_bias_pagerank" hx-target="#kg-pagerank" hx-swap="innerHTML"
+            hx-indicator="#kg-pagerank-spinner" hx-disabled-elt="this">
+      Run query
+      <span id="kg-pagerank-spinner" class="htmx-indicator spinner" aria-hidden="true"></span>
+    </button>
+    <div id="kg-pagerank"></div>
+  </fieldset>
+
+  <fieldset>
+    <legend>Network visualization</legend>
+    {# An iframe, not an htmx swap -- the response is a full, self-contained HTML document with its
+       own <script> tags (pyvis/vis-network); a browser never executes scripts injected via
+       innerHTML, only via a real document load. Deferred until clicked (not loaded eagerly on page
+       load) via a plain src-attribute assignment, matching the "don't run an expensive query until
+       asked" behavior every other button on this page already has via hx-get. #}
+    <button type="button" onclick="document.getElementById('kg-network-iframe').src='/knowledge_graph/archetype_bias_network'">
+      Show network
+    </button>
+    <iframe id="kg-network-iframe" title="Archetype/Bias network"
+            style="width:100%;height:600px;border:1px solid var(--border);margin-top:.5rem;display:block;"></iframe>
+  </fieldset>
   </main>
 </div>
 </body>

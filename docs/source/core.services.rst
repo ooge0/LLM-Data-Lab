@@ -28,6 +28,14 @@ core.services.experiment\_runner module
    :undoc-members:
    :show-inheritance:
 
+core.services.hypothesis\_testing module
+----------------------------------------
+
+.. automodule:: core.services.hypothesis_testing
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 core.services.metrics\_engine module
 ------------------------------------
 

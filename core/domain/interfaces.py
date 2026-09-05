@@ -333,6 +333,46 @@ class GraphRepository(Protocol):
         """
         ...
 
+    def archetype_bias_pagerank(self) -> list[dict]:
+        """
+        PageRank over the plain Archetype/Bias co-occurrence graph -- migrated 2026-09-05 from the
+        legacy Streamlit subsystem's PageRank scripts 1-4 (``core/tabs/knowledge_graph.py``), fixed
+        and consolidated rather than ported as-is. Two real, disclosed problems with the originals,
+        found before writing anything here: script-1 projected only the ``Archetype`` label, so its
+        graph had **zero edges** (``ASSOCIATED_WITH`` always points to ``Bias``) and every score was
+        an identical, meaningless baseline; script-4's two-label projection had real edges but no
+        relationship weight, so on this project's balanced-factorial experiment design (every
+        archetype crossed with every bias, roughly equally) PageRank is mathematically guaranteed to
+        score every node in a label class identically regardless of real data -- confirmed live, not
+        assumed. This method fixes both: one real, weighted (by co-occurrence count) two-label
+        projection, derived from whichever runs have already been synced via
+        :meth:`sync_failure_mode_graph` (no separate ingestion step -- ``Archetype``/``Bias``/
+        ``CONDITIONED_ON`` already exist from that sync).
+
+        Returns
+        -------
+        list[dict]
+            ``{"node_type", "name", "score"}`` rows, ordered by score descending.
+        """
+        ...
+
+    def archetype_bias_graph_data(self) -> dict:
+        """
+        Raw nodes + weighted edges for the Archetype/Bias co-occurrence graph -- backs the
+        interactive network visualization (migrated from ``core/tabs/knowledge_graph.py``'s
+        PageRank script-3's pyvis/NetworkX diagram). Presentation (the actual pyvis HTML) lives in
+        :func:`web.plotting.knowledge_graph_charts.build_archetype_bias_network_html`, not here --
+        this method only returns data, matching this project's `core`-never-imports-a-web-or-
+        viz-library rule.
+
+        Returns
+        -------
+        dict
+            ``{"nodes": list[dict], "edges": list[dict]}``. Each node is ``{"name", "node_type"}``;
+            each edge is ``{"source", "target", "weight"}``.
+        """
+        ...
+
 
 @runtime_checkable
 class Repository(Protocol):
