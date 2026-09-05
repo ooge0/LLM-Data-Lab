@@ -188,26 +188,67 @@ applies to the existing UMAP/HDBSCAN pipeline.
   triangulation argument, demonstrated concretely rather than left as a citation); the single most
   anomalous node was the ``personalization`` bias, whose best match to anything else scored 0.0 --
   reported as-is in the UI, not smoothed over.
-- **Stage 6 -- link prediction for untried combinations.** ``gds.beta.pipeline.linkPrediction``
-  trained on already-run (archetype, bias, model) triples, evaluated on a real held-out split.
-  *Validate with*: precision/recall/AUC on the held-out edges -- and, ideally, an actual follow-up
-  experiment run against a small number of the pipeline's highest-predicted-risk untried
-  combinations, to see whether the prediction holds against a real new Ollama-generated response,
-  not just against historical data.
+- **Stage 6 -- link prediction for untried combinations. Attempted, 2026-09-05, real negative
+  result -- documented honestly, not shipped.** Two real, escalating attempts, not a single quick
+  try: a composite ``ArchetypeBiasCombo`` node (Archetype x Bias, since GDS Link Prediction predicts
+  pairwise edges and this project's real risk unit is a 3-way triple), a real, data-driven ``RISKY``
+  label (median split on real per-triple Judge-FAIL rate, not an arbitrary threshold), FastRP
+  embeddings, HADAMARD features, a logistic-regression candidate, and a real train/test split via
+  ``gds.beta.pipeline.linkPrediction``.
+
+  **Attempt 1** (the failure-mode graph's existing 500-response run, plus a small 75-response
+  feasibility batch adding one new real bias value across 3 of the 5 archetypes, deliberately
+  leaving the other 2 untried for that bias so a genuine "unseen but structurally-informed" target
+  existed): 10 ``ArchetypeBiasCombo`` nodes, 15 real ``RISKY`` edges. Training ran without error and
+  reported a real held-out test AUCPR (0.75-0.83, varying between runs since GDS's own split is
+  stochastic) -- but every single ``predict.stream`` output, across all 35 candidate pairs, came
+  back as **exactly** ``0.5`` probability. The model had collapsed to predicting the base rate for
+  everything; 15 positive examples (about 8-9 after the test split) is too little for the classifier
+  to learn anything.
+
+  **Attempt 2** (a real, substantially larger follow-up: 200 more real Ollama-generated responses
+  across 4 more real bias values, fully crossing all 5 archetypes and all 5 models -- 275 new real
+  responses total across both attempts, not a synthetic top-up): 30 ``ArchetypeBiasCombo`` nodes, 55
+  real ``RISKY`` edges, nearly 4x Attempt 1's positive-edge count. Training metrics looked
+  materially better and more stable this time (train/validation AUCPR ~0.89, test AUCPR 0.68) --
+  but the real predictions were still functionally flat: 95 candidate pairs spanned only 11 distinct
+  probability values, all within **0.4996-0.4998**, a spread of ~0.0002. A real bug in the
+  verification script itself was found and fixed along the way (``predict.stream``'s ``node1``/
+  ``node2`` did not come back in ``sourceNodeLabel``/``targetNodeLabel`` order -- confirmed by
+  checking ``labels()`` directly, not assumed), which changed *which* combinations the top
+  predictions named but did not change the underlying finding: still no real discrimination.
+
+  **Root cause, not just "needs more data" (already tried tripling the positive-edge count and it
+  didn't move the needle) -- a real structural mismatch between this problem and graph-topology
+  embeddings:** every ``ArchetypeBiasCombo`` node has a ``TRIED_WITH`` edge to nearly every ``Model``
+  node -- the graph topology is close to uniform across combos, differing only in the sparse
+  ``RISKY`` label layered on top. FastRP embeds *structural position*, and structural position
+  barely varies here. What actually drives real risk in this data, visible directly in the raw
+  per-triple fail rates without any graph ML at all, is overwhelmingly **which model** (``llama3``/
+  ``phi3`` fail far more than ``qwen``/``tinyllama``/``mistral``, holding archetype and bias
+  constant) -- a signal already fully captured by which ``Model`` node an edge points to, not by
+  anything a structural embedding can add. This is a real, evidence-backed conclusion, not
+  abandoned prematurely: graph-topology-based link prediction is not the right tool for *this*
+  specific risk signal, on *this* graph's shape. **Not shipped as a UI feature** -- a page showing a
+  model with no real discriminative power would be exactly the kind of hollow, impressive-looking
+  result this project's own measurement-validity discipline exists to catch, not produce. If this
+  is revisited, the more promising direction suggested by the diagnosis above is a plain classifier
+  over explicit (archetype, bias, model) categorical features rather than a graph-embedding
+  approach -- a genuinely different attempt, not a bigger version of the same one.
 
 Honest scope note
 ----------------------
 
-**Superseded in part, 2026-09-05:** this page originally stated everything here stays inside
-CLAUDE.md SS1's Neo4j quarantine, with no promotion into ``core.domain``/``core.adapters`` at all.
-That's no longer true for Stage 4 specifically -- the failure-mode graph (not the rest of the
-legacy Neo4j subsystem: the original Archetype/Bias co-occurrence graph, the PageRank scripts,
-Hypothesis Testing, Uncertainty Analysis all remain untouched, exactly where they were) was
-promoted the same day, by explicit author decision, precisely to leave room for this page's
-techniques to grow into real, tested code rather than staying a permanently-quarantined design
-note. Stages 5/6 below are still un-shipped design, not yet real code, but there is no longer a
-standing "never promote this" boundary blocking them the way there was when this page was first
-written -- whether/when to build them is a normal future-work decision now, not a scope violation.
+**Superseded, 2026-09-05:** this page originally stated everything here stays inside CLAUDE.md
+SS1's Neo4j quarantine, with no promotion into ``core.domain``/``core.adapters`` at all. That's no
+longer true at all, as of the same day: the failure-mode graph was promoted first (explicitly to
+leave room for this page's techniques to grow into real, tested code), Stages 4 and 5 both
+graduated into real, shipped code the same day (Leiden communities, node-similarity analogy/
+anomaly), and later the same day the *rest* of the legacy Neo4j subsystem (the original Archetype/
+Bias co-occurrence graph, the PageRank scripts, Hypothesis Testing, Uncertainty Analysis) was
+migrated too -- there is no longer any untouched Neo4j code in this repository at all. Stage 6
+(link prediction) was attempted, twice, with real escalating data, and closed as a real, documented
+negative result rather than shipped -- see its own entry above for the full finding.
 And a direct caution on the "intuition" framing itself: everything above produces a *score* --
 similarity, community assignment, predicted-risk probability -- not a verdict. Treating a
 structural-anomaly flag or a link-prediction score as ground truth without the validation step

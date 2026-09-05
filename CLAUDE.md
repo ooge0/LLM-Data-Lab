@@ -166,8 +166,12 @@ Not gimmicks, not micro-optimizations — habits from people who actually unders
   (`core/services/hypothesis_testing.py`) — pure pandas/scipy, never touched Neo4j.
   `core/tabs/knowledge_graph.py`, `run_knowledge_graph.py`, `core/service/neo4j_service.py`, and
   `utils/other/neo4j_services.py` are all deleted; §12 no longer lists a legacy section for any of
-  this. Full migration history (the narrow exceptions that preceded this, the graph-representation-
-  learning Stage 4/5 work, every bug found along the way): `docs/source/wiki/07-knowledge-graph-
+  this. Stage 6 of the roadmap (link prediction for untried combinations) was attempted twice with
+  real, escalating data (275 new real Ollama responses total) and closed as a real, documented
+  negative result — a structural mismatch between graph-topology embeddings and this project's
+  actual risk signal, not a data-volume problem — rather than shipped as a hollow-looking feature.
+  Full migration history (the narrow exceptions that preceded this, the graph-representation-
+  learning Stage 4/5/6 work, every bug found along the way): `docs/source/wiki/07-knowledge-graph-
   results.rst` and `docs/source/wiki/08-graph-representation-learning.rst`.
 - Authentication.
 - Hosted inference migration (stay on local Ollama for now).
