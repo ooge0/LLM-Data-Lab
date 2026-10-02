@@ -17,6 +17,7 @@ multi-response run to render meaningfully. See ``tests/e2e/conftest.py`` for ``l
 import pytest
 
 from core.adapters.jsonl_store import JSONLStore
+from tests.e2e.pages import NlpPage
 
 
 def _find_a_real_run_with_responses(min_responses: int = 5):
@@ -40,19 +41,14 @@ def test_charts_in_the_default_and_a_switched_tab_both_render_at_full_container_
     """Regression test for the reported bug: fixed by tabs.js explicitly calling
     Plotly.Plots.resize() on a panel's charts the moment that panel becomes .active, both on
     initial load (the default tab) and on every later click (a previously-hidden tab)."""
-    page.goto(f"{live_server}/nlp")
-    page.locator("select[name='run_id']").select_option(real_run_id)
-    page.wait_for_selector(".plotly-graph-div")
+    nlp = NlpPage(page, live_server).open()
+    nlp.choose_run(real_run_id)
 
-    default_panel = page.locator("#nlp-1")
-    default_chart = default_panel.locator(".plotly-graph-div").first
-    default_ratio = default_chart.bounding_box()["width"] / default_panel.bounding_box()["width"]
+    default_ratio = nlp.chart_width_ratio("nlp-1")
     assert default_ratio > 0.85, f"default tab's chart is narrower than its panel: ratio={default_ratio:.2f}"
 
-    page.get_by_role("button", name="NLP-2", exact=False).click()
-    page.wait_for_function("document.getElementById('nlp-2').classList.contains('active')")
+    nlp.open_tab("NLP-2")
+    nlp.wait_for_panel_active("nlp-2")
 
-    switched_panel = page.locator("#nlp-2")
-    switched_chart = switched_panel.locator(".plotly-graph-div").first
-    switched_ratio = switched_chart.bounding_box()["width"] / switched_panel.bounding_box()["width"]
+    switched_ratio = nlp.chart_width_ratio("nlp-2")
     assert switched_ratio > 0.85, f"switched tab's chart is narrower than its panel: ratio={switched_ratio:.2f}"

@@ -146,9 +146,9 @@ Known technical debt and duplication -- named plainly
   ``--output-file`` flag), which ``pip-compile`` defaults to writing as ``requirements.txt`` --
   never adopted into the documented workflow, never referenced by any install step, and not kept in
   sync since (the version drift between the two files' package sets confirms it stopped being
-  regenerated). ``requirements-windows.txt`` (0 lines, tracked) is *not* the same kind of issue --
-  README documents it correctly as a deliberate, empty placeholder (Windows installs PyTorch via a
-  custom index URL instead, not via this file). Separately, ``tmp/need_review/dependencie_fix_win_linux.md``
+  regenerated). ``requirements-windows.txt`` (0 lines, tracked) was a different case: an empty
+  placeholder that nothing needed (Windows installs PyTorch via a custom index URL instead). It was
+  removed 2026-10-02 together with its reference in the ``win32`` tox env. Separately, ``tmp/need_review/dependencie_fix_win_linux.md``
   is an untracked scratch note proposing a different dependency-split design (separate
   ``requirements-linux.in``/``requirements-windows.in`` overlay files) that was never adopted --
   neither overlay file exists on disk; the design actually implemented (documented in README and

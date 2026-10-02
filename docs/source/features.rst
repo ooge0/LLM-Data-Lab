@@ -123,8 +123,8 @@ from these (``completion_tokens`` / ``ollama_eval_duration_ms``) -- an
 actual measurement, not the ``ms_per_word`` proxy (wall-clock duration over
 a word count) every response still also gets, which stays meaningful for
 any future non-Ollama backend that can't report this. Host is derived from
-the same ``config/config.ini`` ``[OLLAMA]`` value the judge still uses
-(``openai_base_url``, with its ``/v1`` suffix stripped), not a second config
+the same ``config/config.ini`` ``[OLLAMA]`` value (``openai_base_url``,
+a historical key name, with its ``/v1`` suffix stripped), not a second config
 entry that could drift out of sync. Still implements the :class:`~core.domain
 .interfaces.LLMClient` interface unchanged, so callers depend on the
 interface, not on Ollama or its transport specifically.
@@ -136,11 +136,12 @@ seconds longer than Ollama's own self-reported ``ollama_total_duration_ms``
 (confirmed by calling three times in a row: the gap was ~2000ms on the
 first call, ~1-2ms on the next two).
 
-The naive judge still calls the OpenAI-compatible endpoint via
-:mod:`core.adapters._openai_compat`, unchanged -- performance telemetry is
-about the student model being measured, not the judge doing the measuring.
+:class:`~core.adapters.structured_judge.StructuredJudge` receives this same client
+through the ``LLMClient`` interface, so judge calls also use the native endpoint. The
+OpenAI-compatible helper that earlier judge code used (``core.adapters._openai_compat``) was
+removed on 2026-10-02: nothing in production called it after the native switch.
 
-See :mod:`core.adapters.ollama_client`, :mod:`core.adapters._openai_compat`.
+See :mod:`core.adapters.ollama_client`.
 
 Structured judge and the Layer 0/1/2 cascade
 -----------------------------------------------
@@ -220,8 +221,8 @@ Response record fields
 The full field set of one persisted response record, pulled directly from a real entry generated
 by a live run (``ExperimentRunner._run_one``, Stage 6, extended with real Ollama performance
 telemetry after Stage 8, the Layer 0/1 cascade fields, and the Layer 2/social-focus/hedging/
-dependency-distance fields, both added 2026-08-24) -- 77 keys today, confirmed via a direct entry
-count, not estimated. Kept here, next to the storage layer that persists these records, rather than
+dependency-distance fields, both added 2026-08-24, and ``v_decided_by``, added 2026-10-02) -- 78 keys
+today, confirmed via a direct entry count of a full-path (non-rejected) response, not estimated. Kept here, next to the storage layer that persists these records, rather than
 as a separate schema page.
 
 .. list-table::
@@ -270,6 +271,18 @@ as a separate schema page.
    * - Run/task metadata
      - ``val``
      - The swept parameter's value for this response (or base temperature if no sweep)
+   * - Run/task metadata
+     - ``val_temperature``
+     - The run's base temperature, recorded on every response whether or not it was swept
+   * - Run/task metadata
+     - ``val_top_p``
+     - The run's base top-p, recorded the same way
+   * - Run/task metadata
+     - ``val_frequency_penalty``
+     - The run's base frequency penalty, recorded the same way
+   * - Run/task metadata
+     - ``val_presence_penalty``
+     - The run's base presence penalty, recorded the same way
    * - Judge verdict
      - ``layer0_classification``
      - Layer 0 result: ``VALID`` / ``EMPTY`` / ``MALFORMED_JSON`` / ``TRUNCATED`` / ``SCHEMA_ERROR``
@@ -296,7 +309,10 @@ as a separate schema page.
      - Same, as 0/1 (for aggregation/heatmaps)
    * - Judge verdict
      - ``v_confidence``
-     - Judge's stated confidence, ``0.0``-``1.0`` (``None`` if the judge didn't supply one; ``1.0`` for a synthesized Layer 0/1 rejection)
+     - Judge's stated confidence, ``0.0``-``1.0`` (``None`` if the judge didn't supply one; ``1.0`` for a synthesized Layer 0/1 rejection; ``0.0`` when the judge's reply could not be parsed). Three different meanings in one column -- read it together with ``v_decided_by``
+   * - Judge verdict
+     - ``v_decided_by``
+     - Added 2026-10-02. Who produced ``v_ok``: ``layer0`` (deterministic rejection), ``layer1`` (echo rejection), ``judge`` (a parsed judge verdict, including a genuine "no"), or ``judge_parse_failure`` (the judge's reply was unusable, so ``v_ok=False`` is a fallback, not a judgment)
    * - Judge verdict
      - ``v_rationale``
      - One-sentence explanation -- a real judge rationale, a Layer 0/1 rejection reason, or a parse-failure explanation (never silently blank)
@@ -553,11 +569,11 @@ Service status (Ollama/NLTK reachability)
 ``/experiments``).
 
 The FastAPI-era equivalent of the legacy sidebar's three green/red buttons (Ollama/NLP/Neo4j) --
-deliberately scoped to **Ollama + NLTK only** (author's explicit choice): the whole Neo4j subsystem
-stays "not even import-path-touched" per CLAUDE.md SS1, and wiring a new status check into it would
-itself be a new integration point into that untouched subsystem, not just a read. Real checks, not
+scoped to **Ollama + NLTK + spaCy**; there is no Neo4j check. That exclusion dates from when the
+Neo4j subsystem was out of scope (CLAUDE.md SS1, reversed 2026-09-05) and was never revisited;
+``/knowledge_graph`` reports an unreachable server inline instead. Real checks, not
 the legacy pattern: ``check_nltk()`` never calls ``nltk.download()`` (the legacy
-``ensure_nltk_resources()`` silently downloaded anything missing, which meant its own "NLP ❌" branch
+``ensure_nltk_resources()`` silently downloaded anything missing, which meant its own red "NLP" branch
 was unreachable dead code -- confirmed by reading it, not assumed) -- a missing resource is reported
 honestly instead of silently fixed and hidden. ``check_ollama()`` reuses
 :func:`core.adapters.ollama_client._native_host`'s host resolution rather than a second, possibly-

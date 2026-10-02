@@ -13,11 +13,11 @@ the compat endpoint's response has none of this, confirmed by querying both
 live and comparing the raw JSON. Everything else about this adapter's
 behaviour (which model, what gets sent, sampling params) is unchanged.
 
-The judge (:mod:`core.adapters.structured_judge`) still goes through the
-OpenAI-compatible endpoint via :mod:`core.adapters._openai_compat`, on
-purpose -- performance telemetry is about the student model being
-evaluated, not the judge doing the evaluating; no reason to touch a working,
-tested call site for a metric nothing asks of it.
+The judge (:mod:`core.adapters.structured_judge`) receives this same client through the
+``LLMClient`` interface, so its calls also go to Ollama's native endpoint. An earlier
+OpenAI-compatible call helper (``core.adapters._openai_compat``) was removed on 2026-10-02: after
+this switch nothing in production called it. The config key is still named ``openai_base_url``
+for historical reasons; :func:`_native_host` derives the native host from it.
 """
 
 import time

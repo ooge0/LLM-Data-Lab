@@ -53,34 +53,3 @@ def rag():
     engine.load_knowledge_base(knowledge_path)
 
     return engine
-
-
-class FakeOpenAIClient:
-    """
-    Test double matching the shape of ``openai.OpenAI().chat.completions
-    .create(...)`` closely enough to test ``core.adapters._openai_compat
-    .chat_complete`` and the ``LLMClient`` adapters built on it, without
-    any real network call.
-
-    Records every call's keyword arguments in ``self.calls`` so tests can
-    assert on the exact request shape sent, and returns ``response_content``
-    (default ``'{"ok": true}'``) as the completion's message content.
-    """
-
-    def __init__(self, response_content: str = '{"ok": true}'):
-        self.response_content = response_content
-        self.calls = []
-        self.chat = self
-        self.completions = self
-
-    def create(self, **kwargs):
-        self.calls.append(kwargs)
-        message = type("Message", (), {"content": self.response_content})()
-        choice = type("Choice", (), {"message": message})()
-        return type("Response", (), {"choices": [choice]})()
-
-
-@pytest.fixture
-def fake_openai_client():
-    """Factory fixture: call with an optional response_content string to get a fresh FakeOpenAIClient."""
-    return FakeOpenAIClient

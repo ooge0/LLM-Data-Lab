@@ -244,6 +244,11 @@ granularities. Merging them into a single linear flow is a known error and must 
 Fail-fast, cheapest deterministic checks first, generative judge last and only for what the lower
 layers cannot resolve. Local, linear, unit-testable one example at a time.
 
+*Known departure, 2026-10-02:* as built, Layer 1 (echo detection) runs after the metrics stack, not
+before it, because it reuses the stack's `semantic_overlap` embedding. Moving the stack behind the gate
+would save work only on echo rows (about 5.6% of responses in the original real data) and would drop
+metric fields from them. Layer 2's NLI check is skipped for echo rows, whose verdict it cannot change.
+
 ```
 response + context
  → Layer 0: deterministic gates    (regex, format, schema, length)   fail → stop
@@ -412,7 +417,13 @@ working implementation, and infinite improvement loops without a solid core.
   Layer 1 (echo detection only, not the full topical-STS gate) — explicitly *not* the judge's own
   pass/fail criteria (still the model's own prompt-driven judgment, not hand-tuned rules) and
   explicitly *not* Layer 2. This is a recorded, one-time author decision to lift the boundary for a
-  specific, discussed scope — not a standing change to this rule for future work.
+  specific, discussed scope — not a standing change to this rule for future work. **A second,
+  equally narrow exception, made 2026-10-02:** after a technical review the author asked the AI agent
+  to fix three things in the cascade's orchestration: skip the Layer 2 NLI call for responses Layer 1
+  already rejected, add a `v_decided_by` field (and `JudgeVerdict.parse_failed`) so the three meanings
+  of `v_confidence` can be told apart, and document why Layer 1 sits after the metrics stack and why
+  Layer 0 is strict while `extract_best_text` is tolerant. No rejection criteria, thresholds or
+  verdict logic changed. Not a standing change to this rule either.
 - **Spec follows code.** No new design/spec note for a component that has no working implementation.
   Existing Obsidian notes are frozen reference; convert them to code/tests or archive them.
 - **Prefer the smallest change that closes a defect.** Breadth is the known risk, not the goal.
@@ -429,8 +440,9 @@ product.
   (e.g. TTR / ARI / cosine coherence on fixed strings) so a dependency change surfaces as a failing
   test. Where feasible, prefer validated libraries (`textdescriptives`, `lexicalrichness`) over
   hand-rolled metric code, and test the seam.
-- **Layers:** unit, functional, API, and Playwright E2E (Chrome + Firefox, headless) with a
-  lightweight Page Object Model.
+- **Layers:** unit, functional, API, and Playwright E2E (Chromium, headless -- Firefox is not
+  set up) with a lightweight Page Object Model in `tests/e2e/pages/` (one class per page; selectors live
+  there, assertions stay in the tests).
 - **Reporting:** Allure. Docstrings on all core + test files so Allure shows real descriptions, not
   bare names.
 - **Logging:** loguru across the app.
@@ -543,14 +555,14 @@ pip-compile requirements.in --output-file=requirements-linux.txt   # must run on
 ```
 
 **Resolved (2026-08-24):** `pyproject.toml` now holds `[tool.black]`/`[tool.ruff]`/`[tool.mypy]`
-config, and `tox -e lint` runs `ruff check .` + `mypy core api cli web utils` (matching pinned
-`requirements-dev.in` versions exactly: `ruff==0.15.17`, `mypy==2.1.0` — installing a bare, unpinned
+config, and `tox -e lint` runs `ruff check .` + `mypy core api cli web utils` + (since 2026-10-02)
+`black --check .` (matching pinned `requirements-dev.in` versions exactly: `ruff==0.15.17`,
+`mypy==2.1.0`, `black==26.5.1`; `tox -e format` applies black — installing a bare, unpinned
 `ruff`/`mypy` into an isolated tox env was tried first and pulled a newer `ruff` with a different
 default rule set, a live demonstration of why this project pins tool versions everywhere else too).
-All three tools' scope deliberately excludes the untouched Neo4j subsystem (§1) and the
-legacy/undecided `streamlit_app*` variants (§5/§12) — the same paths `.coveragerc` already omits
-from coverage measurement, kept consistent across all four tools rather than each inventing its own
-scope. `black .` was run once across every in-scope file (86 of 119 live-code files had never been
+All tools' scope excludes the legacy/undecided `streamlit_app*` variants (§5/§12); the former Neo4j
+exclusion went away when that subsystem was migrated into the main layout (§1). `.coveragerc`
+measures `core`, `api`, `cli`, `web`, `utils` only, so the legacy files are outside it by location. `black .` was run once across every in-scope file (86 of 119 live-code files had never been
 formatted before; 52 remained after the legacy/Neo4j exclusion) — a genuine repo-wide reformat,
 confirmed via the full regression suite before and after. Adding `pyproject.toml` had one real,
 non-obvious side effect worth remembering: `tox.ini`'s `isolated_build = true` started trying to
@@ -559,8 +571,10 @@ setuptools' auto-discovery failed outright on this repo's flat, 12-top-level-dir
 ("Multiple top-level packages discovered"). Fixed by adding `skip_install = true` to `[testenv]` —
 this project was never meant to be pip-installed as a library (tests reach it via
 `tests/conftest.py`'s `sys.path` insert), so skipping the build entirely is correct, not a
-workaround. `black` itself is **not** run by `tox -e lint` — CI-style gating on formatting is a
-separate decision from having the tool configured and runnable, not made here.
+workaround. As of 2026-10-02 `black --check` is part of `tox -e lint`; there is still no CI, so no
+check runs automatically. `pyproject.toml` also carries `[tool.pytest.ini_options]` (`--strict-markers`,
+registered `req` marker), and the platform tox envs (`linux`, `win32`) skip `tests/e2e` like `py312`
+does.
 
 ---
 
@@ -572,12 +586,13 @@ Stage 16 did cutover/cleanup). What's actually on disk today:
 **Primary (FastAPI rewrite):**
 - **`api/`** — FastAPI app (`app.py`) + routers (`experiments`, `runs`, `analytics`, `nlp`,
   `clusters`, `model_evo`, `benchmark`, `monitor`, `faq`, `demo`, `db_export`, `api_status`,
-  `knowledge_graph`, `hypothesis_testing`). `api/_paths.py` centralizes absolute
+  `status`, `knowledge_graph`, `hypothesis_testing`). `api/_paths.py` centralizes absolute
   `TEMPLATES_DIR`/`STATIC_DIR`/`REPO_ROOT`.
 - **`web/`** — Jinja2 templates + HTMX (`web/templates/`), Plotly/matplotlib chart-building
   (`web/plotting/`, one module per tab), vendored `htmx`/`plotly.min.js` (`web/static/vendor/`, no
   CDN dependency).
-- **`cli/`** — `run_experiment.py` (Stage 15's config-driven batch runner) + `example_config.toml`.
+- **`cli/`** — `run_experiment.py` (Stage 15's config-driven batch runner) + `example_config.toml`, and
+  `manage.py` (the operational console, §11).
 - **`core/domain/`** — `entities.py` (pydantic models incl. `ExperimentConfig`, `RunRecord`,
   `GenerationResult`, `JudgeVerdict`) + `interfaces.py` (`LLMClient`, `Judge`, `PromptStrategy`,
   `Repository`, `KnowledgeBase`, `GraphRepository` — the last added 2026-09-05, see §1). Zero
@@ -587,7 +602,9 @@ Stage 16 did cutover/cleanup). What's actually on disk today:
   `compute_fit_indices`), `_sse.py` (the asyncio-queue bridge shared by the web app and reused
   internally by the CLI's own `asyncio.run()` wrapper), `hypothesis_testing.py` (mean-shift
   comparison + bootstrap epistemic/aleatoric variance/KL-divergence, migrated 2026-09-05 from the
-  retired Neo4j subsystem — pure pandas/scipy, never touched Neo4j, see §1).
+  retired Neo4j subsystem — pure pandas/scipy, never touched Neo4j, see §1), `db_export.py` (JSONL -> SQLite export behind
+  `/db_export` and `cli.manage export-db`), `status_checks.py` (Ollama/NLTK/spaCy reachability for
+  `/status`), `_demo_runner.py` (Stage 1's throwaway SSE proof of concept, still wired at `/demo`).
 - **`core/adapters/`** — `OllamaClient` (native `/api/chat`, real token/timing telemetry),
   `JSONLStore`/`SQLiteRepo` (both implement `Repository`), `StructuredJudge` (CLAUDE.md §4),
   `NaivePromptStrategy`, `rag/` (moved here from `core/rag/` in Stage 3:
@@ -597,10 +614,13 @@ Stage 16 did cutover/cleanup). What's actually on disk today:
   `structural_similarity()`/node-similarity added the same day; see §1's fourth Neo4j entry).
 - **`core/analysis/`** — the linguistic/statistical metric implementations
   (`calculate_advanced_linguistic_metrics.py`, `nlp_science.py`, `neuro_metrics.py`,
-  `model_evaluation.py`, `data_contract.py`) plus `cluster_discovery.py` (the pre-existing
+  `model_evaluation.py`, `data_contract.py`, `syntactic_complexity.py`, `response_classification.py`,
+  `hallucination_check.py`) plus `cluster_discovery.py` (the pre-existing
   `ClusterDiscovery` KMeans+PCA class, business logic only — presentation moved to
   `web/plotting/cluster_charts.py`). This is where §1's in-scope "moat" metrics live, already wired
-  behind `domain` interfaces via `core/services/experiment_runner.py`.
+  behind `domain` interfaces via `core/services/experiment_runner.py`. `response_classification.py` holds
+  Layer 0 (`classify_response`) and Layer 1 (`is_echo_response`), `hallucination_check.py` the logging-only
+  Layer 2 NLI check (§4), `syntactic_complexity.py` the spaCy/TextDescriptives dependency-distance metric.
 
 **Legacy (untouched, or reference-only — see §1/§5):**
 - **`legacy/streamlit_app.py`** — the original ~3,400-line monolith, moved here at Stage 16
@@ -615,7 +635,8 @@ Stage 16 did cutover/cleanup). What's actually on disk today:
 **Supporting:**
 - **`utils/`** — grab-bag of app helpers: `config_loader_short.py`/`config_loader_long.py` (read
   `config/config.ini` and `config/config.toml`), `app_utils.py`, `fake_data_generator/`,
-  `project_audit/`, `plotly/`, `rag_embedding_view.py`.
+  `project_audit/`, `plotly/`, `rag_embedding_view.py`, plus docs/QA tooling run by hand:
+  `list_tests.py`, `generate_qa_roster.py`, `generate_tag_cloud.py`, `serve_docs.py`.
 - **`config/config.ini`** — `[neo4j]`, `[rag]`, `[OLLAMA]`, `[DIRECTORIES]`, `[FILES]`,
   `[EXPERIMENT]` sections. **`config/config.toml`** — Streamlit server settings only.
 - **`knowledge/rag/`** — the RAG knowledge-base text files, including the clinical-term files

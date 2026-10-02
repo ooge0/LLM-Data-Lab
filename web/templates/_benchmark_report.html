@@ -36,6 +36,9 @@
   {% if leaderboard_table %}
   <h3>Model leaderboard</h3>
   {{ leaderboard_table | safe }}
+  <p class="hint">final_score = 0.4 x pass rate + 0.3 x coherence + 0.3 x speed score. The weights are
+     hand-picked and have not been validated against any ground truth, and the speed score is relative to
+     the fastest model in this run, so scores are comparable only within one run.</p>
   {% if champion %}
   <p><strong>Champion: {{ champion }}</strong> -- top weighted score across success rate,
      coherence, and inference speed.</p>

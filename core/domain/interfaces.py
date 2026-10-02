@@ -2,10 +2,11 @@
 core.domain.interfaces
 ========================
 
-The four interfaces every other layer depends on:
+The six interfaces every other layer depends on:
 :class:`LLMClient`, :class:`Judge`, :class:`PromptStrategy`,
-:class:`Repository` (plus :class:`KnowledgeBase` for RAG, kept separate
-per the project's refactor plan rather than folded into ``Repository``).
+:class:`Repository`, :class:`KnowledgeBase` (RAG retrieval, kept separate
+per the project's refactor plan rather than folded into ``Repository``) and
+:class:`GraphRepository` (the Neo4j failure-mode graph, added 2026-09-05).
 
 Defined as ``typing.Protocol`` classes (structural typing -- an
 implementation satisfies an interface by having matching methods, with no
@@ -210,16 +211,12 @@ class GraphRepository(Protocol):
     Cascade failure-mode/lineage graph -- corpus-level root-cause analysis over an already-persisted
     run's responses, backed by a graph database.
 
-    2026-09-05: promoted into the layered architecture from the legacy Neo4j subsystem
-    (``core/tabs/knowledge_graph.py``, CLAUDE.md SS1) by explicit author decision -- a deliberate,
-    narrow reversal of that subsystem's original "untouched, no promotion into core.domain"
-    boundary, scoped specifically to the failure-mode/cascade-lineage graph (CLAUDE.md SS1's
-    "Same exception, extended same day" entry) and NOT to the original Archetype/Bias co-occurrence
-    graph or the PageRank scripts, which remain on their existing Streamlit code path unchanged.
-
-    Shaped by, and its Cypher ported directly from, the real, already-verified queries in
-    ``core/tabs/knowledge_graph.py`` (see that module's docstring history) -- not redesigned from
-    scratch. Each method is a narrow, named root-cause question, matching this project's existing
+    History: this interface was promoted into the layered architecture on 2026-09-05 from a
+    retired Neo4j subsystem (a Streamlit tab and its service wrapper, since deleted; CLAUDE.md SS1
+    has the decision record). It now covers the failure-mode graph, Leiden communities, structural
+    similarity and the Archetype/Bias PageRank. Its Cypher was ported from the real, already-verified
+    queries of that subsystem, not redesigned from scratch. Each method is a narrow, named root-cause
+    question, matching this project's existing
     interface style (:class:`Judge`, :class:`KnowledgeBase`) rather than a generic
     "run arbitrary Cypher" escape hatch, which would leak the adapter's query language through the
     domain boundary. Deliberately left room to grow (CLAUDE.md's own working-discipline
@@ -336,16 +333,20 @@ class GraphRepository(Protocol):
     def archetype_bias_pagerank(self) -> list[dict]:
         """
         PageRank over the plain Archetype/Bias co-occurrence graph -- migrated 2026-09-05 from the
-        legacy Streamlit subsystem's PageRank scripts 1-4 (``core/tabs/knowledge_graph.py``), fixed
+        retired Streamlit subsystem's PageRank scripts 1-4 (since deleted), fixed
         and consolidated rather than ported as-is. Two real, disclosed problems with the originals,
         found before writing anything here: script-1 projected only the ``Archetype`` label, so its
         graph had **zero edges** (``ASSOCIATED_WITH`` always points to ``Bias``) and every score was
         an identical, meaningless baseline; script-4's two-label projection had real edges but no
-        relationship weight, so on this project's balanced-factorial experiment design (every
-        archetype crossed with every bias, roughly equally) PageRank is mathematically guaranteed to
-        score every node in a label class identically regardless of real data -- confirmed live, not
-        assumed. This method fixes both: one real, weighted (by co-occurrence count) two-label
-        projection, derived from whichever runs have already been synced via
+        relationship weight. Because every archetype co-occurs with every bias (at least once), that graph
+        is complete bipartite, and PageRank on a complete bipartite graph is symmetric within each side:
+        every node of a label class gets the identical score however often each pair co-occurred. That is
+        a property of the graph's shape, not of the data (pinned independently by
+        ``tests/unit/test_pagerank_symmetry.py``, and also seen live). This method weights the
+        projection by co-occurrence count, which can separate nodes within a side -- but only when the
+        counts actually differ; perfectly equal counts make the scores uniform again. Whether the weighted
+        scores are informative on real data has not been recorded from a live run. The projection
+        itself is one real, weighted two-label graph, derived from whichever runs have already been synced via
         :meth:`sync_failure_mode_graph` (no separate ingestion step -- ``Archetype``/``Bias``/
         ``CONDITIONED_ON`` already exist from that sync).
 

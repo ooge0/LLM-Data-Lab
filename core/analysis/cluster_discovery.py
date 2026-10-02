@@ -2,11 +2,16 @@
 """
 core.analysis.cluster_discovery
 
-``ClusterDiscovery`` -- KMeans + PCA clustering business logic (``process_data()``) and its
-Plotly presentation (``get_plotly_fig()``). Stage 10 (see the project's migration plan) split
-this class's *new* UMAP+HDBSCAN workflow into :mod:`core.services.cluster_discovery` and
-:mod:`web.plotting.cluster_charts`; this original KMeans/PCA class stays here, business logic
-and presentation still together in one class, ported forward unsplit by design.
+``ClusterDiscovery`` -- KMeans + PCA clustering business logic (``process_data()`` and the PCA
+loadings accessor). Pure computation: no visualization library is imported here (CLAUDE.md SS2:
+``core`` never imports a web or visualization library). The scatter plot built from its output
+lives in :mod:`web.plotting.cluster_charts`; the separate UMAP+HDBSCAN workflow lives in
+:mod:`core.services.cluster_discovery`, which re-exports this class for its callers -- two
+modules with the same name, two different jobs, not a duplicate.
+
+Until 2026-10-02 this module also carried a ``get_plotly_fig()`` method and a ``plotly.express``
+import. Nothing called it (the FastAPI app builds the same chart in ``web.plotting``), so it was
+removed rather than left as a second, unused copy of the presentation code.
 """
 
 import numpy as np
@@ -14,13 +19,12 @@ import pandas as pd
 from sklearn.cluster import KMeans
 from sklearn.decomposition import PCA
 from sklearn.preprocessing import StandardScaler
-import plotly.express as px
 
 
 class ClusterDiscovery:
     """
     ClusterDiscovery provides a pipeline for unsupervised clustering of tabular data
-    using KMeans, dimensionality reduction with PCA, and visualization with Plotly.
+    using KMeans and dimensionality reduction with PCA. Visualization is not done here.
 
     The workflow includes:
     1. Filtering numeric features and ignoring common metadata fields.
@@ -28,14 +32,12 @@ class ClusterDiscovery:
     3. Scaling features for clustering stability.
     4. Applying KMeans clustering to assign cluster IDs.
     5. Reducing dimensions with PCA for visualization.
-    6. Generating interactive scatter plots with Plotly.
 
     References
     ----------
     - scikit-learn KMeans: https://scikit-learn.org/stable/modules/generated/sklearn.cluster.KMeans.html
     - scikit-learn PCA: https://scikit-learn.org/stable/modules/generated/sklearn.decomposition.PCA.html
     - scikit-learn StandardScaler: https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.StandardScaler.html
-    - Plotly Express scatter: https://plotly.com/python/plotly-express/
 
     Attributes
     ----------
@@ -135,32 +137,3 @@ class ClusterDiscovery:
         loadings = self.pca.components_.T * np.sqrt(self.pca.explained_variance_)
         loading_df = pd.DataFrame(loadings, columns=["PC1_Weight", "PC2_Weight"], index=self.feature_names)
         return loading_df["PC1_Weight"], loading_df["PC2_Weight"]
-
-    def get_plotly_fig(self, df):
-        """
-        Generate an interactive Plotly scatter plot of clustered data.
-
-        Parameters
-        ----------
-        df : pandas.DataFrame
-            DataFrame containing 'x', 'y', and 'cluster_id' columns.
-
-        Returns
-        -------
-        plotly.graph_objs._figure.Figure
-            Scatter plot showing PCA-reduced clusters with hover metadata.
-
-        Notes
-        -----
-        Hover tooltips display categorical/object columns for richer context.
-        """
-        fig = px.scatter(
-            df,
-            x="x",
-            y="y",
-            color="cluster_id",
-            title="Archetype Clustering (PCA Reduction)",
-            labels={"x": "Principal Component 1", "y": "Principal Component 2"},
-            hover_data=df.select_dtypes(include=["object"]).columns,
-        )
-        return fig

@@ -52,7 +52,16 @@ def test_valid_domains(rag):
     grown to 8 categories; "emotion" doesn't appear in the real data at all. This was a stale test
     fixture, not an ingestion bug -- nothing about RAGEngine/FAISSVectorStore changed.
     """
-    allowed = {"Behavior", "Speech", "Cognition", "Trigger", "Stress response", "Self-perception", "Interaction", "Edge case"}
+    allowed = {
+        "Behavior",
+        "Speech",
+        "Cognition",
+        "Trigger",
+        "Stress response",
+        "Self-perception",
+        "Interaction",
+        "Edge case",
+    }
 
     invalid = [c.domain for c in rag.store.chunks if c.domain not in allowed]
 

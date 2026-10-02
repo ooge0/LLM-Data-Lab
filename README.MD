@@ -44,7 +44,7 @@ visualize.
 2. Apply a behavioral-archetype conditioning prompt
 3. Extract linguistic features using NLTK + TextBlob
 4. Store the structured dataset (JSONL)
-5. Visualize results (FastAPI + Plotly, or the legacy Streamlit KG explorer for Neo4j)
+5. Visualize results (FastAPI + Plotly; the Neo4j knowledge-graph pages are at `/knowledge_graph`)
 
 ### Experimental model (archetypes)
 
@@ -206,7 +206,7 @@ splits compilation via `pip-tools`:
 - `requirements.in` — single source-of-truth for top-level dependencies.
 - `requirements-base.txt` — compiled cross-platform packages (FastAPI, pandas, scikit-learn, Ollama, etc.).
 - `requirements-linux.txt` — compiled Ubuntu-only packages (`triton`, `nvidia-nccl-cu13`, `nvidia-nvshmem-cu13`).
-- `requirements-windows.txt` — reserved for Windows-specific constraints (stays empty; Windows installs PyTorch via a custom index URL instead).
+- There is no `requirements-windows.txt` (an empty placeholder, removed 2026-10-02): Windows installs PyTorch from the CUDA index first, then `requirements-base.txt`.
 
 Regenerating a lock file — never hand-edit the generated `requirements-*.txt` files:
 ```bash

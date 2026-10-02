@@ -22,6 +22,7 @@ import pytest
 from core.adapters.jsonl_store import JSONLStore
 from core.adapters.sqlite_repo import SQLiteRepo
 from core.domain.entities import ExperimentConfig, PromptMode, RunRecord
+from tests.e2e.pages import DbExportPage
 
 _RUN_ID = "run-e2e-db-export-fixture"
 
@@ -69,21 +70,15 @@ def test_export_status_cell_shows_only_the_new_timestamp_not_stacked_with_not_sy
     once, which is what a mis-parsed out-of-band <td> swap produces.
     """
     run_id = real_run_with_one_response
-    page.goto(f"{live_server}/db_export")
+    db_export = DbExportPage(page, live_server).open()
 
-    row = page.locator("tr", has=page.locator(f"code:text-is('{run_id}')"))
-    sync_cell = row.locator("td").last
-    assert "Not synced" in sync_cell.inner_text()
+    assert "Not synced" in db_export.sync_text(run_id)
 
-    row.get_by_role("button", name="Send to DB").click()
+    db_export.click_send_to_db(run_id)
     # Wait for the real timestamp to appear (real htmx round-trip against the live server).
-    page.wait_for_function(
-        "el => el.innerText.includes('UTC')",
-        arg=sync_cell.element_handle(),
-        timeout=5000,
-    )
+    db_export.wait_for_timestamp(run_id)
 
-    cell_text = sync_cell.inner_text()
+    cell_text = db_export.sync_text(run_id)
     assert "UTC" in cell_text, f"expected a real timestamp, got: {cell_text!r}"
     assert "Not synced" not in cell_text, f"stale 'Not synced' still present alongside the new timestamp: {cell_text!r}"
     # Date and time render on two separate lines (CSS white-space: pre-line honoring the embedded
@@ -104,35 +99,28 @@ def test_reexport_updates_the_sync_status_cell_to_the_new_timestamp_not_the_old_
     leave the old one in place or stack both.
     """
     run_id = real_run_with_one_response
-    page.goto(f"{live_server}/db_export")
-
-    row = page.locator("tr", has=page.locator(f"code:text-is('{run_id}')"))
-    sync_cell = row.locator("td").last
+    db_export = DbExportPage(page, live_server).open()
 
     # First export -- establishes an initial real timestamp.
-    row.get_by_role("button", name="Send to DB").click()
-    page.wait_for_function("el => el.innerText.includes('UTC')", arg=sync_cell.element_handle(), timeout=5000)
-    first_timestamp = sync_cell.inner_text()
+    db_export.click_send_to_db(run_id)
+    db_export.wait_for_timestamp(run_id)
+    first_timestamp = db_export.sync_text(run_id)
     assert "UTC" in first_timestamp
 
     # Second export without overwrite -- expected to be refused; the cell must still show the
     # first timestamp (nothing changed in the database yet).
-    row.get_by_role("button", name="Send to DB").click()
-    row.get_by_role("button", name="Re-export (overwrite)").wait_for(timeout=5000)
-    assert sync_cell.inner_text() == first_timestamp
+    db_export.click_send_to_db(run_id)
+    db_export.wait_for_reexport_button(run_id)
+    assert db_export.sync_text(run_id) == first_timestamp
 
     # A real clock tick so a second, genuinely later timestamp is possible to distinguish from the first.
     time.sleep(1.1)
 
     # Re-export (overwrite=true) -- must actually replace the cell with a new, later timestamp.
-    row.get_by_role("button", name="Re-export (overwrite)").click()
-    page.wait_for_function(
-        "([el, prev]) => el.innerText.includes('UTC') && el.innerText !== prev",
-        arg=[sync_cell.element_handle(), first_timestamp],
-        timeout=5000,
-    )
+    db_export.click_reexport(run_id)
+    db_export.wait_for_timestamp(run_id, previous=first_timestamp)
 
-    second_timestamp = sync_cell.inner_text()
+    second_timestamp = db_export.sync_text(run_id)
     assert "UTC" in second_timestamp
     assert second_timestamp != first_timestamp, "re-export did not update the sync timestamp at all"
     assert (

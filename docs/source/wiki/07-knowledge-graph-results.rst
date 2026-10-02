@@ -52,10 +52,14 @@ one real code bug fix, tests, and this writeup -- not a rewrite, not a move into
    scripts had that this page's Part 1 did **not** catch at the time: script-1's single-label graph
    projection had **zero edges** (``ASSOCIATED_WITH`` always points to ``Bias``, excluded from an
    ``Archetype``-only projection), so every PageRank score was an identical, meaningless baseline --
-   confirmed live, not assumed; and script-4's real edges were unweighted, which on this project's
-   balanced-factorial experiment design (every archetype crossed with every bias, roughly equally)
-   makes PageRank mathematically guaranteed to score every node in a label class identically,
-   regardless of real data. Both fixed in the migrated version -- weighted co-occurrence, plus a
+   confirmed live, not assumed; and script-4's real edges were unweighted. Because every archetype
+   co-occurs with every bias, that graph is complete bipartite, and PageRank on a complete bipartite
+   graph is symmetric within each side by graph structure alone -- every node of a label class scores
+   the same regardless of the co-occurrence counts or of any real signal in the data (a proven
+   property, pinned independently by ``tests/unit/test_pagerank_symmetry.py`` and seen live below).
+   The migrated version weights edges by co-occurrence count, which separates nodes within a side
+   only if the counts differ; perfectly equal counts give uniform scores again, and a live result
+   for the weighted version has not been recorded. The migration also added a
    defensive guard (a weight-less edge silently makes ``gds.pageRank.stream`` return NaN, not an
    error -- a real, self-caught bug during the migration itself, from unrelated leftover test data).
 
@@ -167,7 +171,8 @@ The two node types are each internally identical because **30 edges across 5 Arc
 Biases is exactly a complete bipartite graph** (:math:`K_{5,6}`, 5*6=30) -- every archetype is
 connected to every bias. In a complete bipartite graph, PageRank is symmetric within each partition
 by graph-theoretic necessity (every node in one side has an identical neighborhood shape), so equal
-scores within each side is the *correct*, expected output, not a sign nothing differentiated. The
+scores within each side is the *correct*, expected output, not a sign nothing differentiated. (An independent networkx implementation reproduces this, including the
+5-vs-6 score ratio -- see ``tests/unit/test_pagerank_symmetry.py``.) The
 Archetype/Bias score gap (1.05 vs. 0.89) reflects the two partitions' different sizes (5 vs. 6) --
 PageRank on an undirected complete bipartite graph favors the smaller side, which receives
 proportionally more incoming rank per node.

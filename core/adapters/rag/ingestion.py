@@ -37,8 +37,7 @@ class RAGEngine:
         if not files:
             # A distinct exception type from the "bad directory" RuntimeError above,
             # so any caller (the FastAPI RAG-enabled experiment path, the CLI batch
-            # runner, or the legacy Streamlit scripts -- all three call this today)
-            # can tell "directory unreadable" apart from "directory has no content."
+            # runner) can tell "directory unreadable" apart from "directory has no content."
             raise ValueError(f"No .txt files found in {folder_path}. Please add knowledge files.")
 
         for file_name in files:

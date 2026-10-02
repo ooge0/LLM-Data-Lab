@@ -111,3 +111,20 @@ def test_request_asks_for_structured_json_mode():
     assert "Detached" in call["user_prompt"]
     assert "formal, toxic" in call["user_prompt"]
     assert "the generated text" in call["user_prompt"]
+
+
+def test_parse_failures_set_the_parse_failed_flag_and_real_judgments_do_not():
+    """Both malformed-response fallbacks carry parse_failed=True so callers can tell them from a real 'no' without reading rationale text; a parsed verdict (true or false) never does."""
+    not_json = StructuredJudge(FakeLLMClient(response_text="<html>502</html>")).evaluate("t", "Detached", "b", "m")
+    no_key = StructuredJudge(FakeLLMClient(response_text='{"confidence": 0.5}')).evaluate("t", "Detached", "b", "m")
+    real_no = StructuredJudge(FakeLLMClient(response_text='{"verdict": false, "confidence": 0.0}')).evaluate(
+        "t", "Detached", "b", "m"
+    )
+    real_yes = StructuredJudge(FakeLLMClient(response_text='{"verdict": true, "confidence": 0.9}')).evaluate(
+        "t", "Detached", "b", "m"
+    )
+
+    assert not_json.parse_failed is True
+    assert no_key.parse_failed is True
+    assert real_no.parse_failed is False  # a genuine 'no' with confidence 0.0 is NOT a parse failure
+    assert real_yes.parse_failed is False

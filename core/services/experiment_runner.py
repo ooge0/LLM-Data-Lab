@@ -60,6 +60,15 @@ def extract_best_text(raw_response: str) -> str:
     -------
     str
         The extracted text.
+
+    Notes
+    -----
+    Tolerant by design, while Layer 0 (:func:`core.analysis.response_classification.classify_response`)
+    is strict about the *raw* text: it only returns ``VALID`` for a JSON object with a non-empty
+    ``"text"`` key. So the fallback branches here (raw text when it isn't JSON or has no ``"text"``
+    key) only ever matter for the ``output`` stored on a Layer-0-rejected row; every response that
+    passes Layer 0 goes through the ``"text"`` branch. Pinned by
+    ``test_layer0_rejection_is_marked_layer0_and_keeps_the_raw_text_in_output``.
     """
     try:
         parsed = json.loads(raw_response)
@@ -188,9 +197,10 @@ class ExperimentRunner:
         Evaluates each response that survives the Layer 0/Layer 1 gates
         (:mod:`core.analysis.response_classification`, checked before this
         is ever called -- see :meth:`_run_one`). :class:`~core.adapters.structured_judge.StructuredJudge`
-        today, by explicit author decision (CLAUDE.md SS4/SS6) -- Layer 2
-        (NLI/specialized classifiers) is not built; this class needs no
-        change if that lands later, since ``Judge`` is the seam.
+        today, by explicit author decision (CLAUDE.md SS4/SS6). Layer 2's NLI
+        contradiction check is logging-only and does not go through this seam;
+        sentiment/toxicity classifiers are not built. This class needs no
+        change if a gating Layer 2 lands later, since ``Judge`` is the seam.
     archetypes : dict
         The archetypes definition (same dict `NaivePromptStrategy` is
         constructed with) -- used here only to look up each archetype's
@@ -223,8 +233,15 @@ class ExperimentRunner:
     author decision (CLAUDE.md SS4/SS6) -- see :meth:`_run_one`. Layer 1
     (a narrow, real-data-calibrated echo detector, not the full topical-STS
     gate CLAUDE.md SS3a describes) runs after metrics, since it reuses the
-    ``semantic_overlap`` value metrics computation already produces. Layer 2
-    (NLI/specialized classifiers) remains unbuilt.
+    ``semantic_overlap`` value metrics computation already produces. That
+    is a deliberate departure from SS3a's "cheapest check first": the
+    embedding behind ``semantic_overlap`` is part of the metrics stack, and
+    moving the stack after the gate would only save work on echo rows (about
+    5.6% of responses in the original real data, 7 of 125) while dropping
+    metric fields from those rows -- the same schema drift the Layer 0
+    short-circuit already has. Layer 2's NLI check (RAG runs only) comes
+    after Layer 1 and is skipped for echo rows, whose verdict it could not
+    change; it is logging-only and gates nothing.
 
     A real bug found while wiring this, fixed rather than ported forward:
     ``nlp_stats``/``neuro_stats`` both compute ``self_focus`` (different
@@ -549,6 +566,7 @@ class ExperimentRunner:
                 "v_ok": False,
                 "v_ok_numeric": 0,
                 "v_confidence": 1.0,
+                "v_decided_by": "layer0",
                 "v_rationale": f"Rejected by Layer 0 (cascade): {layer0_classification.value}.",
                 "validation_duration_ms": 0.0,
             }
@@ -599,10 +617,16 @@ class ExperimentRunner:
         # non-gating: logs a real contradiction score/predicted label but does not affect v_ok,
         # since no real-data calibration exists yet for a rejection threshold (see
         # hallucination_check.py's own docstring for why that matters).
-        layer2_result = check_hallucination(clean_text, rag_context)
+        # Skipped for echo rows (2026-10-02): Layer 1 already decided the verdict, and a score that
+        # cannot change it is wasted NLI compute (only matters when RAG is on).
+        if echo_detected:
+            layer2_result = {"checked": False, "predicted_label": None, "contradiction_score": None}
+        else:
+            layer2_result = check_hallucination(clean_text, rag_context)
 
         v_start = time.time()
         if echo_detected:
+            decided_by = "layer1"
             verdict = JudgeVerdict(
                 verdict=False,
                 confidence=1.0,
@@ -611,6 +635,9 @@ class ExperimentRunner:
             )
         else:
             verdict = self._judge.evaluate(clean_text, archetype, bias, judge_model)
+            # v_confidence alone cannot say who decided: it is 1.0 for the deterministic layers, 0.0
+            # when the judge's reply was unparseable, and the model's own self-report otherwise.
+            decided_by = "judge_parse_failure" if verdict.parse_failed else "judge"
         v_dur = (time.time() - v_start) * 1000
 
         entry = {
@@ -623,6 +650,7 @@ class ExperimentRunner:
             "v_ok": verdict.verdict,
             "v_ok_numeric": int(verdict.verdict),
             "v_confidence": verdict.confidence,
+            "v_decided_by": decided_by,
             "v_rationale": verdict.rationale,
             "validation_duration_ms": v_dur,
         }

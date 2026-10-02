@@ -156,14 +156,6 @@ tests.unit.test\_ollama\_client module
    :undoc-members:
    :show-inheritance:
 
-tests.unit.test\_openai\_compat module
---------------------------------------
-
-.. automodule:: tests.unit.test_openai_compat
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 tests.unit.test\_prompt\_strategy module
 ----------------------------------------
 

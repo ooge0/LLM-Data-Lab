@@ -23,6 +23,7 @@ whole request down just because the graph database happens to be offline.
 """
 
 from fastapi import APIRouter, Request
+from fastapi.concurrency import run_in_threadpool
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from loguru import logger
@@ -58,8 +59,26 @@ def knowledge_graph_page(request: Request) -> HTMLResponse:
 
 
 @router.post("/sync", response_class=HTMLResponse)
-def sync_failure_mode_graph(request: Request, run_id: str) -> HTMLResponse:
-    """Sync one run's responses into the failure-mode graph, returning a small status fragment."""
+async def sync_failure_mode_graph(request: Request) -> HTMLResponse:
+    """Sync one run's responses into the failure-mode graph, returning a small status fragment.
+
+    ``run_id`` is read from the form body, because that is how the page's htmx button sends it
+    (``hx-post`` + ``hx-include`` of the run picker). It used to be declared as a bare ``run_id: str``
+    parameter, which FastAPI treats as a query parameter, so every click from the browser got a 422.
+    """
+    form = await request.form()
+    run_id = str(form.get("run_id", "")).strip()
+    if not run_id:
+        logger.warning("knowledge_graph sync requested without a run_id in the form body")
+        return templates.TemplateResponse(
+            request, "_knowledge_graph_status.html", {"error": "No run selected: the form did not include a run_id."}
+        )
+    # The Neo4j round trip blocks; run it in the threadpool like a plain ``def`` endpoint would be.
+    return await run_in_threadpool(_sync_run, request, run_id)
+
+
+def _sync_run(request: Request, run_id: str) -> HTMLResponse:
+    """Blocking part of the sync endpoint: load the run's responses and push them into the graph."""
     try:
         responses = _repository.load_responses(run_id)
         if not responses:

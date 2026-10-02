@@ -156,15 +156,44 @@ def test_sync_calls_the_graph_repo_with_the_real_run_id_and_responses(client, fa
     fake_repo.save_run(_make_run("run-a", "2026-09-05T00:00:00Z"))
     fake_repo.save_response("run-a", {"archetype": "Detached", "bias": "toxic"})
 
-    response = client.post("/knowledge_graph/sync", params={"run_id": "run-a"})
+    response = client.post("/knowledge_graph/sync", data={"run_id": "run-a"})
 
     assert response.status_code == 200
     assert "synced" in response.text
     assert fake_graph_repo.synced == [("run-a", 1)]
 
 
+def test_sync_reads_run_id_from_the_form_body_like_the_htmx_button_sends_it(client, fake_repo, fake_graph_repo):
+    """
+    The page's htmx button posts ``run_id`` as a form-encoded body (``hx-post`` + ``hx-include``), not
+    as a query string. This test used ``params=`` until 2026-10-02, which hid a real 422 in the browser:
+    the endpoint declared ``run_id`` as a query parameter. A bare query-string request must no longer be
+    what makes it pass.
+    """
+    fake_repo.save_run(_make_run("run-a", "2026-09-05T00:00:00Z"))
+    fake_repo.save_response("run-a", {"archetype": "Detached", "bias": "toxic"})
+
+    response = client.post(
+        "/knowledge_graph/sync",
+        content="run_id=run-a",
+        headers={"Content-Type": "application/x-www-form-urlencoded"},
+    )
+
+    assert response.status_code == 200
+    assert fake_graph_repo.synced == [("run-a", 1)]
+
+
+def test_sync_without_a_run_id_shows_a_clear_error_not_a_422(client, fake_graph_repo):
+    """A form with no ``run_id`` (e.g. no runs exist yet) gets an inline message, and nothing is synced."""
+    response = client.post("/knowledge_graph/sync", data={})
+
+    assert response.status_code == 200
+    assert "run_id" in response.text
+    assert fake_graph_repo.synced == []
+
+
 def test_sync_for_a_run_with_no_responses_shows_a_clear_error_not_a_500(client):
-    response = client.post("/knowledge_graph/sync", params={"run_id": "unknown-run"})
+    response = client.post("/knowledge_graph/sync", data={"run_id": "unknown-run"})
     assert response.status_code == 200
     assert "No responses found" in response.text
 
@@ -174,7 +203,7 @@ def test_sync_when_neo4j_is_unreachable_shows_a_clear_error_not_a_500(client, fa
     fake_repo.save_response("run-a", {"archetype": "Detached", "bias": "toxic"})
     fake_graph_repo.raise_on_query = True
 
-    response = client.post("/knowledge_graph/sync", params={"run_id": "run-a"})
+    response = client.post("/knowledge_graph/sync", data={"run_id": "run-a"})
 
     assert response.status_code == 200
     assert "Error syncing failure-mode graph" in response.text

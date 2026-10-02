@@ -97,6 +97,19 @@ def test_benchmark_report_renders_overview_and_leaderboard_for_a_populated_run(c
     assert "chart-" in response.text
 
 
+def test_leaderboard_states_that_its_weights_are_hand_picked_and_scores_are_run_relative(client, fake_repo):
+    """The leaderboard carries a visible caveat: the 0.4/0.3/0.3 weights are hand-picked and unvalidated, and speed_score is relative to the fastest model in this run, so scores are comparable only within one run."""
+    fake_repo.save_run(_make_run("run-a", "2026-08-22T00:00:00Z"))
+    fake_repo.save_response("run-a", _full_response("qwen:latest", "response one is here"))
+    fake_repo.save_response("run-a", _full_response("phi3:latest", "response two is here"))
+
+    response = client.get("/benchmark/report", params={"run_id": "run-a"})
+
+    assert response.status_code == 200
+    assert "hand-picked" in response.text
+    assert "within one run" in response.text
+
+
 def test_benchmark_report_for_unknown_run_returns_404_with_message(client):
     """GET /benchmark/report?run_id=... for a run with no persisted responses returns 404, matching the other read-side routers' convention."""
     response = client.get("/benchmark/report", params={"run_id": "never-started"})

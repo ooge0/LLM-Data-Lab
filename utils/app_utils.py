@@ -1,6 +1,6 @@
 import os
 import json
-from loguru import logger  # reuse the same logger configured in streamlit_app.py
+from loguru import logger  # shared loguru logger (file sink is configured in api/app.py)
 
 
 class AppUtils:

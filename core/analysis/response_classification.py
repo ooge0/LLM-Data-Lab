@@ -59,6 +59,14 @@ def classify_response(raw_text: str) -> ResponseClassification:
         or structure-closing character, suggests the response was cut off mid-generation rather
         than genuinely malformed from the start). ``SCHEMA_ERROR`` if it's valid JSON but not the
         expected ``{"text": "..."}`` shape. ``VALID`` otherwise.
+
+    Notes
+    -----
+    Deliberately strict: good prose that was not wrapped in the requested JSON envelope is rejected
+    here, even though :func:`core.services.experiment_runner.extract_best_text` could salvage it.
+    Generation runs in JSON mode, so this is rare (3 of 500 responses in one large run, all
+    ``TRUNCATED``). ``API_ERROR`` and ``FORMAT_ERROR`` are never returned: a generation failure ends
+    the run with an error event instead of producing a row, and no rule defines ``FORMAT_ERROR``.
     """
     if not raw_text or not raw_text.strip():
         return ResponseClassification.EMPTY

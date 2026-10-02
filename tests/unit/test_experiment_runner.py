@@ -651,3 +651,120 @@ def test_genuine_substantive_response_reaches_the_real_judge():
     assert entry["layer0_classification"] == "VALID"
     assert entry["layer1_echo_detected"] is False
     assert entry["v_ok"] is True
+
+
+_SUBSTANTIVE_TEXT = (
+    '{"text": "It seems to me, without proper verification, that your intentions in this '
+    'matter might be concealing more than you are willing to admit, and I remain cautious."}'
+)
+
+
+def _recording_nli(calls):
+    """Stand-in for check_hallucination that records its calls instead of loading the NLI model."""
+
+    def check(response_text, rag_context):
+        calls.append((response_text, rag_context))
+        return {"checked": True, "predicted_label": "neutral", "contradiction_score": 0.1}
+
+    return check
+
+
+def test_layer0_rejection_is_marked_layer0_and_keeps_the_raw_text_in_output():
+    """
+    Layer 0 judges the RAW text strictly while extract_best_text is tolerant (it falls back to the raw
+    text), so a prose answer with no JSON envelope is rejected as MALFORMED_JSON -- but its text is still
+    persisted in ``output``. That is the only place extract_best_text's tolerance matters now.
+    """
+    prose = "The model ignored the JSON instruction entirely and just chatted."
+    repo = FakeRepository()
+    runner = _make_runner(repository=repo, llm_client=FakeLLMClient(response_text=prose))
+
+    _start_and_drain(runner, _make_config())
+
+    _, entry = repo.saved_responses[0]
+    assert entry["layer0_classification"] == "MALFORMED_JSON"
+    assert entry["v_decided_by"] == "layer0"
+    assert entry["output"] == prose
+
+
+def test_layer1_echo_is_marked_layer1_and_with_rag_never_calls_the_nli_check(monkeypatch):
+    """An echo-rejected response skips the NLI cross-encoder even when RAG is on: its result could never change the outcome, so the compute is wasted."""
+    calls = []
+    monkeypatch.setattr("core.services.experiment_runner.check_hallucination", _recording_nli(calls))
+    repo = FakeRepository()
+    runner = _make_runner(
+        repository=repo,
+        llm_client=FakeLLMClient(response_text='{"text": "Personalization, formal, toxic."}'),
+        knowledge_base=FakeKnowledgeBase(),
+    )
+    config = _make_config(
+        biases=["personalization, formal, toxic"], rag_enabled=True, rag_mode="Archetype + Bias", rag_top_k=3
+    )
+
+    _start_and_drain(runner, config)
+
+    _, entry = repo.saved_responses[0]
+    assert entry["layer1_echo_detected"] is True
+    assert entry["v_decided_by"] == "layer1"
+    assert calls == []
+    assert entry["layer2_checked"] is False
+    assert entry["layer2_predicted_label"] is None
+
+
+def test_non_echo_response_with_rag_still_runs_the_nli_check_once(monkeypatch):
+    """The NLI skip is only for echo rows: a genuine response with RAG enabled still gets its (logging-only) Layer 2 check."""
+    calls = []
+    monkeypatch.setattr("core.services.experiment_runner.check_hallucination", _recording_nli(calls))
+    repo = FakeRepository()
+    runner = _make_runner(
+        repository=repo,
+        llm_client=FakeLLMClient(response_text=_SUBSTANTIVE_TEXT),
+        knowledge_base=FakeKnowledgeBase(),
+    )
+    config = _make_config(
+        biases=["personalization, formal, toxic"], rag_enabled=True, rag_mode="Archetype + Bias", rag_top_k=3
+    )
+
+    _start_and_drain(runner, config)
+
+    _, entry = repo.saved_responses[0]
+    assert len(calls) == 1
+    assert entry["layer2_checked"] is True
+    assert entry["v_decided_by"] == "judge"
+
+
+def test_a_genuine_judge_no_is_marked_as_decided_by_the_judge():
+    """A real 'no' from a working judge is v_decided_by='judge', not a parse failure and not a deterministic layer."""
+    repo = FakeRepository()
+    runner = _make_runner(
+        repository=repo,
+        llm_client=FakeLLMClient(response_text=_SUBSTANTIVE_TEXT),
+        judge=FakeJudge(verdict=False),
+    )
+
+    _start_and_drain(runner, _make_config(biases=["personalization, formal, toxic"]))
+
+    _, entry = repo.saved_responses[0]
+    assert entry["v_ok"] is False
+    assert entry["v_decided_by"] == "judge"
+
+
+def test_judge_parse_failure_is_marked_distinctly_from_a_real_judge_no():
+    """A judge verdict flagged parse_failed gets v_decided_by='judge_parse_failure', so aggregates need not read rationale text to separate it from a genuine 'no'."""
+
+    class ParseFailingJudge(FakeJudge):
+        def evaluate(self, response_text, archetype, bias, model):
+            return JudgeVerdict(verdict=False, confidence=0.0, rationale="malformed judge response", parse_failed=True)
+
+    repo = FakeRepository()
+    runner = _make_runner(
+        repository=repo,
+        llm_client=FakeLLMClient(response_text=_SUBSTANTIVE_TEXT),
+        judge=ParseFailingJudge(),
+    )
+
+    _start_and_drain(runner, _make_config(biases=["personalization, formal, toxic"]))
+
+    _, entry = repo.saved_responses[0]
+    assert entry["v_ok"] is False
+    assert entry["v_decided_by"] == "judge_parse_failure"

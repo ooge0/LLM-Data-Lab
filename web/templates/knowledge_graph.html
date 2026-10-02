@@ -28,9 +28,9 @@
   <p>
     Models the per-response cascade (Layer0/Layer1/Layer2/Judge, CLAUDE.md SS3a/SS4) as an explicit
     lineage graph in Neo4j, so root-cause analysis is a graph traversal instead of a groupby you had
-    to already think to write. Promoted from the legacy Neo4j subsystem 2026-09-05 -- the original
-    Archetype/Bias co-occurrence graph and PageRank scripts remain on the separate
-    <code>streamlit run run_knowledge_graph.py</code> entry point. See
+    to already think to write. The page also covers structural analysis (communities, similarity)
+    and the Archetype/Bias co-occurrence graph (PageRank, network view). It needs a running Neo4j
+    server with the GDS plugin; if the server is not reachable, each query reports that inline. See
     <a href="/docs">/docs</a> or the Sphinx wiki's "Knowledge Graph" pages for the full schema and
     real captured findings.
   </p>

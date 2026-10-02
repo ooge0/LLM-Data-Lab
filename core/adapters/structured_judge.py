@@ -3,7 +3,7 @@ core.adapters.structured_judge
 =================================
 
 ``Judge`` implementation that actually parses the structured JSON it asks the model for --
-replacing :mod:`core.adapters.naive_judge`'s ``NaiveJudge``, which requested
+replacing the deleted ``NaiveJudge`` (``core/adapters/naive_judge.py``), which requested
 ``response_format={"type": "json_object"}`` but then decided pass/fail via
 ``"true" in content.lower()``, discarding the parsed structure entirely (CLAUDE.md SS4's
 top-priority correctness gap, and the exact reason CLAUDE.md SS6 named this call site as the
@@ -47,11 +47,11 @@ class StructuredJudge:
     Notes
     -----
     A malformed, truncated, or non-JSON judge response is not silently treated as a genuine "no"
-    the way :class:`~core.adapters.naive_judge.NaiveJudge` did -- it's reported as ``verdict=False,
+    the way the deleted ``NaiveJudge`` did -- it's reported as ``verdict=False,
     confidence=0.0`` with a ``rationale`` explaining *why* it's a fallback, not a real judgment. The
     fallback verdict is still ``False`` (a malformed response is not something to trust as a pass),
     but it's now distinguishable from a real "no" by reading ``rationale``, which
-    :class:`~core.adapters.naive_judge.NaiveJudge` never even parsed far enough to produce.
+    the deleted ``NaiveJudge`` never even parsed far enough to produce.
     """
 
     def __init__(self, llm_client: LLMClient) -> None:
@@ -72,20 +72,27 @@ class StructuredJudge:
         -------
         JudgeVerdict
             ``verdict``/``confidence``/``rationale`` from the parsed JSON on success.
-            ``verdict=False, confidence=0.0`` with a ``rationale`` explaining the parse failure if
-            the response isn't valid JSON, isn't a JSON object, or is missing the required
-            ``"verdict"`` key -- a fallback state, not a claim the model genuinely said "no".
+            ``verdict=False, confidence=0.0, parse_failed=True`` with a ``rationale`` explaining
+            the parse failure if the response isn't valid JSON, isn't a JSON object, or is missing
+            the required ``"verdict"`` key -- a fallback state, not a claim the model genuinely said
+            "no".
         """
         try:
             parsed = json.loads(raw_text)
         except json.JSONDecodeError as exc:
             return JudgeVerdict(
-                verdict=False, confidence=0.0, rationale=f"malformed judge response (not valid JSON): {exc}"
+                verdict=False,
+                confidence=0.0,
+                rationale=f"malformed judge response (not valid JSON): {exc}",
+                parse_failed=True,
             )
 
         if not isinstance(parsed, dict) or "verdict" not in parsed:
             return JudgeVerdict(
-                verdict=False, confidence=0.0, rationale="malformed judge response (missing 'verdict' key)"
+                verdict=False,
+                confidence=0.0,
+                rationale="malformed judge response (missing 'verdict' key)",
+                parse_failed=True,
             )
 
         verdict = bool(parsed["verdict"])

@@ -98,11 +98,16 @@ class JudgeVerdict(BaseModel):
         Judge's confidence in the verdict, if available.
     rationale : str, optional
         Free-text explanation for the verdict, if available.
+    parse_failed : bool
+        ``True`` only when the judge's response could not be parsed into a verdict at all, so the
+        ``verdict=False`` is a fallback and not a judgment. Lets callers tell that case apart from a
+        genuine "no" (including one with ``confidence=0.0``) without reading ``rationale`` text.
     """
 
     verdict: bool
     confidence: Optional[float] = None
     rationale: Optional[str] = None
+    parse_failed: bool = False
 
 
 class ExperimentConfig(BaseModel):

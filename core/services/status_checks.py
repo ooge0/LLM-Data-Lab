@@ -3,13 +3,13 @@ core.services.status_checks
 ==============================
 
 Minimal service-reachability checks -- the FastAPI-era equivalent of the
-legacy sidebar's three green/red buttons (:mod:`legacy.streamlit_app`,
+legacy sidebar's three green/red buttons (``legacy/streamlit_app.py``,
 ``ensure_ollama_run``/``ensure_nltk_resources``/``Neo4jService
-.ensure_neo4j_run``). Deliberately scoped to **Ollama + NLTK + spaCy only**:
-Neo4j is excluded on purpose, per CLAUDE.md SS1 -- the whole Neo4j/knowledge-
-graph subsystem stays "not even import-path-touched" until a separate future
-plan, and wiring a new status check into it from this app would itself be
-a new integration point into that untouched subsystem, not just a read.
+.ensure_neo4j_run``). Scoped to **Ollama + NLTK + spaCy only**: there is no Neo4j
+check here. That exclusion dates from when the Neo4j subsystem was out of scope
+(CLAUDE.md SS1, reversed 2026-09-05) and was never revisited. ``/knowledge_graph``
+reports an unreachable server inline instead; a Neo4j check in this widget is an
+unimplemented follow-up, not a standing boundary.
 
 ``check_spacy`` added 2026-08-24 alongside ``core.analysis.syntactic_complexity``.
 No stop/shutdown endpoint exists for any of these three, by deliberate choice:

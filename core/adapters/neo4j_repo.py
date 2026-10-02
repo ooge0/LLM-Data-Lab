@@ -2,30 +2,25 @@
 core.adapters.neo4j_repo
 ============================
 
-:class:`~core.domain.interfaces.GraphRepository` implementation over Neo4j (``py2neo``) -- the
-failure-mode/cascade-lineage graph, promoted into the layered architecture 2026-09-05 by explicit
-author decision (see :class:`~core.domain.interfaces.GraphRepository`'s own docstring for the full
-scope/boundary: this covers only the failure-mode graph, not the original Archetype/Bias
-co-occurrence graph or the PageRank scripts, which remain on their existing Streamlit code path).
+:class:`~core.domain.interfaces.GraphRepository` implementation over Neo4j (``py2neo``): the
+failure-mode/cascade-lineage graph and its three root-cause queries, Leiden community detection,
+FastRP + kNN structural similarity, and the Archetype/Bias co-occurrence graph with its PageRank
+and network-visualization data. Exposed at ``/knowledge_graph``.
 
-Every Cypher string and the row-building logic below is ported directly from the already-verified
-queries in ``core/tabs/knowledge_graph.py`` (real proof captured against a live Neo4j+GDS install --
-see ``docs/source/wiki/07-knowledge-graph-results.rst``), not redesigned from scratch. One real
-change from the Streamlit version: ``run_id`` is now an explicit parameter to
-:meth:`Neo4jGraphRepo.sync_failure_mode_graph` rather than a column injected into a pandas
-DataFrame beforehand -- this adapter takes plain ``list[dict]`` responses (the same shape
-:meth:`~core.domain.interfaces.Repository.load_responses` returns), no pandas dependency needed.
+History: the Cypher was originally written in a Streamlit tab and a Neo4j service wrapper. Those
+were promoted into this layered architecture on 2026-09-05 and the old modules were deleted the
+same day, so nothing here imports from them. Real proof of the queries against a live Neo4j + GDS
+install is recorded in ``docs/source/wiki/07-knowledge-graph-results.rst``. One change from the
+original: ``run_id`` is an explicit parameter to :meth:`Neo4jGraphRepo.sync_failure_mode_graph`
+rather than a column injected into a pandas DataFrame beforehand -- this adapter takes plain
+``list[dict]`` responses (the shape :meth:`~core.domain.interfaces.Repository.load_responses`
+returns), with no pandas dependency.
 
-Deliberately does **not** import anything from ``core/service/`` or ``core/tabs/`` (the untouched
-legacy subsystem, CLAUDE.md SS1) -- reads its own Neo4j credentials directly from
-``config/config.ini``'s ``[neo4j]`` section rather than reusing
-``core.service.neo4j_service.Neo4jService``, keeping this new architecture layer independent of the
-legacy one its one covered capability was promoted out of.
-
-2026-09-05, later the same day: :meth:`Neo4jGraphRepo.behavioral_communities` adds Stage 4 of
-``docs/source/wiki/08-graph-representation-learning.rst`` -- the first design-doc technique to
-graduate into real code, exactly the growth room the promotion above was for.
-:meth:`Neo4jGraphRepo.structural_similarity` adds Stage 5 the same way.
+Reads its own Neo4j credentials from ``config/config.ini``'s ``[neo4j]`` section. Nothing starts
+Neo4j for you: if the server is not running, every endpoint reports that inline instead of failing
+the request. :meth:`Neo4jGraphRepo.behavioral_communities` is Stage 4 and
+:meth:`Neo4jGraphRepo.structural_similarity` is Stage 5 of
+``docs/source/wiki/08-graph-representation-learning.rst``.
 """
 
 import configparser

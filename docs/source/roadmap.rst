@@ -101,7 +101,7 @@ Stage 4 -- Naive judge (the author-swap boundary)
 
 **Status: done.**
 
-:class:`~core.adapters.naive_judge.NaiveJudge` reproduces the legacy
+``NaiveJudge`` (``core/adapters/naive_judge.py``, since deleted) reproduces the legacy
 validator's exact pass/fail decision, bug included: it asks for structured
 JSON but then checks ``"true" in text.lower()`` instead of parsing it, so
 a malformed response is silently indistinguishable from a genuine "no".

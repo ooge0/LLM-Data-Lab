@@ -64,3 +64,13 @@ ignore_errors = true
 [[tool.mypy.overrides]]
 module = "core.adapters.rag.ingestion"
 ignore_errors = true
+
+[tool.pytest.ini_options]
+# --strict-markers: a misspelled or unregistered marker fails collection instead of passing silently.
+# tests/e2e is deliberately NOT ignored here: it must run in its own process (see tox.ini [testenv:e2e]
+# and CLAUDE.md SS11), and every tox env that runs the rest of the suite passes --ignore=tests/e2e.
+testpaths = ["tests"]
+addopts = "--strict-markers"
+markers = [
+    "req(*ids): requirement ids this test verifies (REQ-* ids from tests/qa/catalogue.toml)",
+]
