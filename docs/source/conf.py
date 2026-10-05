@@ -21,6 +21,7 @@ release = "0.0.1"
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
 
 extensions = [
+    "myst-parser",  # Markdown support
     "sphinx.ext.autodoc",  # Pulls in Python docstrings
     "sphinx.ext.napoleon",  # Google/NumPy style docstrings
     "sphinx.ext.viewcode",  # Adds links to highlighted source code
