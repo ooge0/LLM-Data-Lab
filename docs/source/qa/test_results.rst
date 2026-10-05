@@ -17,14 +17,14 @@ Re-run ``python -m utils.generate_test_results_rst`` after a test run to refresh
      - Skipped
      - No-run
      - Duration (s)
-   * - 2026-10-02T16:18:37.843968+03:00
-     - 464
-     - 463
+   * - 2026-10-02T16:30:08.500833+03:00
+     - 475
+     - 474
      - 0
      - 0
      - 1
      - 0
-     - 166.4
+     - 161.2
 
 Unit
 ~~~~
@@ -47,7 +47,7 @@ Unit
      - REQ-OPS-ARCH-02
      - test_core_module_imports_no_web_or_visualization_library[core/__init__.py]
      - passed
-     - 0.002
+     - 0.001
    * - TC-UNIT-003
      - REQ-OPS-ARCH-02
      - test_core_module_imports_no_web_or_visualization_library[core/adapters/__init__.py]
@@ -57,27 +57,27 @@ Unit
      - REQ-OPS-ARCH-02
      - test_core_module_imports_no_web_or_visualization_library[core/adapters/jsonl_store.py]
      - passed
-     - 0.005
+     - 0.010
    * - TC-UNIT-005
      - REQ-OPS-ARCH-02
      - test_core_module_imports_no_web_or_visualization_library[core/adapters/neo4j_repo.py]
      - passed
-     - 0.011
+     - 0.014
    * - TC-UNIT-006
      - REQ-OPS-ARCH-02
      - test_core_module_imports_no_web_or_visualization_library[core/adapters/ollama_client.py]
      - passed
-     - 0.004
+     - 0.003
    * - TC-UNIT-007
      - REQ-OPS-ARCH-02
      - test_core_module_imports_no_web_or_visualization_library[core/adapters/prompt_strategy.py]
      - passed
-     - 0.004
+     - 0.003
    * - TC-UNIT-008
      - REQ-OPS-ARCH-02
      - test_core_module_imports_no_web_or_visualization_library[core/adapters/rag/__init__.py]
      - passed
-     - 0.002
+     - 0.001
    * - TC-UNIT-009
      - REQ-OPS-ARCH-02
      - test_core_module_imports_no_web_or_visualization_library[core/adapters/rag/chunking.py]
@@ -87,7 +87,7 @@ Unit
      - REQ-OPS-ARCH-02
      - test_core_module_imports_no_web_or_visualization_library[core/adapters/rag/ingestion.py]
      - passed
-     - 0.005
+     - 0.004
    * - TC-UNIT-011
      - REQ-OPS-ARCH-02
      - test_core_module_imports_no_web_or_visualization_library[core/adapters/rag/knowledge_base.py]
@@ -97,62 +97,62 @@ Unit
      - REQ-OPS-ARCH-02
      - test_core_module_imports_no_web_or_visualization_library[core/adapters/rag/retriever.py]
      - passed
-     - 0.003
+     - 0.002
    * - TC-UNIT-013
      - REQ-OPS-ARCH-02
      - test_core_module_imports_no_web_or_visualization_library[core/adapters/rag/vector_store.py]
      - passed
-     - 0.004
+     - 0.003
    * - TC-UNIT-014
      - REQ-OPS-ARCH-02
      - test_core_module_imports_no_web_or_visualization_library[core/adapters/sqlite_repo.py]
      - passed
-     - 0.007
+     - 0.005
    * - TC-UNIT-015
      - REQ-OPS-ARCH-02
      - test_core_module_imports_no_web_or_visualization_library[core/adapters/structured_judge.py]
      - passed
-     - 0.004
+     - 0.003
    * - TC-UNIT-016
      - REQ-OPS-ARCH-02
      - test_core_module_imports_no_web_or_visualization_library[core/analysis/__init__.py]
      - passed
-     - 0.002
+     - 0.001
    * - TC-UNIT-017
      - REQ-OPS-ARCH-02
      - test_core_module_imports_no_web_or_visualization_library[core/analysis/calculate_advanced_linguistic_metrics.py]
      - passed
-     - 0.007
+     - 0.004
    * - TC-UNIT-018
      - REQ-OPS-ARCH-02
      - test_core_module_imports_no_web_or_visualization_library[core/analysis/cluster_discovery.py]
      - passed
-     - 0.004
+     - 0.003
    * - TC-UNIT-019
      - REQ-OPS-ARCH-02
      - test_core_module_imports_no_web_or_visualization_library[core/analysis/data_contract.py]
      - passed
-     - 0.007
+     - 0.006
    * - TC-UNIT-020
      - REQ-OPS-ARCH-02
      - test_core_module_imports_no_web_or_visualization_library[core/analysis/hallucination_check.py]
      - passed
-     - 0.003
+     - 0.002
    * - TC-UNIT-021
      - REQ-OPS-ARCH-02
      - test_core_module_imports_no_web_or_visualization_library[core/analysis/model_evaluation.py]
      - passed
-     - 0.005
+     - 0.004
    * - TC-UNIT-022
      - REQ-OPS-ARCH-02
      - test_core_module_imports_no_web_or_visualization_library[core/analysis/neuro_metrics.py]
      - passed
-     - 0.006
+     - 0.005
    * - TC-UNIT-023
      - REQ-OPS-ARCH-02
      - test_core_module_imports_no_web_or_visualization_library[core/analysis/nlp_science.py]
      - passed
-     - 0.009
+     - 0.008
    * - TC-UNIT-024
      - REQ-OPS-ARCH-02
      - test_core_module_imports_no_web_or_visualization_library[core/analysis/response_classification.py]
@@ -162,17 +162,17 @@ Unit
      - REQ-OPS-ARCH-02
      - test_core_module_imports_no_web_or_visualization_library[core/analysis/syntactic_complexity.py]
      - passed
-     - 0.003
+     - 0.002
    * - TC-UNIT-026
      - REQ-OPS-ARCH-02
      - test_core_module_imports_no_web_or_visualization_library[core/domain/__init__.py]
      - passed
-     - 0.002
+     - 0.001
    * - TC-UNIT-027
      - REQ-OPS-ARCH-02
      - test_core_module_imports_no_web_or_visualization_library[core/domain/entities.py]
      - passed
-     - 0.004
+     - 0.003
    * - TC-UNIT-028
      - REQ-OPS-ARCH-02
      - test_core_module_imports_no_web_or_visualization_library[core/domain/interfaces.py]
@@ -182,12 +182,12 @@ Unit
      - REQ-OPS-ARCH-02
      - test_core_module_imports_no_web_or_visualization_library[core/services/__init__.py]
      - passed
-     - 0.002
+     - 0.001
    * - TC-UNIT-030
      - REQ-OPS-ARCH-02
      - test_core_module_imports_no_web_or_visualization_library[core/services/_demo_runner.py]
      - passed
-     - 0.004
+     - 0.003
    * - TC-UNIT-031
      - REQ-OPS-ARCH-02
      - test_core_module_imports_no_web_or_visualization_library[core/services/_sse.py]
@@ -197,7 +197,7 @@ Unit
      - REQ-OPS-ARCH-02
      - test_core_module_imports_no_web_or_visualization_library[core/services/cluster_discovery.py]
      - passed
-     - 0.007
+     - 0.006
    * - TC-UNIT-033
      - REQ-OPS-ARCH-02
      - test_core_module_imports_no_web_or_visualization_library[core/services/db_export.py]
@@ -207,7 +207,7 @@ Unit
      - REQ-OPS-ARCH-02
      - test_core_module_imports_no_web_or_visualization_library[core/services/experiment_runner.py]
      - passed
-     - 0.015
+     - 0.013
    * - TC-UNIT-035
      - REQ-OPS-ARCH-02
      - test_core_module_imports_no_web_or_visualization_library[core/services/hypothesis_testing.py]
@@ -227,37 +227,37 @@ Unit
      - REQ-CORP-BENCH-01
      - test_leaderboard_final_score_matches_the_documented_formula_exactly
      - passed
-     - 0.289
+     - 0.284
    * - TC-UNIT-039
      - REQ-CORP-BENCH-01
      - test_leaderboard_pass_rate_is_not_trivially_always_one
      - passed
-     - 0.275
+     - 0.282
    * - TC-UNIT-040
      - REQ-CORP-BENCH-01
      - test_leaderboard_no_longer_contains_mimicry_score_or_semantic_overlap
      - passed
-     - 0.287
+     - 0.285
    * - TC-UNIT-041
      - REQ-MET-SEM-01
      - test_semantic_similarity_of_identical_text_is_exactly_one
      - passed
-     - 0.015
+     - 0.013
    * - TC-UNIT-042
      - REQ-MET-SEM-01
      - test_semantic_similarity_of_near_paraphrases_is_high
      - passed
-     - 0.015
+     - 0.013
    * - TC-UNIT-043
      - REQ-MET-SEM-01
      - test_semantic_similarity_of_unrelated_text_is_low
      - passed
-     - 0.021
+     - 0.013
    * - TC-UNIT-044
      - REQ-MET-SEM-01
      - test_semantic_similarity_is_symmetric
      - passed
-     - 0.029
+     - 0.023
    * - TC-UNIT-045
      - REQ-MET-SEM-01
      - test_semantic_similarity_returns_zero_for_an_empty_text_not_a_model_call
@@ -267,27 +267,27 @@ Unit
      - REQ-MET-SEM-01
      - test_semantic_similarity_is_clamped_to_zero_one_range
      - passed
-     - 0.016
+     - 0.013
    * - TC-UNIT-047
      - REQ-MET-SEM-02
      - test_semantic_overlap_field_uses_real_similarity_not_token_overlap
      - passed
-     - 0.015
+     - 0.011
    * - TC-UNIT-048
      - REQ-MET-SEM-02
      - test_semantic_overlap_field_is_low_for_dissimilar_output
      - passed
-     - 0.016
+     - 0.013
    * - TC-UNIT-049
      - REQ-MET-SEM-02
      - test_other_fields_unaffected_by_the_semantic_overlap_fix
      - passed
-     - 0.015
+     - 0.013
    * - TC-UNIT-050
      - -
      - test_load_catalogue_returns_every_requirement_id
      - passed
-     - 0.006
+     - 0.009
    * - TC-UNIT-051
      - -
      - test_load_known_gaps_parses_well_formed_lines
@@ -312,12 +312,12 @@ Unit
      - -
      - test_check_flags_a_requirement_with_no_test_and_no_known_gap
      - passed
-     - 0.005
+     - 0.006
    * - TC-UNIT-056
      - -
      - test_check_flags_a_closed_gap_still_listed_in_known_gaps
      - passed
-     - 0.009
+     - 0.007
    * - TC-UNIT-057
      - -
      - test_check_flags_a_test_marker_naming_an_unknown_requirement_id
@@ -327,7 +327,7 @@ Unit
      - -
      - test_check_flags_a_stale_known_gaps_entry_naming_a_deleted_requirement
      - passed
-     - 0.006
+     - 0.007
    * - TC-UNIT-059
      - -
      - test_collect_requirement_coverage_excludes_xfail_tests_from_coverage
@@ -337,7 +337,7 @@ Unit
      - REQ-OPS-CLI-01
      - test_serve_calls_uvicorn_run_with_the_parsed_host_and_port
      - passed
-     - 0.047
+     - 0.041
    * - TC-UNIT-061
      - REQ-OPS-CLI-01
      - test_serve_no_reload_flag_disables_reload
@@ -372,12 +372,12 @@ Unit
      - REQ-OPS-CLI-01
      - test_export_db_passes_through_custom_db_path_and_overwrite_flag
      - passed
-     - 0.004
+     - 0.003
    * - TC-UNIT-068
      - REQ-OPS-CLI-01
      - test_export_db_on_error_prints_to_stderr_and_returns_1
      - passed
-     - 0.004
+     - 0.003
    * - TC-UNIT-069
      - REQ-OPS-CLI-01
      - test_build_parser_requires_a_subcommand
@@ -397,12 +397,12 @@ Unit
      - REQ-GEN-CLI-01
      - test_load_config_raises_on_a_config_missing_a_required_field
      - passed
-     - 0.005
+     - 0.008
    * - TC-UNIT-073
      - REQ-GEN-CLI-01
      - test_run_prints_progress_and_done_lines_and_persists_every_response
      - passed
-     - 0.069
+     - 0.066
    * - TC-UNIT-074
      - REQ-GEN-RUN-03
      - test_run_rejects_an_invalid_config_before_starting_and_returns_1
@@ -417,7 +417,7 @@ Unit
      - REQ-GEN-CLI-01
      - test_main_end_to_end_with_a_real_config_file_and_a_monkeypatched_runner
      - passed
-     - 0.071
+     - 0.069
    * - TC-UNIT-077
      - REQ-CORP-CL-01
      - test_compute_fit_indices_pinned_on_two_perfectly_separated_clusters
@@ -432,7 +432,7 @@ Unit
      - REQ-CORP-CL-01
      - test_compute_fit_indices_ari_with_perfect_archetype_alignment
      - passed
-     - 0.008
+     - 0.009
    * - TC-UNIT-080
      - REQ-CORP-CL-01
      - test_compute_fit_indices_noise_ratio
@@ -442,7 +442,7 @@ Unit
      - REQ-CORP-CL-02
      - test_run_plain_hdbscan_adds_cluster_columns
      - passed
-     - 0.019
+     - 0.018
    * - TC-UNIT-082
      - REQ-CORP-CL-02
      - test_run_plain_hdbscan_is_a_no_op_when_too_few_rows
@@ -452,132 +452,132 @@ Unit
      - REQ-CORP-CL-02
      - test_run_behavioral_topology_adds_expected_columns
      - passed
-     - 0.246
+     - 0.212
    * - TC-UNIT-084
      - REQ-CORP-CL-02
      - test_run_behavioral_topology_filters_invalid_responses_when_requested
      - passed
-     - 0.199
+     - 0.186
    * - TC-UNIT-085
      - REQ-CORP-CL-02
      - test_run_behavioral_topology_filters_short_outputs
      - passed
-     - 0.184
+     - 0.200
    * - TC-UNIT-086
      - REQ-CORP-CL-02
      - test_run_behavioral_topology_outliers_are_the_noise_labeled_subset
      - passed
-     - 0.208
+     - 0.217
    * - TC-UNIT-087
      - REQ-CORP-CL-02
      - test_run_behavioral_topology_does_not_crash_when_filtering_removes_every_row
      - passed
-     - 0.006
+     - 0.009
    * - TC-UNIT-088
      - REQ-CORP-CL-02
      - test_run_behavioral_topology_fit_indices_has_all_expected_keys
      - passed
-     - 0.204
+     - 0.227
    * - TC-UNIT-089
      - REQ-CORP-CL-03
      - test_cluster_discovery_process_data_adds_expected_columns
      - passed
-     - 0.025
+     - 0.030
    * - TC-UNIT-090
      - REQ-CORP-CL-03
      - test_cluster_discovery_is_a_no_op_when_fewer_rows_than_n_clusters
      - passed
-     - 0.005
+     - 0.009
    * - TC-UNIT-091
      - REQ-CORP-CL-03
      - test_cluster_discovery_is_a_no_op_on_empty_numeric_data
      - passed
-     - 0.003
+     - 0.006
    * - TC-UNIT-092
      - REQ-CORP-CL-03
      - test_cluster_discovery_component_dependencies_available_after_process_data
      - passed
-     - 0.023
+     - 0.036
    * - TC-UNIT-093
      - REQ-CORP-CL-03
      - test_cluster_discovery_component_dependencies_none_before_fit
      - passed
-     - 0.002
+     - 0.003
    * - TC-UNIT-094
      - REQ-OPS-CFG-01
      - test_max_total_tasks_resolves_as_int
      - passed
-     - 0.001
+     - 0.003
    * - TC-UNIT-095
      - REQ-OPS-CFG-01
      - test_unknown_attribute_still_raises
      - passed
-     - 0.001
+     - 0.002
    * - TC-UNIT-096
      - REQ-OPS-CFG-01
      - test_pre_existing_ollama_section_unaffected
      - passed
-     - 0.001
+     - 0.003
    * - TC-UNIT-097
      - REQ-OPS-CFG-01
      - test_pre_existing_directories_section_unaffected
      - passed
-     - 0.002
+     - 0.003
    * - TC-UNIT-098
      - REQ-DATA-EXP-01
      - test_export_run_to_db_copies_run_metadata_and_every_response
      - passed
-     - 0.072
+     - 0.086
    * - TC-UNIT-099
      - REQ-DATA-EXP-02
      - test_export_run_to_db_on_completely_unknown_run_id_raises
      - passed
-     - 0.007
+     - 0.006
    * - TC-UNIT-100
      - REQ-DATA-EXP-02
      - test_export_run_to_db_on_a_run_that_exists_but_has_no_responses_yet_raises
      - passed
-     - 0.004
+     - 0.005
    * - TC-UNIT-101
      - REQ-DATA-EXP-02
      - test_export_run_to_db_second_export_without_overwrite_raises_not_duplicates
      - passed
-     - 0.057
+     - 0.067
    * - TC-UNIT-102
      - REQ-DATA-EXP-02
      - test_export_run_to_db_with_overwrite_replaces_rather_than_duplicates
      - passed
-     - 0.103
+     - 0.107
    * - TC-UNIT-103
      - REQ-DATA-EXP-01
      - test_export_run_to_db_preserves_response_content_exactly_not_just_the_count
      - passed
-     - 0.055
+     - 0.059
    * - TC-UNIT-104
      - REQ-DATA-EXP-01
      - test_export_run_to_db_does_not_disturb_a_different_runs_data_already_in_the_target
      - passed
-     - 0.097
+     - 0.098
    * - TC-UNIT-105
      - REQ-DATA-EXP-01
      - test_export_run_to_db_creates_the_target_directory_if_it_does_not_exist_yet
      - passed
-     - 0.042
+     - 0.044
    * - TC-UNIT-106
      - REQ-DATA-EXP-01
      - test_export_run_to_db_round_trips_edge_case_value_types_through_the_json_column
      - passed
-     - 0.045
+     - 0.046
    * - TC-UNIT-107
      - REQ-DATA-EXP-03
      - test_get_sync_status_reflects_exported_runs_and_omits_unexported_ones
      - passed
-     - 0.046
+     - 0.050
    * - TC-UNIT-108
      - REQ-DATA-EXP-03
      - test_get_sync_status_on_a_database_that_does_not_exist_yet_returns_empty_not_a_crash
      - passed
-     - 0.023
+     - 0.025
    * - TC-UNIT-109
      - REQ-GEN-SSE-01
      - test_bridge_to_queue_delivers_event_from_another_thread
@@ -587,7 +587,7 @@ Unit
      - REQ-GEN-SSE-01
      - test_bridge_to_queue_preserves_order
      - passed
-     - 0.003
+     - 0.004
    * - TC-UNIT-111
      - REQ-GEN-SSE-01
      - test_bridge_to_queue_is_a_thin_wrapper_over_call_soon_threadsafe
@@ -622,7 +622,7 @@ Unit
      - REQ-OPS-ARCH-01
      - test_non_conforming_class_fails_every_protocol
      - passed
-     - 0.001
+     - 0.002
    * - TC-UNIT-118
      - REQ-OPS-ARCH-01
      - test_fake_llm_client_returns_generation_result_from_call_shape_matching_legacy_usage
@@ -652,7 +652,7 @@ Unit
      - REQ-GEN-RUN-01
      - test_compute_sweep_range_single_step_returns_v_min
      - passed
-     - 0.001
+     - 0.002
    * - TC-UNIT-124
      - REQ-GEN-RUN-01
      - test_compute_sweep_range_linear_interpolation_pinned
@@ -687,72 +687,72 @@ Unit
      - REQ-GEN-RUN-03
      - test_try_start_raises_on_missing_teacher_model_when_not_self_critic
      - passed
-     - 0.002
+     - 0.003
    * - TC-UNIT-131
      - REQ-GEN-RUN-03
      - test_try_start_raises_on_sweep_param_without_resolved_range
      - passed
-     - 0.002
+     - 0.003
    * - TC-UNIT-132
      - REQ-GEN-RUN-03
      - test_try_start_raises_too_many_tasks_before_touching_the_guard
      - passed
-     - 0.002
+     - 0.003
    * - TC-UNIT-133
      - REQ-MET-REC-02
      - test_persists_ollama_performance_fields_and_computes_tokens_per_second
      - passed
-     - 0.048
+     - 0.113
    * - TC-UNIT-134
      - REQ-MET-REC-02
      - test_tokens_per_second_is_none_when_ollama_fields_are_unavailable
      - passed
-     - 0.039
+     - 0.049
    * - TC-UNIT-135
      - REQ-MET-REC-01
      - test_persists_full_entry_shape_with_no_key_collisions
      - passed
-     - 0.043
+     - 0.088
    * - TC-UNIT-136
      - REQ-CASC-L3-04
      - test_self_critic_routes_judge_to_the_student_model
      - passed
-     - 0.038
+     - 0.035
    * - TC-UNIT-137
      - REQ-CASC-L3-04
      - test_teacher_student_mode_routes_judge_to_teacher_model
      - passed
-     - 0.038
+     - 0.035
    * - TC-UNIT-138
      - REQ-GEN-RAG-01, REQ-CASC-L2-01
      - test_rag_enabled_retrieves_and_injects_context
      - passed
-     - 0.092
+     - 0.061
    * - TC-UNIT-139
      - REQ-GEN-RAG-01
      - test_rag_disabled_ignores_knowledge_base_even_if_provided
      - passed
-     - 0.037
+     - 0.035
    * - TC-UNIT-140
      - REQ-GEN-RUN-01
      - test_sweep_iterates_the_full_computed_range_and_overrides_one_param
      - passed
-     - 0.099
+     - 0.094
    * - TC-UNIT-141
      - REQ-GEN-RUN-02
      - test_full_grid_produces_students_times_archetypes_times_biases_entries
      - passed
-     - 0.135
+     - 0.124
    * - TC-UNIT-142
      - REQ-GEN-RUN-04
      - test_second_concurrent_start_is_rejected
      - passed
-     - 0.240
+     - 0.234
    * - TC-UNIT-143
      - REQ-GEN-RUN-04
      - test_generation_error_emits_error_event_and_clears_guard
      - passed
-     - 0.014
+     - 0.009
    * - TC-UNIT-144
      - REQ-GEN-RUN-05
      - test_request_stop_with_no_run_in_progress_returns_false
@@ -762,863 +762,918 @@ Unit
      - REQ-GEN-RUN-05
      - test_request_stop_mid_run_halts_before_the_full_grid_completes
      - passed
-     - 0.470
+     - 0.235
    * - TC-UNIT-146
      - REQ-GEN-RUN-05
      - test_stop_requested_flag_is_cleared_by_a_fresh_try_start
      - passed
-     - 0.077
+     - 0.065
    * - TC-UNIT-147
      - REQ-CASC-L0-04
      - test_layer0_empty_response_skips_judge_and_metrics
      - passed
-     - 0.003
+     - 0.026
    * - TC-UNIT-148
      - REQ-CASC-L0-04
      - test_layer0_malformed_response_skips_judge_and_metrics
      - passed
-     - 0.004
+     - 0.003
    * - TC-UNIT-149
      - REQ-CASC-L1-02
      - test_layer1_echo_response_skips_judge_call_but_still_computes_metrics
      - passed
-     - 0.049
+     - 0.039
    * - TC-UNIT-150
      - REQ-CASC-ROUTE-01
      - test_genuine_substantive_response_reaches_the_real_judge
      - passed
-     - 0.079
+     - 0.065
    * - TC-UNIT-151
      - REQ-CASC-L0-04, REQ-CASC-ROUTE-02
      - test_layer0_rejection_is_marked_layer0_and_keeps_the_raw_text_in_output
      - passed
-     - 0.004
+     - 0.003
    * - TC-UNIT-152
      - REQ-CASC-L1-02, REQ-CASC-ROUTE-02, REQ-CASC-L2-03
      - test_layer1_echo_is_marked_layer1_and_with_rag_never_calls_the_nli_check
      - passed
-     - 0.040
+     - 0.036
    * - TC-UNIT-153
      - REQ-CASC-L2-03
      - test_non_echo_response_with_rag_still_runs_the_nli_check_once
      - passed
-     - 0.049
+     - 0.042
    * - TC-UNIT-154
      - REQ-CASC-ROUTE-02
      - test_a_genuine_judge_no_is_marked_as_decided_by_the_judge
      - passed
-     - 0.056
+     - 0.045
    * - TC-UNIT-155
      - REQ-CASC-ROUTE-02
      - test_judge_parse_failure_is_marked_distinctly_from_a_real_judge_no
      - passed
-     - 0.050
+     - 0.045
    * - TC-UNIT-156
+     - -
+     - test_build_feature_catalogue_rst_lists_every_requirement_under_its_feature_and_epic
+     - passed
+     - 0.097
+   * - TC-UNIT-157
+     - -
+     - test_build_test_cases_rst_numbers_real_tests_and_adds_a_known_gaps_section
+     - passed
+     - 0.020
+   * - TC-UNIT-158
+     - -
+     - test_build_test_cases_rst_marks_an_xfail_test_as_automated_xfail
+     - passed
+     - 0.001
+   * - TC-UNIT-159
+     - -
+     - test_build_traceability_rst_reports_covered_and_gap_rows_with_the_right_summary_count
+     - passed
+     - 0.014
+   * - TC-UNIT-160
+     - -
+     - test_build_traceability_rst_flags_an_uncovered_requirement_not_in_known_gaps_as_undocumented
+     - passed
+     - 0.001
+   * - TC-UNIT-161
+     - -
+     - test_build_coverage_by_feature_rst_reports_fraction_and_percent_per_feature
+     - passed
+     - 0.012
+   * - TC-UNIT-162
+     - -
+     - test_build_coverage_by_feature_rst_on_a_feature_with_no_requirements_reports_zero_not_a_crash
+     - passed
+     - 0.001
+   * - TC-UNIT-163
      - REQ-OPS-DOC-01
      - test_extract_glossary_terms_pulls_only_term_lines_not_definitions
      - passed
      - 0.006
-   * - TC-UNIT-157
+   * - TC-UNIT-164
      - REQ-OPS-DOC-01
      - test_extract_glossary_terms_handles_multiple_glossary_blocks
      - passed
      - 0.008
-   * - TC-UNIT-158
+   * - TC-UNIT-165
      - REQ-OPS-DOC-01
      - test_extract_glossary_terms_on_empty_file_returns_empty_list
      - passed
      - 0.005
-   * - TC-UNIT-159
+   * - TC-UNIT-166
      - REQ-OPS-DOC-01
      - test_extract_module_names_excludes_init_and_pycache
      - passed
      - 0.005
-   * - TC-UNIT-160
+   * - TC-UNIT-167
      - REQ-OPS-DOC-01
      - test_extract_module_names_replaces_underscores_with_spaces
      - passed
      - 0.004
-   * - TC-UNIT-161
+   * - TC-UNIT-168
      - REQ-OPS-DOC-01
      - test_real_frequency_counts_whole_word_case_insensitive_occurrences
      - passed
      - 0.008
-   * - TC-UNIT-162
+   * - TC-UNIT-169
      - REQ-OPS-DOC-01
      - test_real_frequency_never_returns_zero_even_for_an_unmentioned_term
      - passed
      - 0.006
-   * - TC-UNIT-163
+   * - TC-UNIT-170
+     - -
+     - test_parse_junit_raises_a_clear_message_when_the_file_is_missing
+     - passed
+     - 0.005
+   * - TC-UNIT-171
+     - -
+     - test_parse_junit_reads_totals_and_per_case_status
+     - passed
+     - 0.005
+   * - TC-UNIT-172
+     - -
+     - test_build_test_results_rst_includes_the_summary_and_a_section_per_type
+     - passed
+     - 0.005
+   * - TC-UNIT-173
+     - -
+     - test_build_test_results_rst_is_valid_rst
+     - passed
+     - 0.033
+   * - TC-UNIT-174
      - REQ-CASC-L2-01
      - test_empty_rag_context_is_not_checked
      - passed
      - 0.001
-   * - TC-UNIT-164
+   * - TC-UNIT-175
      - REQ-CASC-L2-01
      - test_empty_response_is_not_checked
      - passed
      - 0.001
-   * - TC-UNIT-165
+   * - TC-UNIT-176
      - REQ-CASC-L2-01
      - test_whitespace_only_inputs_are_not_checked
      - passed
      - 0.001
-   * - TC-UNIT-166
+   * - TC-UNIT-177
      - REQ-CASC-L2-02
      - test_a_clear_factual_contradiction_is_flagged_as_contradiction
      - passed
-     - 0.039
-   * - TC-UNIT-167
+     - 0.028
+   * - TC-UNIT-178
      - REQ-CASC-L2-02
      - test_a_consistent_response_is_not_flagged_as_contradiction
      - passed
-     - 0.030
-   * - TC-UNIT-168
+     - 0.024
+   * - TC-UNIT-179
      - REQ-CASC-L2-02
      - test_contradiction_score_is_a_probability_in_zero_one_range
      - passed
-     - 0.029
-   * - TC-UNIT-169
+     - 0.023
+   * - TC-UNIT-180
      - REQ-CORP-HYP-01
      - test_compare_archetype_means_computes_the_real_mean_and_shift
      - passed
      - 0.004
-   * - TC-UNIT-170
+   * - TC-UNIT-181
      - REQ-CORP-HYP-01
      - test_compare_archetype_means_flags_a_real_over_50_percent_shift
      - passed
      - 0.004
-   * - TC-UNIT-171
+   * - TC-UNIT-182
      - REQ-CORP-HYP-01
      - test_compare_archetype_means_relative_shift_is_none_when_mean_b_is_zero
      - passed
      - 0.004
-   * - TC-UNIT-172
+   * - TC-UNIT-183
      - REQ-CORP-HYP-01
      - test_compare_archetype_means_ignores_null_metric_values
      - passed
      - 0.004
-   * - TC-UNIT-173
+   * - TC-UNIT-184
      - REQ-CORP-HYP-01
      - test_compare_archetype_means_raises_when_archetype_a_has_no_responses_at_all
      - passed
      - 0.004
-   * - TC-UNIT-174
+   * - TC-UNIT-185
      - REQ-CORP-HYP-01
      - test_compare_archetype_means_raises_when_archetype_b_has_only_null_metric_values
      - passed
      - 0.004
-   * - TC-UNIT-175
+   * - TC-UNIT-186
      - REQ-CORP-HYP-02
      - test_run_uncertainty_analysis_is_deterministic_given_a_seed
      - passed
-     - 0.016
-   * - TC-UNIT-176
+     - 0.015
+   * - TC-UNIT-187
      - REQ-CORP-HYP-02
      - test_run_uncertainty_analysis_returns_one_variance_row_per_archetype_per_metric
      - passed
-     - 0.010
-   * - TC-UNIT-177
+     - 0.011
+   * - TC-UNIT-188
      - REQ-CORP-HYP-02
      - test_run_uncertainty_analysis_computes_a_real_nonnegative_kl_divergence
      - passed
      - 0.010
-   * - TC-UNIT-178
+   * - TC-UNIT-189
      - REQ-CORP-HYP-02
      - test_run_uncertainty_analysis_skips_an_archetype_with_zero_real_values_for_a_metric
      - passed
      - 0.007
-   * - TC-UNIT-179
+   * - TC-UNIT-190
      - REQ-DATA-JSONL-01
      - test_save_run_creates_no_response_file_until_first_response
      - passed
-     - 0.010
-   * - TC-UNIT-180
+     - 0.007
+   * - TC-UNIT-191
      - REQ-DATA-JSONL-01
      - test_save_response_appends_one_json_line_per_call
      - passed
-     - 0.006
-   * - TC-UNIT-181
+     - 0.009
+   * - TC-UNIT-192
      - REQ-DATA-JSONL-01
      - test_load_responses_round_trips_exactly
      - passed
      - 0.007
-   * - TC-UNIT-182
+   * - TC-UNIT-193
      - REQ-DATA-JSONL-01
      - test_load_responses_filters_by_run_id
      - passed
-     - 0.008
-   * - TC-UNIT-183
+     - 0.009
+   * - TC-UNIT-194
      - REQ-DATA-JSONL-01
      - test_load_responses_without_run_id_returns_all_runs
      - passed
-     - 0.010
-   * - TC-UNIT-184
+     - 0.009
+   * - TC-UNIT-195
      - REQ-DATA-JSONL-01
      - test_load_responses_for_never_started_run_returns_empty_list
      - passed
      - 0.004
-   * - TC-UNIT-185
+   * - TC-UNIT-196
      - REQ-DATA-JSONL-01
      - test_list_runs_returns_saved_run_metadata_most_recent_first
      - passed
      - 0.007
-   * - TC-UNIT-186
+   * - TC-UNIT-197
      - REQ-DATA-JSONL-01
      - test_list_runs_on_empty_store_returns_empty_list
      - passed
      - 0.004
-   * - TC-UNIT-187
+   * - TC-UNIT-198
      - REQ-CORP-SUM-01
      - test_summarize_run_pins_exact_totals
      - passed
      - 0.001
-   * - TC-UNIT-188
+   * - TC-UNIT-199
      - REQ-CORP-SUM-01
      - test_summarize_run_for_unknown_run_id_raises_run_not_found
      - passed
      - 0.001
-   * - TC-UNIT-189
+   * - TC-UNIT-200
      - REQ-CORP-SUM-01
      - test_summarize_run_with_no_sweep_reports_na
      - passed
-     - 0.001
-   * - TC-UNIT-190
+     - 0.002
+   * - TC-UNIT-201
      - REQ-CORP-JUDGE-01
      - test_compare_judging_modes_pins_pass_rate_and_delta_for_two_runs
      - passed
      - 0.001
-   * - TC-UNIT-191
+   * - TC-UNIT-202
      - REQ-CORP-JUDGE-01
      - test_compare_judging_modes_unknown_run_raises_run_not_found
      - passed
      - 0.001
-   * - TC-UNIT-192
+   * - TC-UNIT-203
      - REQ-CORP-JUDGE-01
      - test_compare_judging_modes_run_with_only_rejected_responses_reports_none_pass_rate_not_a_crash
      - passed
      - 0.001
-   * - TC-UNIT-193
+   * - TC-UNIT-204
      - REQ-CORP-JUDGE-01
      - test_compare_judging_modes_without_run_metadata_reports_unknown_labels_not_a_crash
      - passed
      - 0.001
-   * - TC-UNIT-194
+   * - TC-UNIT-205
      - REQ-KG-SYNC-01
      - test_parse_rag_chunks_recovers_archetype_and_category_from_the_real_serialized_format
      - passed
      - 0.002
-   * - TC-UNIT-195
+   * - TC-UNIT-206
      - REQ-KG-SYNC-01
      - test_parse_rag_chunks_handles_empty_and_none_input
      - passed
      - 0.001
-   * - TC-UNIT-196
+   * - TC-UNIT-207
      - REQ-KG-SYNC-01
      - test_build_rows_layer0_rejected_response_reaches_nothing_past_layer0
      - passed
      - 0.001
-   * - TC-UNIT-197
+   * - TC-UNIT-208
      - REQ-KG-SYNC-01
      - test_build_rows_echo_rejected_response_can_still_reach_layer2_but_never_the_judge
      - passed
      - 0.001
-   * - TC-UNIT-198
+   * - TC-UNIT-209
      - REQ-KG-SYNC-01
      - test_build_rows_a_response_that_reaches_a_real_judge_call_is_marked_correctly
      - passed
      - 0.001
-   * - TC-UNIT-199
+   * - TC-UNIT-210
      - REQ-KG-SYNC-01
      - test_build_rows_parses_real_rag_chunks_only_when_rag_enabled
      - passed
      - 0.001
-   * - TC-UNIT-200
+   * - TC-UNIT-211
      - REQ-KG-ST-02
      - test_summarize_similarity_pairs_dedupes_directed_rows_keeping_the_max_similarity
      - passed
      - 0.001
-   * - TC-UNIT-201
+   * - TC-UNIT-212
      - REQ-KG-ST-02
      - test_summarize_similarity_pairs_excludes_self_pairs
      - passed
      - 0.001
-   * - TC-UNIT-202
+   * - TC-UNIT-213
      - REQ-KG-ST-02
      - test_summarize_similarity_pairs_caps_at_five_sorted_descending
      - passed
      - 0.001
-   * - TC-UNIT-203
+   * - TC-UNIT-214
      - REQ-KG-ST-02
      - test_summarize_similarity_pairs_flags_the_node_whose_best_match_is_weakest_as_anomalous
      - passed
      - 0.001
-   * - TC-UNIT-204
+   * - TC-UNIT-215
      - REQ-KG-ST-02
      - test_summarize_similarity_pairs_handles_empty_input
      - passed
      - 0.001
-   * - TC-UNIT-205
+   * - TC-UNIT-216
      - REQ-KG-SYNC-02
      - test_sync_sends_the_bootstrap_and_the_unwind_sync_and_returns_the_real_count
      - passed
      - 0.001
-   * - TC-UNIT-206
+   * - TC-UNIT-217
      - REQ-KG-SYNC-02
      - test_sync_with_zero_responses_does_not_send_the_unwind_query_and_returns_zero
      - passed
      - 0.001
-   * - TC-UNIT-207
+   * - TC-UNIT-218
      - REQ-KG-Q-01
      - test_echo_rejections_by_model_returns_the_real_query_shape
      - passed
      - 0.001
-   * - TC-UNIT-208
+   * - TC-UNIT-219
      - REQ-KG-Q-01
      - test_terminal_stage_by_archetype_passes_the_archetype_param
      - passed
      - 0.001
-   * - TC-UNIT-209
+   * - TC-UNIT-220
      - REQ-KG-Q-01
      - test_rag_chunks_linked_to_echo_returns_the_real_query_shape
      - passed
      - 0.001
-   * - TC-UNIT-210
+   * - TC-UNIT-221
      - REQ-KG-ST-01
      - test_behavioral_communities_returns_modularity_count_and_rows
      - passed
      - 0.001
-   * - TC-UNIT-211
+   * - TC-UNIT-222
      - REQ-KG-ST-01
      - test_behavioral_communities_materializes_cooccurrence_then_projects_before_running_leiden
      - passed
      - 0.001
-   * - TC-UNIT-212
+   * - TC-UNIT-223
      - REQ-KG-ST-01
      - test_behavioral_communities_drops_the_projected_graph_both_before_and_after
      - passed
      - 0.001
-   * - TC-UNIT-213
+   * - TC-UNIT-224
      - REQ-KG-ST-01
      - test_behavioral_communities_still_drops_the_graph_when_leiden_itself_raises
      - passed
      - 0.001
-   * - TC-UNIT-214
+   * - TC-UNIT-225
      - REQ-KG-ST-02
      - test_structural_similarity_returns_the_summarized_shape
      - passed
      - 0.001
-   * - TC-UNIT-215
+   * - TC-UNIT-226
      - REQ-KG-ST-02
      - test_structural_similarity_mutates_embeddings_before_running_knn
      - passed
      - 0.001
-   * - TC-UNIT-216
+   * - TC-UNIT-227
      - REQ-KG-ST-02
      - test_structural_similarity_still_drops_the_graph_when_knn_itself_raises
      - passed
      - 0.001
-   * - TC-UNIT-217
+   * - TC-UNIT-228
      - REQ-KG-PR-01
      - test_archetype_bias_pagerank_returns_the_real_query_shape
      - passed
      - 0.001
-   * - TC-UNIT-218
+   * - TC-UNIT-229
      - REQ-KG-PR-01
      - test_archetype_bias_pagerank_deletes_weightless_edges_before_projecting
      - passed
      - 0.001
-   * - TC-UNIT-219
+   * - TC-UNIT-230
      - REQ-KG-PR-01
      - test_archetype_bias_pagerank_drops_the_projected_graph_both_before_and_after
      - passed
      - 0.001
-   * - TC-UNIT-220
+   * - TC-UNIT-231
      - REQ-KG-PR-01
      - test_archetype_bias_graph_data_returns_deduplicated_nodes_and_real_edges
      - passed
      - 0.001
-   * - TC-UNIT-221
+   * - TC-UNIT-232
      - REQ-KG-PR-01
      - test_archetype_bias_graph_data_also_deletes_weightless_edges_first
      - passed
      - 0.001
-   * - TC-UNIT-222
+   * - TC-UNIT-233
      - REQ-MET-LING-03
      - test_cognitive_load_on_a_short_plain_sentence_pinned_by_hand
      - passed
      - 0.001
-   * - TC-UNIT-223
+   * - TC-UNIT-234
      - REQ-MET-LING-03
      - test_cognitive_load_sentence_length_saturates_at_the_cap
      - passed
      - 0.001
-   * - TC-UNIT-224
+   * - TC-UNIT-235
      - REQ-MET-LING-03
      - test_cognitive_load_all_three_components_contribute_not_just_sentence_length
      - passed
      - 0.001
-   * - TC-UNIT-225
+   * - TC-UNIT-236
      - REQ-MET-LING-03
      - test_cognitive_load_returns_zero_for_empty_input
      - passed
      - 0.001
-   * - TC-UNIT-226
+   * - TC-UNIT-237
      - REQ-MET-LING-03
      - test_cognitive_load_never_exceeds_one
      - passed
      - 0.002
-   * - TC-UNIT-227
+   * - TC-UNIT-238
      - REQ-MET-LING-01
      - test_zipf_deviation_pinned_on_a_hand_computed_distribution
      - passed
      - 0.011
-   * - TC-UNIT-228
+   * - TC-UNIT-239
      - REQ-MET-LING-01
      - test_zipf_deviation_on_text_with_no_alphabetic_words_is_zero
      - passed
      - 0.007
-   * - TC-UNIT-229
+   * - TC-UNIT-240
      - REQ-MET-LING-01
      - test_zipf_deviation_on_empty_string_is_zero
      - passed
      - 0.001
-   * - TC-UNIT-230
+   * - TC-UNIT-241
      - REQ-MET-LING-01
      - test_zipf_deviation_is_non_negative
      - passed
      - 0.001
-   * - TC-UNIT-231
+   * - TC-UNIT-242
      - REQ-MET-LING-02
      - test_social_focus_contrasts_with_self_focus_on_a_symmetric_sentence
      - passed
-     - 0.011
-   * - TC-UNIT-232
+     - 0.012
+   * - TC-UNIT-243
      - REQ-MET-LING-02
      - test_social_focus_is_zero_when_no_social_pronouns_present
      - passed
      - 0.007
-   * - TC-UNIT-233
+   * - TC-UNIT-244
      - REQ-MET-LING-02
      - test_hedge_ratio_pinned_on_a_fixed_sentence
      - passed
      - 0.014
-   * - TC-UNIT-234
+   * - TC-UNIT-245
      - REQ-MET-LING-02
      - test_booster_ratio_pinned_on_a_fixed_sentence
      - passed
-     - 0.008
-   * - TC-UNIT-235
+     - 0.007
+   * - TC-UNIT-246
      - REQ-MET-LING-02
      - test_hedge_and_booster_ratio_are_zero_on_empty_text
      - passed
      - 0.001
-   * - TC-UNIT-236
+   * - TC-UNIT-247
      - REQ-GEN-OLL-01
      - test_native_host_strips_v1_suffix_from_the_openai_compat_base_url
      - passed
      - 0.001
-   * - TC-UNIT-237
+   * - TC-UNIT-248
      - REQ-GEN-OLL-01
      - test_native_host_leaves_a_url_without_v1_suffix_unchanged
      - passed
      - 0.001
-   * - TC-UNIT-238
+   * - TC-UNIT-249
      - REQ-GEN-OLL-01
      - test_constructs_with_the_native_host_derived_from_configured_credentials
      - passed
-     - 0.245
-   * - TC-UNIT-239
+     - 0.238
+   * - TC-UNIT-250
      - REQ-GEN-OLL-01
      - test_generate_returns_text_and_model
      - passed
-     - 0.234
-   * - TC-UNIT-240
+     - 0.255
+   * - TC-UNIT-251
      - REQ-GEN-OLL-01
      - test_generate_sends_system_and_user_as_separate_messages
      - passed
-     - 0.236
-   * - TC-UNIT-241
+     - 0.240
+   * - TC-UNIT-252
      - REQ-GEN-OLL-01
      - test_generate_json_mode_requests_json_format
      - passed
-     - 0.250
-   * - TC-UNIT-242
+     - 0.252
+   * - TC-UNIT-253
      - REQ-GEN-OLL-01
      - test_generate_no_json_mode_sends_none_format
      - passed
-     - 0.234
-   * - TC-UNIT-243
+     - 0.242
+   * - TC-UNIT-254
      - REQ-GEN-OLL-02
      - test_generate_maps_token_counts_from_the_native_response
      - passed
-     - 0.232
-   * - TC-UNIT-244
+     - 0.261
+   * - TC-UNIT-255
      - REQ-GEN-OLL-02
      - test_generate_converts_ollama_nanosecond_durations_to_milliseconds
      - passed
-     - 0.266
-   * - TC-UNIT-245
+     - 0.300
+   * - TC-UNIT-256
      - REQ-GEN-OLL-02
      - test_generate_leaves_ollama_fields_none_when_the_response_omits_them
      - passed
-     - 0.247
-   * - TC-UNIT-246
+     - 0.252
+   * - TC-UNIT-257
      - REQ-KG-PR-02
      - test_complete_bipartite_unweighted_scores_are_uniform_within_each_side
      - passed
-     - 0.014
-   * - TC-UNIT-247
+     - 0.018
+   * - TC-UNIT-258
      - REQ-KG-PR-02
      - test_unweighted_uniformity_does_not_depend_on_balanced_counts
      - passed
      - 0.013
-   * - TC-UNIT-248
+   * - TC-UNIT-259
      - REQ-KG-PR-02
      - test_smaller_side_scores_higher_and_ratio_matches_the_recorded_live_gds_run
      - passed
      - 0.013
-   * - TC-UNIT-249
+   * - TC-UNIT-260
      - REQ-KG-PR-02
      - test_missing_pair_breaks_the_symmetry
      - passed
      - 0.013
-   * - TC-UNIT-250
+   * - TC-UNIT-261
      - REQ-KG-PR-02
      - test_weighted_scores_differ_within_a_side_when_counts_are_unequal
      - passed
-     - 0.012
-   * - TC-UNIT-251
+     - 0.013
+   * - TC-UNIT-262
      - REQ-KG-PR-02
      - test_weighted_scores_are_uniform_again_when_all_counts_are_equal
      - passed
-     - 0.012
-   * - TC-UNIT-252
+     - 0.013
+   * - TC-UNIT-263
      - REQ-GEN-PROMPT-01
      - test_tuned_mode_includes_archetype_name
      - passed
      - 0.001
-   * - TC-UNIT-253
+   * - TC-UNIT-264
      - REQ-GEN-PROMPT-01
      - test_tuned_mode_excludes_archetype_name_when_requested
      - passed
-     - 0.002
-   * - TC-UNIT-254
+     - 0.001
+   * - TC-UNIT-265
      - REQ-GEN-PROMPT-01
      - test_blind_mode_hides_the_archetype_label
      - passed
      - 0.001
-   * - TC-UNIT-255
+   * - TC-UNIT-266
      - REQ-GEN-PROMPT-01
      - test_raw_mode_uses_only_the_archetypes_own_sys_prompt
      - passed
      - 0.001
-   * - TC-UNIT-256
+   * - TC-UNIT-267
      - REQ-GEN-PROMPT-01
      - test_unknown_mode_raises_value_error
      - passed
      - 0.001
-   * - TC-UNIT-257
+   * - TC-UNIT-268
      - -
      - test_type_from_node_id_maps_every_known_directory
      - passed
      - 0.001
-   * - TC-UNIT-258
+   * - TC-UNIT-269
      - -
      - test_type_from_node_id_rejects_an_unknown_directory
      - passed
      - 0.002
-   * - TC-UNIT-259
+   * - TC-UNIT-270
      - -
      - test_assign_tc_ids_numbers_sequentially_per_type_starting_at_one
      - passed
      - 0.001
-   * - TC-UNIT-260
+   * - TC-UNIT-271
      - -
      - test_assign_tc_ids_on_a_type_with_no_tests_assigns_nothing
      - passed
      - 0.001
-   * - TC-UNIT-261
+   * - TC-UNIT-272
      - -
      - test_status_label_three_fixed_outcomes
      - passed
      - 0.001
-   * - TC-UNIT-262
+   * - TC-UNIT-273
      - -
      - test_first_docstring_line_strips_and_takes_the_first_non_blank_line
      - passed
      - 0.001
-   * - TC-UNIT-263
+   * - TC-UNIT-274
      - -
      - test_first_docstring_line_on_none_or_empty_returns_the_fixed_placeholder
      - passed
      - 0.001
-   * - TC-UNIT-264
+   * - TC-UNIT-275
      - -
      - test_render_list_table_produces_valid_rst_structure
      - passed
      - 0.001
-   * - TC-UNIT-265
+   * - TC-UNIT-276
      - -
      - test_render_list_table_rejects_a_row_with_the_wrong_number_of_cells
      - passed
      - 0.002
-   * - TC-UNIT-266
+   * - TC-UNIT-277
      - -
      - test_build_coverage_groups_node_ids_by_req_id_and_excludes_xfail
      - passed
      - 0.001
-   * - TC-UNIT-267
+   * - TC-UNIT-278
      - -
      - test_qa_test_collector_records_type_req_ids_xfail_and_docstring
      - passed
      - 0.001
-   * - TC-UNIT-268
+   * - TC-UNIT-279
      - -
      - test_qa_test_collector_skips_items_outside_the_known_test_directories
      - passed
      - 0.001
-   * - TC-UNIT-269
+   * - TC-UNIT-280
      - REQ-GEN-RAG-03
      - test_retrieve_renames_query_to_text_for_the_underlying_engine
      - passed
      - 0.001
-   * - TC-UNIT-270
+   * - TC-UNIT-281
      - REQ-GEN-RAG-03
      - test_retrieve_default_top_k_and_archetype
      - passed
      - 0.001
-   * - TC-UNIT-271
+   * - TC-UNIT-282
      - REQ-GEN-RAG-03
      - test_load_knowledge_base_delegates_to_the_engine
      - passed
      - 0.001
-   * - TC-UNIT-272
+   * - TC-UNIT-283
      - REQ-GEN-RAG-03
      - test_without_an_injected_engine_a_real_ragengine_is_constructed
      - passed
-     - 3.796
-   * - TC-UNIT-273
+     - 3.868
+   * - TC-UNIT-284
      - REQ-CASC-L0-03
      - test_classify_response_valid_json_with_text_key_is_valid
      - passed
      - 0.001
-   * - TC-UNIT-274
+   * - TC-UNIT-285
      - REQ-CASC-L0-01
      - test_classify_response_empty_string_is_empty
      - passed
      - 0.001
-   * - TC-UNIT-275
+   * - TC-UNIT-286
      - REQ-CASC-L0-01
      - test_classify_response_valid_json_with_empty_text_value_is_empty
      - passed
      - 0.001
-   * - TC-UNIT-276
+   * - TC-UNIT-287
      - REQ-CASC-L0-03
      - test_classify_response_valid_json_missing_text_key_is_schema_error
      - passed
      - 0.001
-   * - TC-UNIT-277
+   * - TC-UNIT-288
      - REQ-CASC-L0-03
      - test_classify_response_valid_json_but_not_an_object_is_schema_error
      - passed
      - 0.001
-   * - TC-UNIT-278
+   * - TC-UNIT-289
      - REQ-CASC-L0-02
      - test_classify_response_cut_off_mid_json_is_truncated
      - passed
      - 0.001
-   * - TC-UNIT-279
+   * - TC-UNIT-290
      - REQ-CASC-L0-02
      - test_classify_response_genuinely_garbled_non_json_is_malformed
      - passed
      - 0.001
-   * - TC-UNIT-280
+   * - TC-UNIT-291
      - REQ-CASC-L1-01
      - test_is_echo_response_true_for_real_confirmed_echo_scores
      - passed
      - 0.001
-   * - TC-UNIT-281
+   * - TC-UNIT-292
      - REQ-CASC-L1-01
      - test_is_echo_response_false_for_real_genuine_response_scores
      - passed
      - 0.001
-   * - TC-UNIT-282
+   * - TC-UNIT-293
      - REQ-CASC-L1-01
      - test_is_echo_response_boundary_at_exactly_the_threshold
      - passed
      - 0.001
-   * - TC-UNIT-283
+   * - TC-UNIT-294
      - REQ-OPS-DOC-01
      - test_main_raises_system_exit_with_a_helpful_message_when_build_dir_is_missing
      - passed
      - 0.004
-   * - TC-UNIT-284
+   * - TC-UNIT-295
      - REQ-OPS-DOC-01
      - test_default_docs_html_dir_points_at_the_real_sphinx_build_output_location
      - passed
      - 0.001
-   * - TC-UNIT-285
+   * - TC-UNIT-296
      - REQ-DATA-SQL-01
      - test_save_run_returns_the_run_id
      - passed
      - 0.008
-   * - TC-UNIT-286
+   * - TC-UNIT-297
      - REQ-DATA-SQL-01
      - test_save_run_persists_config_as_structured_data
      - passed
      - 0.009
-   * - TC-UNIT-287
+   * - TC-UNIT-298
      - REQ-DATA-SQL-01
      - test_save_response_and_load_responses_round_trip
      - passed
-     - 0.011
-   * - TC-UNIT-288
+     - 0.012
+   * - TC-UNIT-299
      - REQ-DATA-SQL-01
      - test_load_responses_filters_by_run_id_across_multiple_runs
      - passed
-     - 0.012
-   * - TC-UNIT-289
+     - 0.015
+   * - TC-UNIT-300
      - REQ-DATA-SQL-01
      - test_load_responses_without_run_id_returns_all_runs
      - passed
-     - 0.011
-   * - TC-UNIT-290
+     - 0.014
+   * - TC-UNIT-301
      - REQ-DATA-SQL-01
      - test_delete_responses_removes_only_the_target_runs_rows_and_returns_the_count
      - passed
-     - 0.014
-   * - TC-UNIT-291
+     - 0.017
+   * - TC-UNIT-302
      - REQ-DATA-SQL-01
      - test_save_run_twice_with_same_id_upserts_rather_than_duplicating
      - passed
-     - 0.010
-   * - TC-UNIT-292
+     - 0.013
+   * - TC-UNIT-303
      - REQ-DATA-SQL-01
      - test_list_runs_returns_saved_run_metadata_most_recent_first
      - passed
-     - 0.009
-   * - TC-UNIT-293
+     - 0.011
+   * - TC-UNIT-304
      - REQ-DATA-SQL-01
      - test_list_runs_on_empty_repo_returns_empty_list
      - passed
-     - 0.005
-   * - TC-UNIT-294
+     - 0.007
+   * - TC-UNIT-305
      - REQ-DATA-SQL-02
      - test_save_run_stamps_last_synced_at_and_get_sync_status_reports_it
      - passed
-     - 0.008
-   * - TC-UNIT-295
+     - 0.010
+   * - TC-UNIT-306
      - REQ-DATA-SQL-02
      - test_get_sync_status_omits_runs_never_saved
      - passed
-     - 0.009
-   * - TC-UNIT-296
+     - 0.010
+   * - TC-UNIT-307
      - REQ-DATA-SQL-02
      - test_save_run_twice_updates_last_synced_at_to_the_newer_write
      - passed
-     - 0.022
-   * - TC-UNIT-297
+     - 0.025
+   * - TC-UNIT-308
      - REQ-DATA-SQL-02
      - test_opening_a_database_created_before_last_synced_at_existed_self_heals
      - passed
-     - 0.043
-   * - TC-UNIT-298
+     - 0.047
+   * - TC-UNIT-309
      - REQ-OPS-ST-01
      - test_check_ollama_reports_ok_with_model_count_when_reachable
      - passed
      - 0.001
-   * - TC-UNIT-299
+   * - TC-UNIT-310
      - REQ-OPS-ST-01
      - test_check_ollama_reports_failure_reason_when_unreachable
      - passed
      - 0.001
-   * - TC-UNIT-300
+   * - TC-UNIT-311
      - REQ-OPS-ST-01
      - test_check_nltk_reports_ok_when_every_resource_is_found
      - passed
      - 0.001
-   * - TC-UNIT-301
+   * - TC-UNIT-312
      - REQ-OPS-ST-01
      - test_check_nltk_reports_which_resources_are_missing_without_downloading
      - passed
-     - 0.001
-   * - TC-UNIT-302
+     - 0.002
+   * - TC-UNIT-313
      - REQ-OPS-ST-01
      - test_check_spacy_reports_ok_when_model_is_installed
      - passed
      - 0.001
-   * - TC-UNIT-303
+   * - TC-UNIT-314
      - REQ-OPS-ST-01
      - test_check_spacy_reports_not_installed_without_downloading
      - passed
      - 0.001
-   * - TC-UNIT-304
+   * - TC-UNIT-315
      - REQ-CASC-L3-01
      - test_clear_pass_is_parsed_from_real_json
      - passed
      - 0.001
-   * - TC-UNIT-305
+   * - TC-UNIT-316
      - REQ-CASC-L3-01
      - test_clear_fail_is_parsed_from_real_json
      - passed
      - 0.001
-   * - TC-UNIT-306
+   * - TC-UNIT-317
      - REQ-CASC-L3-02
      - test_malformed_json_response_falls_back_to_a_distinguishable_false
      - passed
      - 0.001
-   * - TC-UNIT-307
+   * - TC-UNIT-318
      - REQ-CASC-L3-02
      - test_valid_json_missing_verdict_key_falls_back_cleanly
      - passed
      - 0.001
-   * - TC-UNIT-308
+   * - TC-UNIT-319
      - REQ-CASC-L3-03
      - test_confidence_outside_zero_one_range_is_clamped
      - passed
      - 0.001
-   * - TC-UNIT-309
+   * - TC-UNIT-320
      - REQ-CASC-L3-03
      - test_missing_confidence_and_rationale_stay_none_not_defaulted
      - passed
      - 0.001
-   * - TC-UNIT-310
+   * - TC-UNIT-321
      - REQ-CASC-L3-04
      - test_judge_model_varies_per_call_for_self_critic_mode
      - passed
      - 0.001
-   * - TC-UNIT-311
+   * - TC-UNIT-322
      - REQ-CASC-L3-04
      - test_request_asks_for_structured_json_mode
      - passed
      - 0.001
-   * - TC-UNIT-312
+   * - TC-UNIT-323
      - REQ-CASC-L3-02
      - test_parse_failures_set_the_parse_failed_flag_and_real_judgments_do_not
      - passed
      - 0.001
-   * - TC-UNIT-313
+   * - TC-UNIT-324
      - REQ-MET-LING-04
      - test_empty_text_returns_zero
      - passed
      - 0.001
-   * - TC-UNIT-314
+   * - TC-UNIT-325
      - REQ-MET-LING-04
      - test_single_short_token_returns_zero_not_nan
      - passed
-     - 0.008
-   * - TC-UNIT-315
+     - 0.006
+   * - TC-UNIT-326
      - REQ-MET-LING-04
      - test_pinned_value_on_a_fixed_sentence
      - passed
      - 0.008
-   * - TC-UNIT-316
+   * - TC-UNIT-327
      - REQ-MET-LING-04
      - test_longer_more_complex_sentence_scores_higher_than_a_short_simple_one
      - passed
-     - 0.016
-   * - TC-UNIT-317
+     - 0.017
+   * - TC-UNIT-328
      - REQ-MET-LING-04
      - test_result_is_rounded_to_three_decimals
      - passed
@@ -1640,72 +1695,72 @@ Integration
      - REQ-PAGE-AN-01
      - test_analytics_page_with_no_runs_shows_empty_state
      - passed
-     - 10.776
+     - 10.345
    * - TC-INTEGRATION-002
      - REQ-PAGE-AN-01
      - test_analytics_page_renders_all_three_subtabs_for_a_populated_run
      - passed
-     - 2.625
+     - 2.371
    * - TC-INTEGRATION-003
      - REQ-PAGE-AN-01
      - test_analytics_charts_fragment_for_known_run_returns_populated_charts
      - passed
-     - 1.720
+     - 1.769
    * - TC-INTEGRATION-004
      - REQ-PAGE-AN-01
      - test_analytics_charts_fragment_for_unknown_run_returns_404_with_message
      - passed
-     - 0.011
+     - 0.014
    * - TC-INTEGRATION-005
      - REQ-PAGE-AN-02
      - test_analytics_charts_does_not_500_on_a_sparse_pre_stage6_run
      - passed
-     - 0.194
+     - 0.271
    * - TC-INTEGRATION-006
      - REQ-PAGE-AN-02
      - test_analytics_charts_does_not_500_when_some_but_not_all_responses_lack_word_count
      - passed
-     - 1.718
+     - 1.613
    * - TC-INTEGRATION-007
      - REQ-PAGE-AN-02
      - test_analytics_charts_skips_high_dim_and_zipf_gracefully_when_columns_missing
      - passed
-     - 0.902
+     - 0.771
    * - TC-INTEGRATION-008
      - REQ-PAGE-AN-02
      - test_analytics_charts_include_prompt_strategy_charts_when_strategy_and_coherence_present
      - passed
-     - 2.046
+     - 1.673
    * - TC-INTEGRATION-009
      - REQ-OPS-ST-03
      - test_api_status_page_returns_200_and_reports_all_frontend_pages_checked
      - passed
-     - 14.764
+     - 13.042
    * - TC-INTEGRATION-010
      - REQ-OPS-ST-03
      - test_api_status_page_never_fires_side_effecting_or_streaming_routes
      - passed
-     - 13.820
+     - 12.575
    * - TC-INTEGRATION-011
      - REQ-OPS-ST-03
      - test_api_status_page_skips_run_id_routes_gracefully_when_no_runs_exist
      - passed
-     - 9.222
+     - 9.093
    * - TC-INTEGRATION-012
      - REQ-PAGE-BE-01
      - test_benchmark_page_with_no_runs_shows_empty_state
      - passed
-     - 0.011
+     - 0.010
    * - TC-INTEGRATION-013
      - REQ-PAGE-BE-01
      - test_benchmark_report_renders_overview_and_leaderboard_for_a_populated_run
      - passed
-     - 0.509
+     - 0.364
    * - TC-INTEGRATION-014
      - REQ-CORP-BENCH-02
      - test_leaderboard_states_that_its_weights_are_hand_picked_and_scores_are_run_relative
      - passed
-     - 0.496
+     - 0.398
    * - TC-INTEGRATION-015
      - REQ-PAGE-BE-01
      - test_benchmark_report_for_unknown_run_returns_404_with_message
@@ -1715,67 +1770,67 @@ Integration
      - REQ-PAGE-BE-01
      - test_benchmark_report_degrades_gracefully_on_a_sparse_pre_stage5_run
      - passed
-     - 0.011
+     - 0.010
    * - TC-INTEGRATION-017
      - REQ-PAGE-CL-01
      - test_clusters_page_with_no_runs_shows_empty_state
      - passed
-     - 0.018
+     - 0.016
    * - TC-INTEGRATION-018
      - REQ-PAGE-CL-01
      - test_clusters_charts_fragment_for_unknown_run_returns_404_with_message
      - passed
-     - 0.040
+     - 0.038
    * - TC-INTEGRATION-019
      - REQ-PAGE-CL-01
      - test_clusters_charts_degrades_gracefully_with_too_few_responses
      - passed
-     - 0.026
+     - 0.023
    * - TC-INTEGRATION-020
      - REQ-PAGE-CL-01
      - test_clusters_page_renders_all_three_subtabs_for_a_populated_run
      - passed
-     - 20.064
+     - 19.931
    * - TC-INTEGRATION-021
      - REQ-DATA-EXP-03
      - test_db_export_page_with_no_runs_shows_empty_state
      - passed
-     - 0.035
+     - 0.037
    * - TC-INTEGRATION-022
      - REQ-DATA-EXP-03
      - test_db_export_page_lists_runs_with_a_send_to_db_button
      - passed
-     - 0.032
+     - 0.036
    * - TC-INTEGRATION-023
      - REQ-DATA-EXP-03
      - test_db_export_page_has_bulk_select_checkboxes_wired_to_each_rows_own_button
      - passed
-     - 0.032
+     - 0.033
    * - TC-INTEGRATION-024
      - REQ-DATA-EXP-01
      - test_export_run_copies_responses_and_reports_success
      - passed
-     - 0.075
+     - 0.076
    * - TC-INTEGRATION-025
      - REQ-DATA-EXP-02
      - test_export_run_for_unknown_run_shows_a_clear_error_not_a_500
      - passed
-     - 0.011
+     - 0.010
    * - TC-INTEGRATION-026
      - REQ-DATA-EXP-02
      - test_export_run_twice_without_overwrite_shows_already_exported_with_a_reexport_action
      - passed
-     - 0.057
+     - 0.054
    * - TC-INTEGRATION-027
      - REQ-DATA-EXP-02
      - test_export_run_with_overwrite_true_replaces_rather_than_erroring
      - passed
-     - 0.077
+     - 0.078
    * - TC-INTEGRATION-028
      - REQ-DATA-EXP-04
      - test_export_failure_for_one_run_does_not_report_success_for_a_different_run
      - passed
-     - 0.050
+     - 0.056
    * - TC-INTEGRATION-029
      - REQ-DATA-EXP-03
      - test_db_export_page_shows_not_synced_for_a_run_never_exported
@@ -1785,12 +1840,12 @@ Integration
      - REQ-DATA-EXP-03
      - test_db_export_page_shows_the_real_synced_timestamp_after_an_export
      - passed
-     - 0.055
+     - 0.062
    * - TC-INTEGRATION-031
      - REQ-DATA-EXP-04
      - test_export_run_response_includes_an_out_of_band_update_for_the_sync_status_cell
      - passed
-     - 0.049
+     - 0.047
    * - TC-INTEGRATION-032
      - REQ-DATA-EXP-04
      - test_export_run_that_fails_does_not_include_a_sync_status_oob_update
@@ -1800,17 +1855,17 @@ Integration
      - REQ-GEN-SSE-02
      - test_start_returns_202_with_sse_fragment
      - passed
-     - 0.074
+     - 0.073
    * - TC-INTEGRATION-034
      - REQ-GEN-RUN-04
      - test_second_concurrent_start_is_rejected
      - passed
-     - 0.071
+     - 0.070
    * - TC-INTEGRATION-035
      - REQ-GEN-SSE-02
      - test_stream_yields_all_progress_events_in_order_then_closes
      - passed
-     - 0.212
+     - 0.213
    * - TC-INTEGRATION-036
      - REQ-GEN-SSE-02
      - test_stream_without_a_started_run_sends_error_and_closes
@@ -1825,22 +1880,22 @@ Integration
      - REQ-GEN-UI-01
      - test_experiments_page_renders_a_real_initial_preview_not_undefined
      - passed
-     - 0.007
+     - 0.008
    * - TC-INTEGRATION-039
      - REQ-GEN-UI-01
      - test_preview_renders_the_full_setup_summary_including_sweep_range
      - passed
-     - 0.009
+     - 0.010
    * - TC-INTEGRATION-040
      - REQ-GEN-UI-01
      - test_preview_shows_no_sweep_when_sweep_param_is_unset
      - passed
-     - 0.007
+     - 0.008
    * - TC-INTEGRATION-041
      - REQ-GEN-UI-01
      - test_preview_returns_total_tasks_without_starting_anything
      - passed
-     - 0.007
+     - 0.008
    * - TC-INTEGRATION-042
      - REQ-GEN-UI-02
      - test_start_returns_202_with_sse_fragment
@@ -1850,127 +1905,127 @@ Integration
      - REQ-GEN-RUN-03
      - test_start_over_the_cap_returns_413_and_does_not_start
      - passed
-     - 0.079
+     - 0.085
    * - TC-INTEGRATION-044
      - REQ-GEN-RUN-04
      - test_second_concurrent_start_is_rejected
      - passed
-     - 5.119
+     - 5.126
    * - TC-INTEGRATION-045
      - REQ-GEN-RUN-05
      - test_stop_with_no_run_in_progress_returns_409
      - passed
-     - 0.087
+     - 0.116
    * - TC-INTEGRATION-046
      - REQ-GEN-RUN-05
      - test_stop_mid_run_returns_200_and_the_run_actually_halts_early
      - passed
-     - 0.613
+     - 0.610
    * - TC-INTEGRATION-047
      - REQ-GEN-UI-02
      - test_self_critic_checkbox_is_honored
      - passed
-     - 0.720
+     - 0.589
    * - TC-INTEGRATION-048
      - REQ-GEN-UI-02
      - test_split_biases_produces_one_entry_per_bias
      - passed
-     - 1.516
+     - 1.600
    * - TC-INTEGRATION-049
      - REQ-GEN-RAG-02
      - test_rag_enabled_lazily_builds_the_knowledge_base
      - passed
-     - 0.298
+     - 0.296
    * - TC-INTEGRATION-050
      - REQ-GEN-RAG-02
      - test_get_knowledge_base_does_not_cache_a_failed_load
      - passed
-     - 0.003
+     - 0.002
    * - TC-INTEGRATION-051
      - REQ-GEN-RAG-02
      - test_rag_enabled_with_unbuildable_knowledge_base_returns_400_not_500
      - passed
-     - 0.010
+     - 0.008
    * - TC-INTEGRATION-052
      - REQ-GEN-SSE-03
      - test_progress_fragment_renders_a_real_progress_element_not_just_text
      - passed
-     - 0.002
+     - 0.001
    * - TC-INTEGRATION-053
      - REQ-GEN-SSE-03
      - test_progress_fragment_on_done_links_to_every_read_side_page
      - passed
-     - 0.002
+     - 0.001
    * - TC-INTEGRATION-054
      - REQ-GEN-SSE-03
      - test_progress_fragment_on_stopped_reports_partial_progress_and_links_to_results
      - passed
-     - 0.002
+     - 0.001
    * - TC-INTEGRATION-055
      - REQ-GEN-SSE-03
      - test_progress_fragment_while_in_progress_includes_a_stop_button
      - passed
-     - 0.002
+     - 0.001
    * - TC-INTEGRATION-056
      - REQ-GEN-SSE-03
      - test_progress_fragment_on_terminal_stages_omits_the_stop_button
      - passed
-     - 0.002
+     - 0.001
    * - TC-INTEGRATION-057
      - REQ-GEN-SSE-03
      - test_progress_fragment_on_error_shows_the_message
      - passed
-     - 0.002
+     - 0.001
    * - TC-INTEGRATION-058
      - REQ-GEN-SSE-02
      - test_stream_without_a_started_run_sends_error_and_closes
      - passed
-     - 0.011
+     - 0.008
    * - TC-INTEGRATION-059
      - REQ-PAGE-FAQ-01
      - test_faq_defaults_to_english
      - passed
-     - 0.085
+     - 0.075
    * - TC-INTEGRATION-060
      - REQ-PAGE-FAQ-01
      - test_faq_renders_ukrainian_when_selected
      - passed
-     - 0.169
+     - 0.458
    * - TC-INTEGRATION-061
      - REQ-PAGE-FAQ-01
      - test_faq_with_unknown_language_shows_inline_error_not_500
      - passed
-     - 0.010
+     - 0.009
    * - TC-INTEGRATION-062
      - REQ-PAGE-FAQ-01
      - test_faq_page_includes_language_switch_links
      - passed
-     - 0.087
+     - 0.077
    * - TC-INTEGRATION-063
      - REQ-PAGE-HYP-01
      - test_page_with_no_runs_shows_empty_state
      - passed
-     - 0.022
+     - 0.020
    * - TC-INTEGRATION-064
      - REQ-PAGE-HYP-01
      - test_page_with_a_run_lists_its_archetypes
      - passed
-     - 0.019
+     - 0.016
    * - TC-INTEGRATION-065
      - REQ-PAGE-HYP-01
      - test_archetypes_fragment_for_unknown_run_returns_404_with_a_clear_message
      - passed
-     - 0.011
+     - 0.009
    * - TC-INTEGRATION-066
      - REQ-PAGE-HYP-01
      - test_compare_renders_the_real_mean_shift_and_a_chart
      - passed
-     - 0.188
+     - 0.165
    * - TC-INTEGRATION-067
      - REQ-PAGE-HYP-01
      - test_compare_for_an_unknown_run_shows_a_clear_error_not_a_500
      - passed
-     - 0.009
+     - 0.008
    * - TC-INTEGRATION-068
      - REQ-PAGE-HYP-01
      - test_compare_with_an_archetype_missing_the_metric_shows_a_clear_error_not_a_500
@@ -1980,17 +2035,17 @@ Integration
      - REQ-PAGE-HYP-01
      - test_uncertainty_renders_distribution_shift_and_charts
      - passed
-     - 1.153
+     - 1.129
    * - TC-INTEGRATION-070
      - REQ-PAGE-HYP-01
      - test_uncertainty_for_an_unknown_run_shows_a_clear_error_not_a_500
      - passed
-     - 0.008
+     - 0.009
    * - TC-INTEGRATION-071
      - REQ-KG-PAGE-01
      - test_page_with_no_runs_shows_empty_state
      - passed
-     - 0.022
+     - 0.021
    * - TC-INTEGRATION-072
      - REQ-KG-PAGE-01
      - test_page_with_a_run_lists_it_and_its_archetypes
@@ -2000,12 +2055,12 @@ Integration
      - REQ-KG-SYNC-03
      - test_sync_calls_the_graph_repo_with_the_real_run_id_and_responses
      - passed
-     - 0.013
+     - 0.014
    * - TC-INTEGRATION-074
      - REQ-KG-SYNC-03
      - test_sync_reads_run_id_from_the_form_body_like_the_htmx_button_sends_it
      - passed
-     - 0.009
+     - 0.011
    * - TC-INTEGRATION-075
      - REQ-KG-SYNC-03
      - test_sync_without_a_run_id_shows_a_clear_error_not_a_422
@@ -2015,22 +2070,22 @@ Integration
      - REQ-KG-SYNC-03
      - test_sync_for_a_run_with_no_responses_shows_a_clear_error_not_a_500
      - passed
-     - 0.010
+     - 0.011
    * - TC-INTEGRATION-077
      - REQ-KG-SYNC-03
      - test_sync_when_neo4j_is_unreachable_shows_a_clear_error_not_a_500
      - passed
-     - 0.011
+     - 0.010
    * - TC-INTEGRATION-078
      - REQ-KG-Q-01
      - test_echo_by_model_renders_the_real_query_result
      - passed
-     - 0.018
+     - 0.020
    * - TC-INTEGRATION-079
      - REQ-KG-Q-01
      - test_terminal_stage_passes_the_archetype_and_renders_the_result
      - passed
-     - 0.011
+     - 0.010
    * - TC-INTEGRATION-080
      - REQ-KG-Q-01
      - test_rag_chunks_echo_renders_the_real_query_result
@@ -2050,12 +2105,12 @@ Integration
      - REQ-KG-ST-01
      - test_behavioral_communities_when_neo4j_is_unreachable_shows_a_clear_error_not_a_500
      - passed
-     - 0.009
+     - 0.010
    * - TC-INTEGRATION-084
      - REQ-KG-ST-02
      - test_structural_similarity_renders_the_top_pairs_and_the_anomaly
      - passed
-     - 0.016
+     - 0.017
    * - TC-INTEGRATION-085
      - REQ-KG-ST-02
      - test_structural_similarity_when_neo4j_is_unreachable_shows_a_clear_error_not_a_500
@@ -2070,47 +2125,47 @@ Integration
      - REQ-KG-PR-01
      - test_archetype_bias_pagerank_when_neo4j_is_unreachable_shows_a_clear_error_not_a_500
      - passed
-     - 0.009
+     - 0.011
    * - TC-INTEGRATION-088
      - REQ-KG-PR-01
      - test_archetype_bias_network_returns_a_self_contained_html_document
      - passed
-     - 0.096
+     - 0.100
    * - TC-INTEGRATION-089
      - REQ-KG-PR-01
      - test_archetype_bias_network_when_neo4j_is_unreachable_shows_a_clear_inline_error_not_a_500
      - passed
-     - 0.011
+     - 0.009
    * - TC-INTEGRATION-090
      - REQ-PAGE-ME-01
      - test_model_evo_page_with_no_runs_shows_empty_state
      - passed
-     - 0.010
+     - 0.008
    * - TC-INTEGRATION-091
      - REQ-PAGE-ME-01
      - test_model_evo_targets_lists_discrete_columns_for_a_populated_run
      - passed
-     - 0.016
+     - 0.012
    * - TC-INTEGRATION-092
      - REQ-PAGE-ME-01
      - test_model_evo_targets_for_unknown_run_returns_404_with_message
      - passed
-     - 0.012
+     - 0.009
    * - TC-INTEGRATION-093
      - REQ-PAGE-ME-01
      - test_model_evo_evaluate_renders_real_metrics_and_charts
      - passed
-     - 0.277
+     - 0.255
    * - TC-INTEGRATION-094
      - REQ-PAGE-ME-01
      - test_model_evo_evaluate_with_too_few_rows_renders_inline_error_not_500
      - passed
-     - 0.016
+     - 0.013
    * - TC-INTEGRATION-095
      - REQ-PAGE-ME-01
      - test_model_evo_evaluate_with_missing_target_column_renders_inline_error
      - passed
-     - 0.010
+     - 0.009
    * - TC-INTEGRATION-096
      - REQ-PAGE-ME-01
      - test_model_evo_evaluate_for_unknown_run_returns_404
@@ -2125,7 +2180,7 @@ Integration
      - REQ-PAGE-MON-01
      - test_monitor_schema_reports_correct_dtypes_for_a_populated_run
      - passed
-     - 0.015
+     - 0.017
    * - TC-INTEGRATION-099
      - REQ-PAGE-MON-01
      - test_monitor_schema_for_unknown_run_returns_404_with_message
@@ -2135,12 +2190,12 @@ Integration
      - REQ-PAGE-MON-01
      - test_monitor_schema_includes_a_data_preview_table
      - passed
-     - 0.015
+     - 0.014
    * - TC-INTEGRATION-101
      - REQ-PAGE-MON-01
      - test_monitor_schema_default_view_truncates_to_20_rows_with_a_show_all_link
      - passed
-     - 0.015
+     - 0.016
    * - TC-INTEGRATION-102
      - REQ-PAGE-MON-01
      - test_monitor_schema_full_true_returns_every_row
@@ -2150,27 +2205,27 @@ Integration
      - REQ-PAGE-NLP-01
      - test_nlp_page_with_no_runs_shows_empty_state
      - passed
-     - 0.010
+     - 0.009
    * - TC-INTEGRATION-104
      - REQ-PAGE-NLP-01
      - test_nlp_page_renders_all_three_subtabs_for_a_populated_run
      - passed
-     - 1.244
+     - 1.286
    * - TC-INTEGRATION-105
      - REQ-PAGE-NLP-01
      - test_nlp_charts_fragment_for_known_run_returns_populated_charts
      - passed
-     - 1.222
+     - 1.259
    * - TC-INTEGRATION-106
      - REQ-PAGE-NLP-01
      - test_nlp_charts_fragment_for_unknown_run_returns_404_with_message
      - passed
-     - 0.009
+     - 0.010
    * - TC-INTEGRATION-107
      - REQ-PAGE-NLP-01
      - test_nlp_charts_uses_self_focus_ext_not_self_focus_for_neuro_self_focus
      - passed
-     - 1.122
+     - 1.101
    * - TC-INTEGRATION-108
      - REQ-PAGE-RUNS-01
      - test_runs_page_with_no_runs_shows_empty_state
@@ -2180,7 +2235,7 @@ Integration
      - REQ-PAGE-RUNS-01
      - test_runs_page_selects_most_recently_started_run_by_default
      - passed
-     - 0.008
+     - 0.009
    * - TC-INTEGRATION-110
      - REQ-PAGE-RUNS-01
      - test_run_summary_fragment_for_known_run_returns_populated_table
@@ -2195,12 +2250,12 @@ Integration
      - REQ-CORP-JUDGE-01
      - test_runs_page_renders_the_judging_comparison_picker
      - passed
-     - 0.009
+     - 0.008
    * - TC-INTEGRATION-113
      - REQ-CORP-JUDGE-01
      - test_judging_comparison_fragment_shows_pass_rates_and_delta
      - passed
-     - 0.027
+     - 0.028
    * - TC-INTEGRATION-114
      - REQ-CORP-JUDGE-01
      - test_judging_comparison_fragment_for_unknown_run_returns_404_with_message
@@ -2210,12 +2265,12 @@ Integration
      - REQ-OPS-ST-02
      - test_status_json_reports_all_three_services_and_an_overall_flag
      - passed
-     - 0.012
+     - 0.010
    * - TC-INTEGRATION-116
      - REQ-OPS-ST-02
      - test_status_json_all_ok_true_when_every_service_is_up
      - passed
-     - 0.009
+     - 0.010
    * - TC-INTEGRATION-117
      - REQ-OPS-ST-02
      - test_status_json_all_ok_false_when_only_spacy_is_down
@@ -2273,7 +2328,7 @@ Legacy RAG
      - -
      - test_no_nan_critical
      - passed
-     - 0.029
+     - 0.025
    * - TC-LEGACYRAG-008
      - -
      - test_pos_mapping
@@ -2283,37 +2338,37 @@ Legacy RAG
      - -
      - test_neuro_fields_prefixed
      - passed
-     - 0.022
+     - 0.024
    * - TC-LEGACYRAG-010
      - REQ-RAG-02
      - test_load_knowledge_base_error_handling
      - passed
-     - 4.014
+     - 3.880
    * - TC-LEGACYRAG-011
      - REQ-RAG-01
      - test_metadata_integrity
      - passed
-     - 3.928
+     - 3.873
    * - TC-LEGACYRAG-012
      - REQ-RAG-02
      - test_retrieval_isolation_negative
      - passed
-     - 3.760
+     - 3.850
    * - TC-LEGACYRAG-013
      - REQ-RAG-01
      - test_chunk_granularity
      - passed
-     - 3.763
+     - 3.842
    * - TC-LEGACYRAG-014
      - REQ-RAG-02
      - test_query_before_load_safety
      - passed
-     - 3.802
+     - 3.709
    * - TC-LEGACYRAG-015
      - REQ-RAG-01
      - test_chunks_loaded
      - passed
-     - 3.962
+     - 3.902
    * - TC-LEGACYRAG-016
      - REQ-RAG-01
      - test_all_archetypes_present
@@ -2323,7 +2378,7 @@ Legacy RAG
      - REQ-RAG-01
      - test_valid_domains
      - passed
-     - 0.001
+     - 0.002
    * - TC-LEGACYRAG-018
      - REQ-RAG-01
      - test_no_empty_chunks
@@ -2343,12 +2398,12 @@ Legacy RAG
      - REQ-RAG-02
      - test_paranoid_signal_retrieval
      - passed
-     - 0.013
+     - 0.011
    * - TC-LEGACYRAG-022
      - REQ-RAG-02
      - test_retrieval_boundary_isolation
      - passed
-     - 0.013
+     - 0.011
    * - TC-LEGACYRAG-023
      - REQ-RAG-03
      - test_cosine_alignment_integrity
@@ -2358,12 +2413,12 @@ Legacy RAG
      - REQ-RAG-03
      - test_weighted_drift_calculation
      - passed
-     - 0.002
+     - 0.001
    * - TC-LEGACYRAG-025
      - REQ-RAG-02
      - test_retrieval_sanity_loop
      - passed
-     - 0.045
+     - 0.039
    * - TC-LEGACYRAG-026
      - -
      - test_feature_correlation_consistency
@@ -2373,7 +2428,7 @@ Legacy RAG
      - REQ-RAG-02
      - test_filtered_semantic_retrieval
      - passed
-     - 0.012
+     - 0.011
    * - TC-LEGACYRAG-028
      - REQ-RAG-02
      - test_unfiltered_retrieval_ranking
@@ -2383,4 +2438,4 @@ Legacy RAG
      - REQ-RAG-02
      - test_empty_query_handling
      - passed
-     - 0.012
+     - 0.010
