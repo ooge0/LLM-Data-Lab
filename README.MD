@@ -23,6 +23,16 @@ It is not a product and isn't meant to scale past one user on one machine — ev
 decision optimizes for correctness and testability over breadth of features or deployment
 sophistication.
 
+***Documentation***
+
+Full documentation is built with Sphinx and published on
+[ReadTheDocs](https://llm-data-lab.readthedocs.io/en/latest/index.html).
+To build locally:
+
+```bash
+sphinx-build -b html docs/source docs/html
+```
+
 **Quick summary**
 - App purpose: run AI/NLP models in different modes (Teacher–Student, Self‑Critic, Blind Mode) and collect structured results.
 - Parameters: supports sweeps of temperature, top‑p, penalties, max tokens.

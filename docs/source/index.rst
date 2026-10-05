@@ -1,5 +1,5 @@
 LLM Data Lab documentation
-======================
+===========================
 
 ``nn_lab`` (LLM Data Lab) is a portfolio project built to demonstrate one specific skill:
 testing large language models rigorously, not just using them. It generates synthetic text by
@@ -21,12 +21,14 @@ a one-shot script. It is not a product and isn't meant to scale past one user on
 ***Documentation***
 
 Full documentation is built with Sphinx and published on
-[ReadTheDocs](https://python-ta-web-api-framework.readthedocs.io/en/latest/index.html).
+`ReadTheDocs <https://llm-data-lab.readthedocs.io/en/latest/index.html>`_.
+
 To build locally:
 
-```bash
-sphinx-build -b html docs/source docs/html
-```
+.. code-block:: bash
+
+   sphinx-build -b html docs/source docs/html
+
 
 UI layers
 ------------
