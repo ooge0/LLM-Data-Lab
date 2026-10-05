@@ -1,0 +1,869 @@
+# Requirement catalogue for the QA traceability gate (CLAUDE.md section 7).
+# Generated mechanically from the plan file's Stage B1 draft (vivid-herding-blum.md) on 2026-10-02.
+# Edit the plan's draft and regenerate, rather than hand-editing this file piecemeal, so the two never drift.
+schema_version = 1
+
+[[epic]]
+id = "CASC"
+name = "Evaluation cascade"
+
+[[epic]]
+id = "MET"
+name = "Metrics"
+
+[[epic]]
+id = "GEN"
+name = "Generation and orchestration"
+
+[[epic]]
+id = "DATA"
+name = "Persistence and export"
+
+[[epic]]
+id = "CORP"
+name = "Corpus-level analysis"
+
+[[epic]]
+id = "PAGE"
+name = "Analysis pages"
+
+[[epic]]
+id = "KG"
+name = "Knowledge graph"
+
+[[epic]]
+id = "OPS"
+name = "Operations and project rules"
+
+[[epic]]
+id = "RAG"
+name = "Legacy RAG suite"
+
+[[feature]]
+id = "FEAT-CASC-L0"
+epic = "CASC"
+name = "Layer 0 deterministic gates"
+
+[[feature]]
+id = "FEAT-CASC-L1"
+epic = "CASC"
+name = "Layer 1 echo detector"
+
+[[feature]]
+id = "FEAT-CASC-L2"
+epic = "CASC"
+name = "Layer 2 NLI contradiction check"
+
+[[feature]]
+id = "FEAT-CASC-L3"
+epic = "CASC"
+name = "Structured judge"
+
+[[feature]]
+id = "FEAT-CASC-ROUTE"
+epic = "CASC"
+name = "Routing and verdict record"
+
+[[feature]]
+id = "FEAT-MET-SEM"
+epic = "MET"
+name = "Embedding similarity"
+
+[[feature]]
+id = "FEAT-MET-LING"
+epic = "MET"
+name = "Linguistic and psycholinguistic metrics"
+
+[[feature]]
+id = "FEAT-MET-REC"
+epic = "MET"
+name = "Metrics in the persisted record"
+
+[[feature]]
+id = "FEAT-GEN-OLL"
+epic = "GEN"
+name = "Ollama client"
+
+[[feature]]
+id = "FEAT-GEN-PROMPT"
+epic = "GEN"
+name = "Prompt strategy"
+
+[[feature]]
+id = "FEAT-GEN-RUN"
+epic = "GEN"
+name = "Experiment runner"
+
+[[feature]]
+id = "FEAT-GEN-RAG"
+epic = "GEN"
+name = "RAG-enabled generation"
+
+[[feature]]
+id = "FEAT-GEN-SSE"
+epic = "GEN"
+name = "Live progress"
+
+[[feature]]
+id = "FEAT-GEN-UI"
+epic = "GEN"
+name = "Experiment setup page"
+
+[[feature]]
+id = "FEAT-GEN-CLI"
+epic = "GEN"
+name = "Batch runner"
+
+[[feature]]
+id = "FEAT-DATA-JSONL"
+epic = "DATA"
+name = "JSONL store"
+
+[[feature]]
+id = "FEAT-DATA-SQL"
+epic = "DATA"
+name = "SQLite repository"
+
+[[feature]]
+id = "FEAT-DATA-EXP"
+epic = "DATA"
+name = "JSONL to SQLite export"
+
+[[feature]]
+id = "FEAT-DATA-CON"
+epic = "DATA"
+name = "Data contract"
+
+[[feature]]
+id = "FEAT-CORP-CL"
+epic = "CORP"
+name = "Clustering and cluster validity"
+
+[[feature]]
+id = "FEAT-CORP-HYP"
+epic = "CORP"
+name = "Hypothesis testing"
+
+[[feature]]
+id = "FEAT-CORP-BENCH"
+epic = "CORP"
+name = "Benchmark leaderboard"
+
+[[feature]]
+id = "FEAT-CORP-JUDGE"
+epic = "CORP"
+name = "Judging-mode comparison"
+
+[[feature]]
+id = "FEAT-CORP-SUM"
+epic = "CORP"
+name = "Run summary"
+
+[[feature]]
+id = "FEAT-PAGE-AN"
+epic = "PAGE"
+name = "/analytics"
+
+[[feature]]
+id = "FEAT-PAGE-NLP"
+epic = "PAGE"
+name = "/nlp"
+
+[[feature]]
+id = "FEAT-PAGE-RUNS"
+epic = "PAGE"
+name = "/runs"
+
+[[feature]]
+id = "FEAT-PAGE-CL"
+epic = "PAGE"
+name = "/clusters"
+
+[[feature]]
+id = "FEAT-PAGE-ME"
+epic = "PAGE"
+name = "/model_evo"
+
+[[feature]]
+id = "FEAT-PAGE-BE"
+epic = "PAGE"
+name = "/benchmark"
+
+[[feature]]
+id = "FEAT-PAGE-MON"
+epic = "PAGE"
+name = "/monitor"
+
+[[feature]]
+id = "FEAT-PAGE-FAQ"
+epic = "PAGE"
+name = "/faq"
+
+[[feature]]
+id = "FEAT-PAGE-HYP"
+epic = "PAGE"
+name = "/hypothesis_testing"
+
+[[feature]]
+id = "FEAT-KG-SYNC"
+epic = "KG"
+name = "Failure-mode graph sync"
+
+[[feature]]
+id = "FEAT-KG-PAGE"
+epic = "KG"
+name = "Knowledge graph page"
+
+[[feature]]
+id = "FEAT-KG-Q"
+epic = "KG"
+name = "Root-cause queries"
+
+[[feature]]
+id = "FEAT-KG-ST"
+epic = "KG"
+name = "Structural analysis"
+
+[[feature]]
+id = "FEAT-KG-PR"
+epic = "KG"
+name = "Archetype/Bias PageRank"
+
+[[feature]]
+id = "FEAT-OPS-ST"
+epic = "OPS"
+name = "Service status"
+
+[[feature]]
+id = "FEAT-OPS-CLI"
+epic = "OPS"
+name = "Operational console"
+
+[[feature]]
+id = "FEAT-OPS-CFG"
+epic = "OPS"
+name = "Config loader"
+
+[[feature]]
+id = "FEAT-OPS-ARCH"
+epic = "OPS"
+name = "Architecture rules"
+
+[[feature]]
+id = "FEAT-OPS-DOC"
+epic = "OPS"
+name = "Docs tooling"
+
+[[feature]]
+id = "FEAT-RAG-KB"
+epic = "RAG"
+name = "Knowledge base"
+
+[[requirement]]
+id = "REQ-CASC-L0-01"
+feature = "FEAT-CASC-L0"
+value = "High"
+text = "A raw response that is empty, whitespace-only, or JSON with an empty `text` value is classified `EMPTY`"
+
+[[requirement]]
+id = "REQ-CASC-L0-02"
+feature = "FEAT-CASC-L0"
+value = "High"
+text = "Non-JSON text is classified `TRUNCATED` when it looks cut off and `MALFORMED_JSON` otherwise"
+
+[[requirement]]
+id = "REQ-CASC-L0-03"
+feature = "FEAT-CASC-L0"
+value = "High"
+text = "Valid JSON without the `{\"text\": ...}` object shape is `SCHEMA_ERROR`; with it, `VALID`"
+
+[[requirement]]
+id = "REQ-CASC-L0-04"
+feature = "FEAT-CASC-L0"
+value = "High"
+text = "A Layer-0-rejected response skips metrics and the judge and is persisted with `v_ok=False`, `v_decided_by=\"layer0\"` and its raw text in `output`"
+
+[[requirement]]
+id = "REQ-CASC-L0-05"
+feature = "FEAT-CASC-L0"
+value = "Low"
+text = "`API_ERROR` and `FORMAT_ERROR` are assigned to responses"
+known_gap = true
+
+[[requirement]]
+id = "REQ-CASC-L1-01"
+feature = "FEAT-CASC-L1"
+value = "High"
+text = "`is_echo_response` rejects `semantic_overlap` above 0.5, pinned on the real calibration scores and at the boundary"
+
+[[requirement]]
+id = "REQ-CASC-L1-02"
+feature = "FEAT-CASC-L1"
+value = "High"
+text = "An echo-rejected response never reaches the judge, keeps its metric fields and is marked `v_decided_by=\"layer1\"`"
+
+[[requirement]]
+id = "REQ-CASC-L2-01"
+feature = "FEAT-CASC-L2"
+value = "Medium"
+text = "The NLI check runs only when both the RAG context and the response are non-empty; otherwise `checked=False`"
+
+[[requirement]]
+id = "REQ-CASC-L2-02"
+feature = "FEAT-CASC-L2"
+value = "Medium"
+text = "A clear factual contradiction is labelled `contradiction`, a consistent response is not, and the score is a probability in [0, 1]"
+
+[[requirement]]
+id = "REQ-CASC-L2-03"
+feature = "FEAT-CASC-L2"
+value = "Medium"
+text = "The NLI check is skipped for echo-rejected rows and runs exactly once for a non-echo row with RAG on"
+
+[[requirement]]
+id = "REQ-CASC-L2-04"
+feature = "FEAT-CASC-L2"
+value = "Medium"
+text = "Layer 2 gates responses on a threshold calibrated on real RAG-enabled data"
+known_gap = true
+
+[[requirement]]
+id = "REQ-CASC-L2-05"
+feature = "FEAT-CASC-L2"
+value = "Low"
+text = "Sentiment and toxicity classifiers score each response"
+known_gap = true
+
+[[requirement]]
+id = "REQ-CASC-L3-01"
+feature = "FEAT-CASC-L3"
+value = "High"
+text = "The judge parses real JSON into `{verdict, confidence, rationale}`: a clear pass and a clear fail (CLAUDE.md section 4)"
+
+[[requirement]]
+id = "REQ-CASC-L3-02"
+feature = "FEAT-CASC-L3"
+value = "High"
+text = "An unparseable judge reply yields `verdict=False`, `confidence=0.0`, `parse_failed=True`, distinguishable from a genuine \"no\""
+
+[[requirement]]
+id = "REQ-CASC-L3-03"
+feature = "FEAT-CASC-L3"
+value = "Medium"
+text = "Confidence is clamped to [0, 1]; missing confidence or rationale stay `None`"
+
+[[requirement]]
+id = "REQ-CASC-L3-04"
+feature = "FEAT-CASC-L3"
+value = "Medium"
+text = "The judge request asks for JSON mode and goes to the per-call model (student in self-critic mode, teacher otherwise)"
+
+[[requirement]]
+id = "REQ-CASC-ROUTE-01"
+feature = "FEAT-CASC-ROUTE"
+value = "High"
+text = "Routing is fixed Python control flow (Layer 0, metrics, Layer 1, Layer 2, Layer 3); a genuine response reaches the judge"
+
+[[requirement]]
+id = "REQ-CASC-ROUTE-02"
+feature = "FEAT-CASC-ROUTE"
+value = "High"
+text = "`v_decided_by` records who decided: `layer0`, `layer1`, `judge` or `judge_parse_failure`"
+
+[[requirement]]
+id = "REQ-MET-SEM-01"
+feature = "FEAT-MET-SEM"
+value = "High"
+text = "`semantic_similarity` is sentence-embedding cosine: identical text 1.0, paraphrase high, unrelated low, symmetric, clamped to [0, 1], empty text 0 without a model call"
+
+[[requirement]]
+id = "REQ-MET-SEM-02"
+feature = "FEAT-MET-SEM"
+value = "High"
+text = "The persisted `semantic_overlap` field uses that similarity, not token overlap, and the fix leaves other fields unchanged"
+
+[[requirement]]
+id = "REQ-MET-LING-01"
+feature = "FEAT-MET-LING"
+value = "High"
+text = "`zipf_deviation` matches a hand-computed RMSE and is zero or non-negative on edge inputs"
+
+[[requirement]]
+id = "REQ-MET-LING-02"
+feature = "FEAT-MET-LING"
+value = "Medium"
+text = "Social focus contrasts with self focus; hedge and booster ratios match fixed sentences and are zero on empty text"
+
+[[requirement]]
+id = "REQ-MET-LING-03"
+feature = "FEAT-MET-LING"
+value = "High"
+text = "`cognitive_load` averages three min-max-normalized components, equals 0.2 on the hand-computed sentence and stays in [0, 1]"
+
+[[requirement]]
+id = "REQ-MET-LING-04"
+feature = "FEAT-MET-LING"
+value = "Medium"
+text = "`dependency_distance` matches 2.286 on a fixed sentence, returns 0 for empty or one-token text, is rounded to 3 decimals"
+
+[[requirement]]
+id = "REQ-MET-LING-05"
+feature = "FEAT-MET-LING"
+value = "High"
+text = "TTR, readability ARI, coherence, modality and self focus are pinned on known inputs"
+known_gap = true
+
+[[requirement]]
+id = "REQ-MET-REC-01"
+feature = "FEAT-MET-REC"
+value = "High"
+text = "Colliding metric keys keep both values (`self_focus`/`self_focus_ext`, `word_count`/`word_count_raw`, `ms_per_word`/`ms_per_word_raw`)"
+
+[[requirement]]
+id = "REQ-MET-REC-02"
+feature = "FEAT-MET-REC"
+value = "Medium"
+text = "Ollama telemetry is persisted and `tokens_per_second` is derived, or `None` when the inputs are missing"
+
+[[requirement]]
+id = "REQ-GEN-OLL-01"
+feature = "FEAT-GEN-OLL"
+value = "High"
+text = "Calls native `/api/chat` with separate system and user messages, JSON format only in JSON mode, host derived from config with `/v1` stripped"
+
+[[requirement]]
+id = "REQ-GEN-OLL-02"
+feature = "FEAT-GEN-OLL"
+value = "Medium"
+text = "Token counts and nanosecond durations are mapped to fields in milliseconds; absent fields stay `None`"
+
+[[requirement]]
+id = "REQ-GEN-PROMPT-01"
+feature = "FEAT-GEN-PROMPT"
+value = "Medium"
+text = "Tuned, Blind and Raw modes build their specified prompts, exclude-archetype is honoured, an unknown mode raises"
+
+[[requirement]]
+id = "REQ-GEN-RUN-01"
+feature = "FEAT-GEN-RUN"
+value = "High"
+text = "The sweep range is computed correctly (linear, delta, descending, 2-decimal rounding) and each value is run with exactly one parameter overridden"
+
+[[requirement]]
+id = "REQ-GEN-RUN-02"
+feature = "FEAT-GEN-RUN"
+value = "High"
+text = "Total tasks equal students x archetypes x biases x steps, and a full grid produces exactly that many entries"
+
+[[requirement]]
+id = "REQ-GEN-RUN-03"
+feature = "FEAT-GEN-RUN"
+value = "High"
+text = "Invalid configs are rejected before any generation: missing teacher without self-critic, sweep without a range, more tasks than the cap"
+
+[[requirement]]
+id = "REQ-GEN-RUN-04"
+feature = "FEAT-GEN-RUN"
+value = "High"
+text = "Only one run at a time; a generation error emits an error event and frees the guard"
+
+[[requirement]]
+id = "REQ-GEN-RUN-05"
+feature = "FEAT-GEN-RUN"
+value = "Medium"
+text = "A stop request halts a run early, the flag resets on the next start, and stopping with nothing running is refused"
+
+[[requirement]]
+id = "REQ-GEN-RUN-06"
+feature = "FEAT-GEN-RUN"
+value = "Medium"
+text = "`extract_best_text` returns the `text` key of a JSON object and falls back to the raw text otherwise"
+
+[[requirement]]
+id = "REQ-GEN-RAG-01"
+feature = "FEAT-GEN-RAG"
+value = "Medium"
+text = "With RAG on, the query is built from archetype and bias, chunks are injected and RAG fields persisted; with RAG off the knowledge base is ignored"
+
+[[requirement]]
+id = "REQ-GEN-RAG-02"
+feature = "FEAT-GEN-RAG"
+value = "Medium"
+text = "The knowledge base is built lazily, a failed load is not cached, and an unbuildable one returns 400, not 500"
+
+[[requirement]]
+id = "REQ-GEN-RAG-03"
+feature = "FEAT-GEN-RAG"
+value = "Low"
+text = "The `KnowledgeBase` adapter delegates to `RAGEngine` with the right parameter names and defaults"
+
+[[requirement]]
+id = "REQ-GEN-SSE-01"
+feature = "FEAT-GEN-SSE"
+value = "High"
+text = "The thread-to-asyncio bridge delivers events from another thread in order"
+
+[[requirement]]
+id = "REQ-GEN-SSE-02"
+feature = "FEAT-GEN-SSE"
+value = "Medium"
+text = "The stream yields ordered progress events then closes; a stream without a started run sends an error and closes"
+
+[[requirement]]
+id = "REQ-GEN-SSE-03"
+feature = "FEAT-GEN-SSE"
+value = "Medium"
+text = "The progress fragment shows a real `<progress>` element, a stop button only while running, result links when done, partial progress when stopped, the message on error"
+
+[[requirement]]
+id = "REQ-GEN-UI-01"
+feature = "FEAT-GEN-UI"
+value = "Medium"
+text = "`/experiments` lists archetypes and prompt modes and renders a real setup preview, including total tasks, without starting anything"
+
+[[requirement]]
+id = "REQ-GEN-UI-02"
+feature = "FEAT-GEN-UI"
+value = "Medium"
+text = "Start returns 202 with the SSE fragment; self-critic is honoured; comma-separated biases produce one entry per bias"
+
+[[requirement]]
+id = "REQ-GEN-UI-03"
+feature = "FEAT-GEN-UI"
+value = "High"
+text = "In the browser, sweep sub-fields stay disabled until a parameter is chosen, Delta and MIN-MAX fields are mutually exclusive, and the toggle is reversible"
+
+[[requirement]]
+id = "REQ-GEN-UI-04"
+feature = "FEAT-GEN-UI"
+value = "High"
+text = "In the browser, MIN/MAX bounds match the selected parameter’s valid range"
+
+[[requirement]]
+id = "REQ-GEN-UI-05"
+feature = "FEAT-GEN-UI"
+value = "Medium"
+text = "In the browser, self-critic disables the teacher field, Enable RAG enables its fields, non-Tuned mode clears exclude-archetype, and archetypes are required"
+
+[[requirement]]
+id = "REQ-GEN-CLI-01"
+feature = "FEAT-GEN-CLI"
+value = "Medium"
+text = "A TOML config loads into `ExperimentConfig` (missing fields rejected), and a run prints progress and a done line and persists every response"
+
+[[requirement]]
+id = "REQ-DATA-JSONL-01"
+feature = "FEAT-DATA-JSONL"
+value = "High"
+text = "One JSON line per response, exact round trip, filtering by run, run metadata listed newest first, empty cases handled"
+
+[[requirement]]
+id = "REQ-DATA-SQL-01"
+feature = "FEAT-DATA-SQL"
+value = "High"
+text = "Runs (config as structured data) and responses round-trip, filter by run, upsert on the same id, list newest first, delete only the target run’s rows"
+
+[[requirement]]
+id = "REQ-DATA-SQL-02"
+feature = "FEAT-DATA-SQL"
+value = "Medium"
+text = "`last_synced_at` is stamped and refreshed on each save, reported by `get_sync_status`, and added to old databases automatically"
+
+[[requirement]]
+id = "REQ-DATA-EXP-01"
+feature = "FEAT-DATA-EXP"
+value = "High"
+text = "An export copies run metadata and every response exactly (including edge-case value types), leaves other runs untouched and creates the target directory"
+
+[[requirement]]
+id = "REQ-DATA-EXP-02"
+feature = "FEAT-DATA-EXP"
+value = "High"
+text = "Exporting an unknown or empty run fails clearly; a second export without overwrite is refused, with overwrite it replaces instead of duplicating"
+
+[[requirement]]
+id = "REQ-DATA-EXP-03"
+feature = "FEAT-DATA-EXP"
+value = "Medium"
+text = "`/db_export` lists runs with a per-row button, bulk select drives each row’s own button, and the status column shows \"Not synced\" or the real timestamp"
+
+[[requirement]]
+id = "REQ-DATA-EXP-04"
+feature = "FEAT-DATA-EXP"
+value = "High"
+text = "After an export the status cell is replaced in place (out-of-band swap) only on success, never stacked with the old value, and a re-export shows the newer timestamp"
+
+[[requirement]]
+id = "REQ-DATA-CON-01"
+feature = "FEAT-DATA-CON"
+value = "Medium"
+text = "`LabDataBridge` maps raw entries to `LabSchema` (parsing, dataframe, no NaN in critical fields, POS mapping, prefixed neuro fields), preferring `self_focus_ext` and falling back for old entries"
+
+[[requirement]]
+id = "REQ-CORP-CL-01"
+feature = "FEAT-CORP-CL"
+value = "High"
+text = "Fit indices (silhouette, Davies-Bouldin, label-alignment ARI, noise ratio) match pinned values on synthetic embeddings, with sentinels for a single cluster"
+
+[[requirement]]
+id = "REQ-CORP-CL-02"
+feature = "FEAT-CORP-CL"
+value = "Medium"
+text = "Plain HDBSCAN and the UMAP+HDBSCAN behavioural topology add their columns, filter invalid and short responses, label outliers as noise, and survive filtering every row"
+
+[[requirement]]
+id = "REQ-CORP-CL-03"
+feature = "FEAT-CORP-CL"
+value = "Medium"
+text = "K-Means+PCA clustering adds cluster and PCA columns, is a no-op on too few rows or no numeric data, and exposes component drivers only after fitting"
+
+[[requirement]]
+id = "REQ-CORP-HYP-01"
+feature = "FEAT-CORP-HYP"
+value = "Medium"
+text = "Mean-shift comparison between two archetypes reports real means, flags shifts over 50 percent, gives `None` when the base mean is 0, ignores nulls and fails clearly on missing data"
+
+[[requirement]]
+id = "REQ-CORP-HYP-02"
+feature = "FEAT-CORP-HYP"
+value = "Medium"
+text = "Bootstrap uncertainty analysis is deterministic for a seed, gives one row per archetype per metric, a non-negative KL divergence, and skips empty archetypes"
+
+[[requirement]]
+id = "REQ-CORP-BENCH-01"
+feature = "FEAT-CORP-BENCH"
+value = "High"
+text = "`final_score = 0.4 pass_rate + 0.3 coherence + 0.3 speed_score`, pass rate over unfiltered responses (not trivially 1.0), no `mimicry_score`"
+
+[[requirement]]
+id = "REQ-CORP-BENCH-02"
+feature = "FEAT-CORP-BENCH"
+value = "Medium"
+text = "The leaderboard states that its weights are hand-picked and its scores comparable only within one run"
+
+[[requirement]]
+id = "REQ-CORP-BENCH-03"
+feature = "FEAT-CORP-BENCH"
+value = "Low"
+text = "The leaderboard weights are validated against a ground truth"
+known_gap = true
+
+[[requirement]]
+id = "REQ-CORP-JUDGE-01"
+feature = "FEAT-CORP-JUDGE"
+value = "Medium"
+text = "Pass rate per run and the delta between two runs are computed; `None` for a run with only rejected responses; unknown labels when metadata is missing"
+
+[[requirement]]
+id = "REQ-CORP-SUM-01"
+feature = "FEAT-CORP-SUM"
+value = "Medium"
+text = "The run summary matches pinned totals, reports n/a without a sweep, and an unknown run raises"
+
+[[requirement]]
+id = "REQ-PAGE-AN-01"
+feature = "FEAT-PAGE-AN"
+value = "Medium"
+text = "Renders the three sub-tabs for a populated run, an empty state without runs, and a clear 404 for an unknown run"
+
+[[requirement]]
+id = "REQ-PAGE-AN-02"
+feature = "FEAT-PAGE-AN"
+value = "High"
+text = "Sparse or partially missing data degrades chart by chart instead of returning 500"
+
+[[requirement]]
+id = "REQ-PAGE-NLP-01"
+feature = "FEAT-PAGE-NLP"
+value = "Medium"
+text = "Renders the three sub-tabs, empty state and 404, and charts neuro self focus from `self_focus_ext`"
+
+[[requirement]]
+id = "REQ-PAGE-NLP-02"
+feature = "FEAT-PAGE-NLP"
+value = "High"
+text = "In the browser, charts in the default and in a switched tab render at full panel width"
+
+[[requirement]]
+id = "REQ-PAGE-RUNS-01"
+feature = "FEAT-PAGE-RUNS"
+value = "Medium"
+text = "Selects the newest run by default, renders its summary, an empty state and a clear 404"
+
+[[requirement]]
+id = "REQ-PAGE-CL-01"
+feature = "FEAT-PAGE-CL"
+value = "Medium"
+text = "Renders the three sub-tabs for a populated run, an empty state, a 404, and degrades with too few responses"
+
+[[requirement]]
+id = "REQ-PAGE-ME-01"
+feature = "FEAT-PAGE-ME"
+value = "Medium"
+text = "Lists discrete target columns, renders real fit metrics and charts, and shows inline errors (too few rows, missing target) and 404s"
+
+[[requirement]]
+id = "REQ-PAGE-BE-01"
+feature = "FEAT-PAGE-BE"
+value = "Medium"
+text = "Renders overview, charts and a leaderboard with a champion, an empty state, a 404, and degrades on a sparse run"
+
+[[requirement]]
+id = "REQ-PAGE-MON-01"
+feature = "FEAT-PAGE-MON"
+value = "Low"
+text = "Reports column dtypes and a preview table (20 rows by default, all rows on request), an empty state and a 404"
+
+[[requirement]]
+id = "REQ-PAGE-FAQ-01"
+feature = "FEAT-PAGE-FAQ"
+value = "Low"
+text = "Shows English by default and Ukrainian on request, an inline error for an unknown language, and language switch links"
+
+[[requirement]]
+id = "REQ-PAGE-HYP-01"
+feature = "FEAT-PAGE-HYP"
+value = "Medium"
+text = "Lists a run’s archetypes and renders real comparison and uncertainty results with charts; unknown runs and missing metrics give clear errors, not 500"
+
+[[requirement]]
+id = "REQ-KG-SYNC-01"
+feature = "FEAT-KG-SYNC"
+value = "High"
+text = "Lineage rows are correct: a Layer-0 reject reaches nothing past Layer 0, an echo reject can reach Layer 2 but never the judge, a judged response is marked, RAG chunks are parsed only with RAG on"
+
+[[requirement]]
+id = "REQ-KG-SYNC-02"
+feature = "FEAT-KG-SYNC"
+value = "Medium"
+text = "A sync sends the bootstrap and the UNWIND query and returns the real count; zero responses send no UNWIND"
+
+[[requirement]]
+id = "REQ-KG-SYNC-03"
+feature = "FEAT-KG-SYNC"
+value = "High"
+text = "`/knowledge_graph/sync` reads `run_id` from the form body as htmx sends it; a missing run id, an empty run and an unreachable Neo4j give inline errors, never 422 or 500"
+
+[[requirement]]
+id = "REQ-KG-PAGE-01"
+feature = "FEAT-KG-PAGE"
+value = "Low"
+text = "The page shows an empty state without runs and lists runs and their archetypes otherwise"
+
+[[requirement]]
+id = "REQ-KG-Q-01"
+feature = "FEAT-KG-Q"
+value = "Medium"
+text = "Echo rejections by model, terminal stage per archetype and RAG chunks linked to echo return the expected shape and render; an unreachable Neo4j gives an inline error"
+
+[[requirement]]
+id = "REQ-KG-ST-01"
+feature = "FEAT-KG-ST"
+value = "Medium"
+text = "Leiden: co-occurrence is materialized and projected before Leiden runs, the projection is dropped before and after even when Leiden fails, and modularity and rows render"
+
+[[requirement]]
+id = "REQ-KG-ST-02"
+feature = "FEAT-KG-ST"
+value = "Medium"
+text = "Structural similarity: FastRP embeddings before kNN, directed pairs deduplicated, self pairs excluded, top five kept, the weakest best match flagged as anomaly, projection dropped on failure"
+
+[[requirement]]
+id = "REQ-KG-ST-03"
+feature = "FEAT-KG-ST"
+value = "Low"
+text = "Leiden communities and UMAP/HDBSCAN clusters are compared with a measured agreement score (NMI)"
+known_gap = true
+
+[[requirement]]
+id = "REQ-KG-PR-01"
+feature = "FEAT-KG-PR"
+value = "Medium"
+text = "Weightless edges are deleted before projecting, the projection is dropped before and after, network data is deduplicated, the network view is a self-contained HTML document, offline gives an inline error"
+
+[[requirement]]
+id = "REQ-KG-PR-02"
+feature = "FEAT-KG-PR"
+value = "Medium"
+text = "Unweighted PageRank on the complete bipartite Archetype/Bias graph is uniform within each side regardless of counts; weighted scores separate nodes only when counts differ"
+
+[[requirement]]
+id = "REQ-OPS-ST-01"
+feature = "FEAT-OPS-ST"
+value = "Medium"
+text = "Ollama, NLTK and spaCy checks report the real state without downloading or changing anything"
+
+[[requirement]]
+id = "REQ-OPS-ST-02"
+feature = "FEAT-OPS-ST"
+value = "Low"
+text = "`/status` returns each service and an overall flag, and the widget shows one badge per service"
+
+[[requirement]]
+id = "REQ-OPS-ST-03"
+feature = "FEAT-OPS-ST"
+value = "Low"
+text = "`/api_status` checks every front-end page, never calls side-effecting or streaming routes, and skips run-id routes when no runs exist"
+
+[[requirement]]
+id = "REQ-OPS-CLI-01"
+feature = "FEAT-OPS-CLI"
+value = "Low"
+text = "`serve`, `status`, `list-runs` and `export-db` parse their arguments and return the documented exit codes"
+
+[[requirement]]
+id = "REQ-OPS-CFG-01"
+feature = "FEAT-OPS-CFG"
+value = "Low"
+text = "`MAX_TOTAL_TASKS` resolves as an int, unknown attributes raise, existing sections are unaffected"
+
+[[requirement]]
+id = "REQ-OPS-ARCH-01"
+feature = "FEAT-OPS-ARCH"
+value = "Medium"
+text = "Domain interfaces are runtime-checkable Protocols: fakes satisfy them and a non-conforming class fails all of them"
+
+[[requirement]]
+id = "REQ-OPS-ARCH-02"
+feature = "FEAT-OPS-ARCH"
+value = "Medium"
+text = "No module under `core/` imports a web framework or a visualization library"
+
+[[requirement]]
+id = "REQ-OPS-DOC-01"
+feature = "FEAT-OPS-DOC"
+value = "Low"
+text = "Tag-cloud term extraction and frequency counting behave as specified; the docs server refuses to start without a build"
+
+[[requirement]]
+id = "REQ-OPS-DOC-02"
+feature = "FEAT-OPS-DOC"
+value = "Low"
+text = "The QA test roster generator (`utils/list_tests.py`) is tested"
+known_gap = true
+
+[[requirement]]
+id = "REQ-RAG-01"
+feature = "FEAT-RAG-KB"
+value = "Medium"
+text = "Every archetype file loads as non-empty chunks of reasonable length, with valid domains and intact metadata"
+
+[[requirement]]
+id = "REQ-RAG-02"
+feature = "FEAT-RAG-KB"
+value = "Medium"
+text = "Retrieval returns relevant results, respects archetype filters and boundaries, ranks unfiltered results, and handles empty queries, queries before loading and load errors"
+
+[[requirement]]
+id = "REQ-RAG-03"
+feature = "FEAT-RAG-KB"
+value = "Low"
+text = "Embedding geometry: a matching text scores above a non-matching one, and weighted drift is computed correctly"
+
+[[requirement]]
+id = "REQ-RAG-04"
+feature = "FEAT-RAG-KB"
+value = "Low"
+text = "Cross-trait correlation consistency is checked against real generated data"
+known_gap = true
+

@@ -1,0 +1,21 @@
+[run]
+# The live code only. legacy/ and the streamlit_app*.py variants sit outside these directories on
+# purpose (CLAUDE.md SS5/SS12), so they are not measured and need no omit entry.
+source =
+    core
+    api
+    cli
+    web
+    utils
+omit =
+    */__pycache__/*
+
+[report]
+# Measured 2026-10-02: 78% (2506 of 3226 statements) over the non-e2e suite. The floor sits two
+# points below that so ordinary churn does not trip it but a real drop does; raise it when coverage
+# rises. Only enforced when pytest runs with --cov (tox -e py312).
+fail_under = 76
+exclude_lines =
+    pragma: no cover
+    raise NotImplementedError
+    if TYPE_CHECKING:

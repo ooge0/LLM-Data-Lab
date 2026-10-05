@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <script>
+  (function(){
+    try {
+      var theme = localStorage.getItem("nn_lab_theme") === "light" ? "light" : "dark";
+      if (theme === "light") {
+        document.documentElement.setAttribute("data-theme", "light");
+      }
+      document.cookie = "nn_lab_theme=" + theme + "; path=/; max-age=31536000; samesite=lax";
+      if (localStorage.getItem("nn_lab_sidebar_collapsed") === "1") {
+        document.documentElement.classList.add("sidebar-collapsed");
+      }
+    } catch (e) {}
+  })();
+  </script>
+  <title>nn_lab -- Hypothesis Testing</title>
+  <link rel="stylesheet" href="/static/style.css">
+  <script src="/static/vendor/htmx/htmx.min.js"></script>
+</head>
+<body>
+<div class="app-shell">
+  {% include "_nav.html" %}
+  <main>
+  <h1>Hypothesis Testing</h1>
+  <p>
+    Migrated 2026-09-05 from the retired Streamlit knowledge-graph script's "Hypothesis Testing" and
+    "Uncertainty Analysis" tabs -- pure pandas/numpy/scipy over one run's persisted responses, never
+    touched Neo4j (see <a href="/knowledge_graph">/knowledge_graph</a> for the capabilities that do).
+    Compares one metric's mean between two archetypes, then a fuller epistemic/aleatoric variance +
+    distribution-shift breakdown across all three metrics.
+  </p>
+
+  {% if runs %}
+  <label>
+    Run
+    <select name="run_id" hx-get="/hypothesis_testing/archetypes" hx-trigger="change" hx-target="#hypothesis-archetypes" hx-swap="outerHTML" hx-indicator="#run-picker-spinner">
+      {% for run in runs %}
+      <option value="{{ run.run_id }}" {% if run.run_id == selected_run_id %}selected{% endif %}>
+        {{ run.run_id }} ({{ run.started_at }}, {{ run.total_tasks }} tasks)
+      </option>
+      {% endfor %}
+    </select>
+    <span id="run-picker-spinner" class="htmx-indicator spinner" aria-hidden="true"></span>
+  </label>
+  {% include "_hypothesis_archetypes.html" %}
+  {% else %}
+  <p>No experiment runs found yet. Run one first via <a href="/experiments">/experiments</a>.</p>
+  {% endif %}
+  </main>
+</div>
+</body>
+</html>
