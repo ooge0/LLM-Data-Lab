@@ -4,8 +4,11 @@ write/read against a temp directory (no shared state with the real
 ``results/`` tree).
 """
 
+import pytest
 from core.adapters.jsonl_store import JSONLStore
 from core.domain.entities import ExperimentConfig, PromptMode, RunRecord
+
+pytestmark = pytest.mark.req("REQ-DATA-JSONL-01")
 
 
 def _make_run(run_id="run-1"):

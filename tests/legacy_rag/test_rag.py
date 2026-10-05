@@ -23,6 +23,7 @@ Covers:
 # ---------------------------------------------------------
 
 
+@pytest.mark.req("REQ-RAG-01")
 def test_chunks_loaded(rag):
     """
     Ensure the knowledge base is not empty after ingestion.
@@ -30,6 +31,7 @@ def test_chunks_loaded(rag):
     assert len(rag.store.chunks) > 0, "RAG knowledge base is empty"
 
 
+@pytest.mark.req("REQ-RAG-01")
 def test_all_archetypes_present(rag):
     """
     Ensure all expected archetype categories exist in the loaded dataset.
@@ -41,6 +43,7 @@ def test_all_archetypes_present(rag):
     assert not missing, f"Missing archetypes in knowledge base: {missing}"
 
 
+@pytest.mark.req("REQ-RAG-01")
 def test_valid_domains(rag):
     """
     Ensure all ingested chunks adhere to the allowed domain labels (schema validation).
@@ -68,6 +71,7 @@ def test_valid_domains(rag):
     assert not invalid, f"Invalid domains found in chunks: {set(invalid)}"
 
 
+@pytest.mark.req("REQ-RAG-01")
 def test_no_empty_chunks(rag):
     """
     Safety check: Ensure no empty or broken content chunks were ingested.
@@ -76,6 +80,7 @@ def test_no_empty_chunks(rag):
     assert len(empty) == 0, "Empty content detected in ingested chunks"
 
 
+@pytest.mark.req("REQ-RAG-01")
 def test_chunk_length_quality(rag):
     """
     Quality Gate: Ensure chunks are not degenerate (too short to provide context).
@@ -91,6 +96,7 @@ def test_chunk_length_quality(rag):
 # ---------------------------------------------------------
 
 
+@pytest.mark.req("REQ-RAG-02")
 def test_retrieval_returns_results(rag):
     """
     Verify that the vector store (e.g., FAISS) returns valid results for a basic query.
@@ -100,6 +106,7 @@ def test_retrieval_returns_results(rag):
     assert len(results) > 0, "Search engine failed to return any results"
 
 
+@pytest.mark.req("REQ-RAG-02")
 def test_paranoid_signal_retrieval(rag):
     """
     Semantic test: Ensure a query with strong paranoid keywords returns paranoid-tagged content.
@@ -109,6 +116,7 @@ def test_paranoid_signal_retrieval(rag):
     assert len(paranoid_hits) > 0, "Retrieval failed to identify paranoid signals for a relevant query"
 
 
+@pytest.mark.req("REQ-RAG-02")
 def test_retrieval_boundary_isolation(rag):
     """
     Isolation test: Ensure a query for 'Structured' traits does not leak 'Expressive' content.
@@ -125,6 +133,7 @@ def test_retrieval_boundary_isolation(rag):
     assert "hysteroid" not in types_in_results, "Cross-contamination: Expressive content leaked into Structured search"
 
 
+@pytest.mark.req("REQ-RAG-03")
 def test_cosine_alignment_integrity(rag):
     """
     Validate that the embedding model correctly ranks semantic similarity.
@@ -160,6 +169,7 @@ def test_cosine_alignment_integrity(rag):
 # ---------------------------------------------------------
 
 
+@pytest.mark.req("REQ-RAG-03")
 def test_weighted_drift_calculation():
     """
     Validate the Drift Index formula.
@@ -191,6 +201,7 @@ def test_weighted_drift_calculation():
     assert drift_high > 0.4, f"Failed to detect significant drift: {drift_high}"
 
 
+@pytest.mark.req("REQ-RAG-02")
 def test_retrieval_sanity_loop(rag):
     """
     Comprehensive smoke test for a variety of archetype queries.
@@ -226,6 +237,7 @@ def test_retrieval_sanity_loop(rag):
     ),
     strict=True,
 )
+@pytest.mark.req("REQ-RAG-04")
 def test_feature_correlation_consistency(rag):
     """
     Structural Integrity Check:

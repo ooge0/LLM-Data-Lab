@@ -134,12 +134,14 @@ def _fakes(fake_repo, fake_graph_repo):
     kg_router._graph_repo = orig_graph
 
 
+@pytest.mark.req("REQ-KG-PAGE-01")
 def test_page_with_no_runs_shows_empty_state(client):
     response = client.get("/knowledge_graph")
     assert response.status_code == 200
     assert "No experiment runs found yet" in response.text
 
 
+@pytest.mark.req("REQ-KG-PAGE-01")
 def test_page_with_a_run_lists_it_and_its_archetypes(client, fake_repo):
     fake_repo.save_run(_make_run("run-a", "2026-09-05T00:00:00Z"))
     fake_repo.save_response("run-a", {"archetype": "Detached", "bias": "toxic"})
@@ -152,6 +154,7 @@ def test_page_with_a_run_lists_it_and_its_archetypes(client, fake_repo):
     assert "Neutral" in response.text
 
 
+@pytest.mark.req("REQ-KG-SYNC-03")
 def test_sync_calls_the_graph_repo_with_the_real_run_id_and_responses(client, fake_repo, fake_graph_repo):
     fake_repo.save_run(_make_run("run-a", "2026-09-05T00:00:00Z"))
     fake_repo.save_response("run-a", {"archetype": "Detached", "bias": "toxic"})
@@ -163,6 +166,7 @@ def test_sync_calls_the_graph_repo_with_the_real_run_id_and_responses(client, fa
     assert fake_graph_repo.synced == [("run-a", 1)]
 
 
+@pytest.mark.req("REQ-KG-SYNC-03")
 def test_sync_reads_run_id_from_the_form_body_like_the_htmx_button_sends_it(client, fake_repo, fake_graph_repo):
     """
     The page's htmx button posts ``run_id`` as a form-encoded body (``hx-post`` + ``hx-include``), not
@@ -183,6 +187,7 @@ def test_sync_reads_run_id_from_the_form_body_like_the_htmx_button_sends_it(clie
     assert fake_graph_repo.synced == [("run-a", 1)]
 
 
+@pytest.mark.req("REQ-KG-SYNC-03")
 def test_sync_without_a_run_id_shows_a_clear_error_not_a_422(client, fake_graph_repo):
     """A form with no ``run_id`` (e.g. no runs exist yet) gets an inline message, and nothing is synced."""
     response = client.post("/knowledge_graph/sync", data={})
@@ -192,12 +197,14 @@ def test_sync_without_a_run_id_shows_a_clear_error_not_a_422(client, fake_graph_
     assert fake_graph_repo.synced == []
 
 
+@pytest.mark.req("REQ-KG-SYNC-03")
 def test_sync_for_a_run_with_no_responses_shows_a_clear_error_not_a_500(client):
     response = client.post("/knowledge_graph/sync", data={"run_id": "unknown-run"})
     assert response.status_code == 200
     assert "No responses found" in response.text
 
 
+@pytest.mark.req("REQ-KG-SYNC-03")
 def test_sync_when_neo4j_is_unreachable_shows_a_clear_error_not_a_500(client, fake_repo, fake_graph_repo):
     fake_repo.save_run(_make_run("run-a", "2026-09-05T00:00:00Z"))
     fake_repo.save_response("run-a", {"archetype": "Detached", "bias": "toxic"})
@@ -209,6 +216,7 @@ def test_sync_when_neo4j_is_unreachable_shows_a_clear_error_not_a_500(client, fa
     assert "Error syncing failure-mode graph" in response.text
 
 
+@pytest.mark.req("REQ-KG-Q-01")
 def test_echo_by_model_renders_the_real_query_result(client):
     response = client.get("/knowledge_graph/echo_by_model")
     assert response.status_code == 200
@@ -216,6 +224,7 @@ def test_echo_by_model_renders_the_real_query_result(client):
     assert "qwen" in response.text and "12" in response.text
 
 
+@pytest.mark.req("REQ-KG-Q-01")
 def test_terminal_stage_passes_the_archetype_and_renders_the_result(client, fake_graph_repo):
     response = client.get("/knowledge_graph/terminal_stage", params={"archetype": "Defensive"})
     assert response.status_code == 200
@@ -223,12 +232,14 @@ def test_terminal_stage_passes_the_archetype_and_renders_the_result(client, fake
     assert "Judge" in response.text and "PASS" in response.text
 
 
+@pytest.mark.req("REQ-KG-Q-01")
 def test_rag_chunks_echo_renders_the_real_query_result(client):
     response = client.get("/knowledge_graph/rag_chunks_echo")
     assert response.status_code == 200
     assert "paranoid" in response.text and "Behavior" in response.text and "36" in response.text
 
 
+@pytest.mark.req("REQ-KG-Q-01")
 def test_query_when_neo4j_is_unreachable_shows_a_clear_error_not_a_500(client, fake_graph_repo):
     fake_graph_repo.raise_on_query = True
     response = client.get("/knowledge_graph/echo_by_model")
@@ -236,6 +247,7 @@ def test_query_when_neo4j_is_unreachable_shows_a_clear_error_not_a_500(client, f
     assert "Error running query" in response.text
 
 
+@pytest.mark.req("REQ-KG-ST-01")
 def test_behavioral_communities_renders_modularity_and_the_community_rows(client):
     response = client.get("/knowledge_graph/behavioral_communities")
     assert response.status_code == 200
@@ -243,6 +255,7 @@ def test_behavioral_communities_renders_modularity_and_the_community_rows(client
     assert "Detached" in response.text and "qwen:latest" in response.text and "Defensive" in response.text
 
 
+@pytest.mark.req("REQ-KG-ST-01")
 def test_behavioral_communities_when_neo4j_is_unreachable_shows_a_clear_error_not_a_500(client, fake_graph_repo):
     fake_graph_repo.raise_on_query = True
     response = client.get("/knowledge_graph/behavioral_communities")
@@ -250,6 +263,7 @@ def test_behavioral_communities_when_neo4j_is_unreachable_shows_a_clear_error_no
     assert "Error running query" in response.text
 
 
+@pytest.mark.req("REQ-KG-ST-02")
 def test_structural_similarity_renders_the_top_pairs_and_the_anomaly(client):
     response = client.get("/knowledge_graph/structural_similarity")
     assert response.status_code == 200
@@ -258,6 +272,7 @@ def test_structural_similarity_renders_the_top_pairs_and_the_anomaly(client):
     assert "0.0000" in response.text
 
 
+@pytest.mark.req("REQ-KG-ST-02")
 def test_structural_similarity_when_neo4j_is_unreachable_shows_a_clear_error_not_a_500(client, fake_graph_repo):
     fake_graph_repo.raise_on_query = True
     response = client.get("/knowledge_graph/structural_similarity")
@@ -265,6 +280,7 @@ def test_structural_similarity_when_neo4j_is_unreachable_shows_a_clear_error_not
     assert "Error running query" in response.text
 
 
+@pytest.mark.req("REQ-KG-PR-01")
 def test_archetype_bias_pagerank_renders_the_real_query_result(client):
     response = client.get("/knowledge_graph/archetype_bias_pagerank")
     assert response.status_code == 200
@@ -272,6 +288,7 @@ def test_archetype_bias_pagerank_renders_the_real_query_result(client):
     assert "Detached" in response.text and "0.61" in response.text
 
 
+@pytest.mark.req("REQ-KG-PR-01")
 def test_archetype_bias_pagerank_when_neo4j_is_unreachable_shows_a_clear_error_not_a_500(client, fake_graph_repo):
     fake_graph_repo.raise_on_query = True
     response = client.get("/knowledge_graph/archetype_bias_pagerank")
@@ -279,6 +296,7 @@ def test_archetype_bias_pagerank_when_neo4j_is_unreachable_shows_a_clear_error_n
     assert "Error running query" in response.text
 
 
+@pytest.mark.req("REQ-KG-PR-01")
 def test_archetype_bias_network_returns_a_self_contained_html_document(client):
     response = client.get("/knowledge_graph/archetype_bias_network")
     assert response.status_code == 200
@@ -287,6 +305,7 @@ def test_archetype_bias_network_returns_a_self_contained_html_document(client):
     assert "Detached" in response.text
 
 
+@pytest.mark.req("REQ-KG-PR-01")
 def test_archetype_bias_network_when_neo4j_is_unreachable_shows_a_clear_inline_error_not_a_500(client, fake_graph_repo):
     fake_graph_repo.raise_on_query = True
     response = client.get("/knowledge_graph/archetype_bias_network")

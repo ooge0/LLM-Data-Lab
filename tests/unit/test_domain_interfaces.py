@@ -5,8 +5,11 @@ checkable at runtime (a conforming fake passes ``isinstance``, a
 non-conforming one fails it) rather than trivially satisfied by anything.
 """
 
+import pytest
 from core.domain.entities import ExperimentConfig, GenerationResult, JudgeVerdict, PromptMode, RunRecord
 from core.domain.interfaces import KnowledgeBase, LLMClient, Judge, PromptStrategy, Repository
+
+pytestmark = pytest.mark.req("REQ-OPS-ARCH-01")
 
 
 class FakeLLMClient:
@@ -114,6 +117,7 @@ def test_fake_llm_client_returns_generation_result_from_call_shape_matching_lega
     assert result.model == "qwen:latest"
 
 
+@pytest.mark.req("REQ-CASC-L3-01")
 def test_judge_verdict_confidence_and_rationale_are_optional():
     """JudgeVerdict can be constructed with only `verdict` -- both other fields stay valid as unset, e.g. for a malformed judge response StructuredJudge can't extract confidence/rationale from."""
     verdict = JudgeVerdict(verdict=False)

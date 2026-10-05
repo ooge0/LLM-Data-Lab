@@ -1,4 +1,4 @@
-08 — Beyond Hand-Written Queries: Graph Representation Learning as a Higher Abstraction Layer
+08 — Beyond hand-written queries: Graph representation learning as a higher abstraction layer
 ====================================================================================================
 
 Why this page exists
@@ -19,7 +19,7 @@ a new dependency: every GDS procedure named below was confirmed **live, on the a
 install**, not assumed from documentation (see *Confirmed available now* below).
 
 **Update, 2026-09-05 (same day, later): Stage 4 shipped.** The failure-mode graph was promoted the
-same day into the layered architecture (CLAUDE.md SS1's "Fourth entry"), explicitly to leave room
+same day into the layered architecture (the agent instructions' SS1's "Fourth entry"), explicitly to leave room
 to grow toward this page's techniques without a later redesign -- Stage 4 (structural embeddings +
 Leiden communities) is the first to graduate: :meth:`core.domain.interfaces.GraphRepository.behavioral_communities`
 / :meth:`core.adapters.neo4j_repo.Neo4jGraphRepo.behavioral_communities`, exposed as a real button
@@ -29,7 +29,7 @@ still open.
 The gap, precisely
 -----------------------
 
-The existing corpus-level analysis (CLAUDE.md SS3b, :doc:`../architecture`'s clustering pipeline)
+The existing corpus-level analysis (the agent instructions SS3b, :doc:`../architecture`'s clustering pipeline)
 already does real unsupervised structure-finding -- UMAP + HDBSCAN over the *linguistic feature
 matrix* (cognitive load, lexical density, etc.). The failure-mode graph (:doc:`07-knowledge-graph-results`)
 adds a second, independent data source: *relational* structure -- which archetype/bias/model/RAG-chunk
@@ -48,7 +48,7 @@ Neo4j's own benchmarking reports FastRP as "up to 75,000 times faster than Node2
 accuracy" [Neo4jFastRP]_, and FastRP's own theoretical grounding (very sparse random projection,
 backed by the Johnson-Lindenstrauss lemma) is a real, separate, cited result [Chen2019]_ -- not a
 Neo4j marketing claim taken on faith. This specific tradeoff -- 5 orders of magnitude cheaper for
-"equivalent accuracy" -- is exactly what CLAUDE.md's own standing "weak machine" constraint calls
+"equivalent accuracy" -- is exactly what the agent instructions' own standing "weak machine" constraint calls
 for, the same reasoning that picked ``all-MiniLM-L6-v2``/``nli-MiniLM2-L6-H768`` over larger models
 elsewhere in this project.
 
@@ -239,7 +239,7 @@ applies to the existing UMAP/HDBSCAN pipeline.
 Honest scope note
 ----------------------
 
-**Superseded, 2026-09-05:** this page originally stated everything here stays inside CLAUDE.md
+**Superseded, 2026-09-05:** this page originally stated everything here stays inside the agent instructions
 SS1's Neo4j quarantine, with no promotion into ``core.domain``/``core.adapters`` at all. That's no
 longer true at all, as of the same day: the failure-mode graph was promoted first (explicitly to
 leave room for this page's techniques to grow into real, tested code), Stages 4 and 5 both

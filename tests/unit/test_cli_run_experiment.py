@@ -20,6 +20,8 @@ from core.domain.entities import ExperimentConfig, PromptMode
 from core.services.experiment_runner import ExperimentRunner
 from tests.unit.test_experiment_runner import FakeJudge, FakeLLMClient, FakePromptStrategy, FakeRepository
 
+pytestmark = pytest.mark.req("REQ-GEN-CLI-01")
+
 _VALID_TOML = """
     student_models = ["qwen:latest"]
     teacher_model = "llama3:latest"
@@ -97,6 +99,7 @@ def test_run_prints_progress_and_done_lines_and_persists_every_response(tmp_path
     assert len(runner._repository.saved_responses) == 2
 
 
+@pytest.mark.req("REQ-GEN-RUN-03")
 def test_run_rejects_an_invalid_config_before_starting_and_returns_1():
     """A config with a sweep_param but no resolved sweep_min/sweep_max is rejected by try_start's own validation, printed as an ERROR line, exit code 1."""
     config = ExperimentConfig(
@@ -116,6 +119,7 @@ def test_run_rejects_an_invalid_config_before_starting_and_returns_1():
     assert "sweep_min/sweep_max" in out.getvalue()
 
 
+@pytest.mark.req("REQ-GEN-RUN-04")
 def test_run_reports_an_already_running_guard_as_exit_1(tmp_path):
     """If try_start returns None (a run already in progress), run() reports it clearly rather than hanging or crashing."""
     config = load_config(_write_toml(tmp_path, _VALID_TOML))

@@ -28,6 +28,7 @@ from core.services.cluster_discovery import (
 # --- compute_fit_indices: pinned, pure math -----------------------------
 
 
+@pytest.mark.req("REQ-CORP-CL-01")
 def test_compute_fit_indices_pinned_on_two_perfectly_separated_clusters():
     """
     Two tight, far-apart 2-point clusters -> silhouette should be very
@@ -46,6 +47,7 @@ def test_compute_fit_indices_pinned_on_two_perfectly_separated_clusters():
     assert result["noise_ratio"] == 0.0  # no -1 labels
 
 
+@pytest.mark.req("REQ-CORP-CL-01")
 def test_compute_fit_indices_single_cluster_uses_legacy_sentinels():
     """A single cluster (nothing to separate) can't compute silhouette/DBI -- matches the legacy app's own 0.0/99.0 sentinels, not a crash."""
     embedding = np.array([[0.0, 0.0], [1.0, 1.0], [2.0, 2.0]])
@@ -57,6 +59,7 @@ def test_compute_fit_indices_single_cluster_uses_legacy_sentinels():
     assert result["davies_bouldin"] == 99.0
 
 
+@pytest.mark.req("REQ-CORP-CL-01")
 def test_compute_fit_indices_ari_with_perfect_archetype_alignment():
     """ARI == 1.0 when cluster labels perfectly match the ground-truth archetype grouping."""
     embedding = np.array([[0.0, 0.0], [0.1, 0.1], [10.0, 10.0], [10.1, 10.1]])
@@ -68,6 +71,7 @@ def test_compute_fit_indices_ari_with_perfect_archetype_alignment():
     assert result["ari"] == pytest.approx(1.0)
 
 
+@pytest.mark.req("REQ-CORP-CL-01")
 def test_compute_fit_indices_noise_ratio():
     """noise_ratio is the fraction of rows labeled -1 (HDBSCAN's noise sentinel)."""
     embedding = np.zeros((10, 2))
@@ -97,6 +101,7 @@ def _synthetic_responses(n=40, seed=42):
     )
 
 
+@pytest.mark.req("REQ-CORP-CL-02")
 def test_run_plain_hdbscan_adds_cluster_columns():
     """cluster_id and cluster_name columns get added, cluster_name derived correctly from cluster_id."""
     df = _synthetic_responses(n=40)
@@ -113,6 +118,7 @@ def test_run_plain_hdbscan_adds_cluster_columns():
         assert non_noise["cluster_name"].str.startswith("Cluster ").all()
 
 
+@pytest.mark.req("REQ-CORP-CL-02")
 def test_run_plain_hdbscan_is_a_no_op_when_too_few_rows():
     """A dataset smaller than min_cluster_size is returned unchanged, not crashed on."""
     df = _synthetic_responses(n=3)
@@ -126,6 +132,7 @@ def test_run_plain_hdbscan_is_a_no_op_when_too_few_rows():
 # --- run_behavioral_topology: structural ------------------------------------
 
 
+@pytest.mark.req("REQ-CORP-CL-02")
 def test_run_behavioral_topology_adds_expected_columns():
     """x_vis/y_vis/cluster_id/cluster_name all get added, one row per (filtered) input row."""
     df = _synthetic_responses(n=40)
@@ -139,6 +146,7 @@ def test_run_behavioral_topology_adds_expected_columns():
     assert len(result.df) <= len(df)
 
 
+@pytest.mark.req("REQ-CORP-CL-02")
 def test_run_behavioral_topology_filters_invalid_responses_when_requested():
     """filter_v_ok=True drops rows where v_ok_numeric == 0."""
     df = _synthetic_responses(n=40)
@@ -157,6 +165,7 @@ def test_run_behavioral_topology_filters_invalid_responses_when_requested():
     assert len(result.df) <= 30
 
 
+@pytest.mark.req("REQ-CORP-CL-02")
 def test_run_behavioral_topology_filters_short_outputs():
     """min_words drops rows whose output has fewer words than the threshold."""
     df = _synthetic_responses(n=40)
@@ -173,6 +182,7 @@ def test_run_behavioral_topology_filters_short_outputs():
     assert "short" not in result.df["output"].values
 
 
+@pytest.mark.req("REQ-CORP-CL-02")
 def test_run_behavioral_topology_outliers_are_the_noise_labeled_subset():
     """outliers is exactly the cluster_id == -1 subset of df, nothing more or less."""
     df = _synthetic_responses(n=40)
@@ -185,6 +195,7 @@ def test_run_behavioral_topology_outliers_are_the_noise_labeled_subset():
     assert set(result.outliers.index).issubset(set(result.df.index))
 
 
+@pytest.mark.req("REQ-CORP-CL-02")
 def test_run_behavioral_topology_does_not_crash_when_filtering_removes_every_row():
     """
     Regression test for a real bug: filtering can legitimately leave zero
@@ -204,6 +215,7 @@ def test_run_behavioral_topology_does_not_crash_when_filtering_removes_every_row
     assert result.fit_indices == {}
 
 
+@pytest.mark.req("REQ-CORP-CL-02")
 def test_run_behavioral_topology_fit_indices_has_all_expected_keys():
     """fit_indices always has the four expected keys, values are floats."""
     df = _synthetic_responses(n=40)
@@ -220,6 +232,7 @@ def test_run_behavioral_topology_fit_indices_has_all_expected_keys():
 # --- ClusterDiscovery (KMeans+PCA, existing pre-Stage-10 module): first tests ever written for it ---
 
 
+@pytest.mark.req("REQ-CORP-CL-03")
 def test_cluster_discovery_process_data_adds_expected_columns():
     """process_data adds cluster_id (str), x, y (PCA coords) -- no unit test existed for this pre-existing module before Stage 10."""
     df = _synthetic_responses(n=40)
@@ -233,6 +246,7 @@ def test_cluster_discovery_process_data_adds_expected_columns():
     assert result["cluster_id"].apply(lambda v: isinstance(v, str)).all()
 
 
+@pytest.mark.req("REQ-CORP-CL-03")
 def test_cluster_discovery_is_a_no_op_when_fewer_rows_than_n_clusters():
     """
     Regression test for a real bug: KMeans(n_clusters=3) raised
@@ -252,6 +266,7 @@ def test_cluster_discovery_is_a_no_op_when_fewer_rows_than_n_clusters():
     assert len(result) == 2
 
 
+@pytest.mark.req("REQ-CORP-CL-03")
 def test_cluster_discovery_is_a_no_op_on_empty_numeric_data():
     """A DataFrame with no numeric columns at all is returned unchanged, not crashed on."""
     df = pd.DataFrame({"student": ["a", "b"], "archetype": ["x", "y"]})
@@ -262,6 +277,7 @@ def test_cluster_discovery_is_a_no_op_on_empty_numeric_data():
     assert "cluster_id" not in result.columns
 
 
+@pytest.mark.req("REQ-CORP-CL-03")
 def test_cluster_discovery_component_dependencies_available_after_process_data():
     """get_component_dependencies returns PC1/PC2 loadings after process_data has fit the PCA, keyed by feature name."""
     df = _synthetic_responses(n=40)
@@ -274,6 +290,7 @@ def test_cluster_discovery_component_dependencies_available_after_process_data()
     assert set(pc1.index) == set(discovery.feature_names)
 
 
+@pytest.mark.req("REQ-CORP-CL-03")
 def test_cluster_discovery_component_dependencies_none_before_fit():
     """Before process_data ever runs, get_component_dependencies returns (None, None) rather than raising."""
     discovery = ClusterDiscovery(n_clusters=2)

@@ -8,11 +8,14 @@ deterministically regardless of whether a real Ollama server, NLTK data
 directory, or spaCy model is present.
 """
 
+import pytest
 import nltk
 import ollama
 import spacy.util
 
 from core.services.status_checks import SPACY_MODEL_NAME, check_nltk, check_ollama, check_spacy
+
+pytestmark = pytest.mark.req("REQ-OPS-ST-01")
 
 
 class _FakeModel:

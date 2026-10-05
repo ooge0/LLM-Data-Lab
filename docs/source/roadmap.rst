@@ -4,7 +4,7 @@ Migration Roadmap
 ``nn_lab`` is being rebuilt from a single 3437-line Streamlit script into
 the layered architecture described in :doc:`architecture`, one stage at a
 time, each with its own tests verified before the next stage starts (see
-CLAUDE.md's "one front at a time" discipline). This page is the
+the agent instructions' "one front at a time" discipline). This page is the
 stage-by-stage record: what each stage built, why, and -- where relevant --
 real bugs found in the legacy code along the way and *deliberately not*
 carried forward. See :doc:`features` for what's actually usable today.
@@ -118,14 +118,14 @@ building on it.
    **2026-08-24 update:** this author-swap boundary was crossed. Following a direct code review by
    the author (four specific defects raised: the fake ``semantic_overlap`` field, the unnormalized
    ``cognitive_load`` average, and this stage's own known judge bug, plus a request for a QA page),
-   the author granted the AI agent one narrow, explicit exception to CLAUDE.md SS6's "author writes
+   the author granted the AI agent one narrow, explicit exception to the agent instructions' SS6's "author writes
    the moat" rule -- not a general lifting of the boundary. ``NaiveJudge`` was replaced by
    :class:`~core.adapters.structured_judge.StructuredJudge`, which genuinely parses the judge's JSON
    response instead of substring-matching ``"true"``. What did **not** change: the judge's own
    pass/fail *criteria* are untouched (still whatever the underlying LLM decides), and cascade
    Layer 2 (NLI/toxicity classifiers) remains unbuilt, still the author's to write. See
    :doc:`wiki/04-llm-analytics` for the full story, including a real Layer 1 threshold-inversion
-   finding from calibrating against this project's own data, and CLAUDE.md SS4 for the exact,
+   finding from calibrating against this project's own data, and the agent instructions SS4 for the exact,
    permanent record of what changed and why.
 
 Stage 5 -- ``ExperimentRunner`` core loop (generation-only)
@@ -368,7 +368,7 @@ features directly, no UMAP), and **Behavioral topology**
 two separate UMAP embeddings -- 2D for visualization, N-D for the actual clustering, matching the
 legacy app's own deliberate split, since forcing both onto one 2D projection distorts density -->
 HDBSCAN on the N-D embedding --> :func:`~core.services.cluster_discovery.compute_fit_indices`,
-CLAUDE.md SS3b's silhouette/Davies-Bouldin/ARI confirmatory-validation numbers). First use of
+the agent instructions' SS3b's silhouette/Davies-Bouldin/ARI confirmatory-validation numbers). First use of
 matplotlib in this rewrite (:mod:`web.plotting.mpl_render`, ``Agg`` backend, figure-to-base64-PNG),
 needed for HDBSCAN's own MST/condensed-tree plots.
 
@@ -597,7 +597,7 @@ assumptions:
   ``legacy/streamlit_app.py`` via ``git mv`` (history and the author's own pending uncommitted
   edits both preserved, nothing discarded).
 - **``streamlit_app_.py``:** investigated before asking -- turned out **not** to be the
-  "undifferentiated duplicate" the plan's own text (and CLAUDE.md SS12) assumed. A real diff shows
+  "undifferentiated duplicate" the plan's own text (and the agent instructions SS12) assumed. A real diff shows
   3013 changed lines and opposite Neo4j wiring, it's untracked in git (unlike every other
   ``streamlit_app*.py``), and it imports ``core.tabs.failure_taxonomy`` -- a module already deleted
   -- so it cannot currently run. Author chose to leave it untouched and investigate further before
@@ -613,28 +613,28 @@ assumptions:
   uses. Two files are byte-identical duplicates between the trees. Author's explicit choice: leave
   both trees exactly as they are -- a known, accepted state, not an unresolved question.
 
-**Documentation consolidation** (CLAUDE.md SS8): the architecture page gained three new diagrams
+**Documentation consolidation** (the agent instructions SS8): the architecture page gained three new diagrams
 generated from the real, finished code -- an entity-relationship diagram (``JSONLStore``'s two
 files vs. ``SQLiteRepo``'s two real tables, both serializing the same logical
 ``RunRecord``/response-dict pair), a two-part business-flow activity diagram (the write-path
-per-response cascade and the read-path corpus-level confirmatory analysis, matching CLAUDE.md
+per-response cascade and the read-path corpus-level confirmatory analysis, matching the agent instructions
 SS3a/SS3b exactly, traced through the real classes), and a class-relations diagram (every
 ``core.domain`` entity/interface and which adapter satisfies each). The existing component diagram
 was also fixed: it still referenced the already-removed ``OpenAIClient`` (Stage 3) and was missing
 five routers (``model_evo``/``benchmark``/``monitor``/``faq``/``clusters``) and
-``core/services/cluster_discovery.py``. README.MD was fully restructured into CLAUDE.md SS8's
+``core/services/cluster_discovery.py``. README.MD was fully restructured into the agent instructions' SS8's
 mandated order (Core app -> Services -> Architecture -> Tests -> API Reference) -- the old version
 was a 27-heading, un-thematic grab-bag mixing current content with confirmed-fictional material
 (a "TOX Commands Cheat Sheet" documenting ``lint``/``format``/``type``/``coverage``/``streamlit``/
 ``eval``/``rag``/``llm`` tox environments that don't exist in ``tox.ini``, and a "Phase 2" pointing
 at a ``run.bat``/``Makefile`` that don't exist on disk either -- both cut, not carried forward).
-CLAUDE.md itself updated: SS12's "pre-rewrite legacy layout" framing replaced with the actual
+the agent instructions itself updated: SS12's "pre-rewrite legacy layout" framing replaced with the actual
 current layout (Stages 0-15 built and primary), SS1/SS5's Neo4j bullets corrected, the
 ``failure_taxonomy``/``test_data``/``streamlit_app_.py`` findings folded in.
 
 **Representative files:** ``run_knowledge_graph.py`` (new), ``legacy/streamlit_app.py`` (moved via
 ``git mv``), ``docs/source/architecture.rst`` (3 new diagrams + component-diagram fixes),
-``README.MD`` (full restructure), ``CLAUDE.md`` (SS1/SS2/SS5/SS11/SS12 updated), ``docs/source/index.rst``.
+``README.MD`` (full restructure), ``the agent instructions`` (SS1/SS2/SS5/SS11/SS12 updated), ``docs/source/index.rst``.
 
 **Verification:** clean Sphinx rebuild (``-E -W --keep-going``) stays at the stable 9-warning
 baseline with all 5 architecture diagrams rendering as real images (spot-checked visually, not just
@@ -655,5 +655,5 @@ revisited only as a separate future plan after this one lands.
    **Superseded, 2026-09-05.** That separate future plan happened, the same day, in two steps: the
    failure-mode graph was promoted into the layered architecture first, then the rest of this
    subsystem (PageRank, network viz, Hypothesis Testing/Uncertainty Analysis) followed later the
-   same day. All three files named above are now deleted. Full record: CLAUDE.md SS1's Neo4j entry,
+   same day. All three files named above are now deleted. Full record: the agent instructions' SS1's Neo4j entry,
    :doc:`wiki/07-knowledge-graph-results`, :doc:`wiki/08-graph-representation-learning`.

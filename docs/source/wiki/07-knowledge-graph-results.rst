@@ -1,4 +1,4 @@
-07 — Knowledge Graph: Real Results, Not Just a Design
+07 — Knowledge graph: Real results, not just a design
 ==========================================================
 
 Why this page exists
@@ -13,7 +13,7 @@ subsystem had zero automated test coverage. This page is the record of fixing th
 capturing genuine output -- so the underlying claim can be defended with a reproducible result, not
 just a code walkthrough.
 
-This is a narrow, explicit exception to CLAUDE.md SS1's Neo4j quarantine ("untouched... no
+This is a narrow, explicit exception to the agent instructions' SS1's Neo4j quarantine ("untouched... no
 logic/behavior changes... without a separate explicit decision"), made the same way the earlier
 judge-fix exception was (SS4/SS6): the author asked for it directly, scoped tightly (a config fix,
 one real code bug fix, tests, and this writeup -- not a rewrite, not a move into
@@ -205,9 +205,9 @@ Honest, disclosed limitations -- still real, still worth naming
   test.** They cannot, on their own, prove a real Neo4j+GDS deployment still works after a future
   change -- only a manual run like the one captured above can. That gap is disclosed, not hidden,
   and is a direct consequence of this project's own no-Docker/no-disposable-test-database
-  constraint (CLAUDE.md SS2), not an oversight specific to this subsystem.
+  constraint (the agent instructions SS2), not an oversight specific to this subsystem.
 - This remains, deliberately, outside the FastAPI rewrite's layering (``core.domain`` /
-  ``core.services`` / ``core.adapters``) and outside its testing-rigor "moat" (CLAUDE.md SS1/SS6).
+  ``core.services`` / ``core.adapters``) and outside its testing-rigor "moat" (the agent instructions SS1/SS6).
   Today's fix makes the existing legacy code actually work and proves it once, live -- it does not
   promote this subsystem into the rewrite's own architecture or ongoing test discipline.
 

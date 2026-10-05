@@ -1,8 +1,8 @@
-# LLM data lab / Psycho-Data-Augmentor
+# LLM data lab / LLM data lab 
 
 ## Intro
 
-`nn_lab` (Psycho-Data-Augmentor) is a portfolio project built to demonstrate one specific skill:
+`nn_lab` (LLM Data Lab) is a portfolio project built to demonstrate one specific skill:
 testing large language models rigorously, not just using them. It generates synthetic text by
 conditioning local LLMs (via [Ollama](https://ollama.com), no paid API) on behavioral archetypes,
 then runs a validation and linguistic/statistical analysis pipeline over the resulting corpus to
@@ -393,10 +393,10 @@ sudo systemctl status neo4j
 
 ## Architecture
 
-### Migration Roadmap
+### Migration roadmap
 
 Staged rewrite from the original Streamlit monolith to the FastAPI architecture below — one stage
-at a time, each with its own tests, verified before the next started (CLAUDE.md §6's "one front at
+at a time, each with its own tests, verified before the next started (the agent instructions §6's "one front at
 a time" discipline). Full stage-by-stage detail, including bugs found in the legacy code along the
 way and deliberately *not* carried forward, lives in the
 [Sphinx roadmap page](docs/source/roadmap.rst) (rendered: `docs/source/_build/html/roadmap.html`).
@@ -426,7 +426,7 @@ code path (`run_knowledge_graph.py`) for a while, until a separate, later decisi
 migrated it fully into this same architecture (`/knowledge_graph`, see
 [UI layers](#ui-layers) above); `run_knowledge_graph.py` no longer exists.
 
-### Target Architecture (FastAPI, current)
+### Target architecture (FastAPI, current)
 
 Two front ends drive one service layer that only ever talks to `domain` interfaces — never directly
 to Ollama, SQLite, JSONL, or Neo4j.
@@ -496,7 +496,7 @@ flowchart TB
     ARAG --> KB
 ```
 
-### Deployment and Operations Architecture
+### Deployment and operations architecture
 
 The repository enforces a strict boundary between isolated validation (`tox`) and local application
 runtime (`.venv`):
@@ -518,7 +518,7 @@ Development         Testing    Development         Testing
  [win11 host]     [.tox sandbox] [ubuntu host]   [.tox sandbox]
 ```
 
-### Project Structure
+### Project structure
 
 ```text
 api/                             # FastAPI app: routers, pydantic DTOs, SSE endpoint
@@ -557,7 +557,7 @@ tox.ini                           # cross-platform test matrix (py312 / linux / 
 
 ## Tests
 
-Testing methodology is itself part of what this project demonstrates (CLAUDE.md §7) — see the
+Testing methodology is itself part of what this project demonstrates (the agent instructions §7) — see the
 Sphinx [QA page](docs/source/qa.rst) for the full traceability matrix, coverage numbers, and test
 roster.
 
@@ -618,7 +618,7 @@ pytest --html=results/pytest_test_results/pytest_report.html --self-contained-ht
 
 ---
 
-## API Reference
+## API reference
 
 Full API/architecture/QA documentation is generated with [Sphinx](https://www.sphinx-doc.org/) from
 docstrings (already configured — `docs/source/conf.py`, autodoc + napoleon + myst-parser +

@@ -14,6 +14,8 @@ from core.domain.entities import ExperimentConfig, PromptMode, RunRecord
 from core.services.metrics_engine import MetricsEngine
 from tests.unit.test_experiment_runner import FakeRepository
 
+pytestmark = pytest.mark.req("REQ-PAGE-RUNS-01")
+
 
 @pytest.fixture
 def client():
@@ -86,6 +88,7 @@ def test_run_summary_fragment_for_unknown_run_returns_404_with_message(client):
     assert "No responses found" in response.text or "never-started" in response.text
 
 
+@pytest.mark.req("REQ-CORP-JUDGE-01")
 def test_runs_page_renders_the_judging_comparison_picker(client, fake_repo):
     """GET /runs with runs present shows the self-critic-vs-teacher-judging comparison form."""
     fake_repo.save_run(_make_run("run-a", "2026-08-21T00:00:00Z"))
@@ -98,6 +101,7 @@ def test_runs_page_renders_the_judging_comparison_picker(client, fake_repo):
     assert 'name="run_id_b"' in response.text
 
 
+@pytest.mark.req("REQ-CORP-JUDGE-01")
 def test_judging_comparison_fragment_shows_pass_rates_and_delta(client, fake_repo):
     """GET /runs/judging_comparison for a self-critic run and a teacher-judged run renders both
     pass rates, both mode labels, and the delta -- a real end-to-end check of the router wiring, not
@@ -127,6 +131,7 @@ def test_judging_comparison_fragment_shows_pass_rates_and_delta(client, fake_rep
     assert "+100.0 pp" in response.text
 
 
+@pytest.mark.req("REQ-CORP-JUDGE-01")
 def test_judging_comparison_fragment_for_unknown_run_returns_404_with_message(client, fake_repo):
     """GET /runs/judging_comparison where one run_id has no persisted responses returns 404, not a 500."""
     fake_repo.save_run(_make_run("run-a", "2026-08-21T00:00:00Z"))

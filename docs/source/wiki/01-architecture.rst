@@ -1,4 +1,4 @@
-01 — Architecture: How the Pieces Actually Fit Together
+01 — Architecture: How the pieces actually fit together
 ===========================================================
 
 :doc:`../architecture` already has the target component diagram. This page answers a different
@@ -21,7 +21,7 @@ Inside that background thread, ``ExperimentRunner._run_one`` walks the same sequ
 ``student × archetype × bias × swept-value`` combination: build a prompt (optionally RAG-augmented
 via :class:`~core.domain.interfaces.KnowledgeBase`), call ``LLMClient.generate`` (concretely
 :class:`~core.adapters.ollama_client.OllamaClient`, a *synchronous* call to Ollama's native
-``/api/chat``), then run the per-response cascade (CLAUDE.md SS3a; see :doc:`04-llm-analytics` for
+``/api/chat``), then run the per-response cascade (the agent instructions SS3a; see :doc:`04-llm-analytics` for
 the full story, including a real threshold-inversion finding): **Layer 0**
 (:func:`core.analysis.response_classification.classify_response` -- deterministic
 ``VALID``/``EMPTY``/``MALFORMED_JSON``/``TRUNCATED``/``SCHEMA_ERROR`` gates) runs first; a
@@ -35,7 +35,7 @@ rejection ``JudgeVerdict`` is recorded without ever calling the real judge. Only
 clears both layers reaches ``Judge.evaluate`` (concretely
 :class:`~core.adapters.structured_judge.StructuredJudge`, itself another synchronous LLM call, and
 -- as of 2026-08-24 -- one that genuinely parses the judge's JSON instead of substring-matching
-``"true"``). Cascade **Layer 2** (NLI/sentiment/toxicity classifiers) is not built; CLAUDE.md SS6
+``"true"``). Cascade **Layer 2** (NLI/sentiment/toxicity classifiers) is not built; the agent instructions SS6
 reserves it for the author to hand-write. Everything merges into one flat record (now including
 ``layer0_classification``/``layer1_echo_detected``/``v_confidence``/``v_rationale``) and persists via
 ``Repository.save_response`` (concretely :class:`~core.adapters.jsonl_store.JSONLStore`, which
@@ -122,8 +122,8 @@ module-global ``_runner``, with no per-user or per-session keying anywhere. A se
 ``POST /experiments/start`` while a run is in flight is rejected outright (409 at the HTTP layer,
 tested directly), not queued. This single-run guard is asserted as deliberate in several places'
 own docstrings/comments ("single-user, single-session per the project's deployment constraints") --
-worth noting precisely: that exact phrase is this codebase's own recurring gloss on CLAUDE.md's
-stated context (a solo author, a bare-metal/no-cloud deployment target), not a sentence CLAUDE.md
+worth noting precisely: that exact phrase is this codebase's own recurring gloss on the agent instructions'
+stated context (a solo author, a bare-metal/no-cloud deployment target), not a sentence the agent instructions
 itself contains verbatim. The design choice is real and load-bearing regardless of where the words
 for it came from.
 

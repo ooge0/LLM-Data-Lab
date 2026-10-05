@@ -66,6 +66,7 @@ def engine():
     return MetricsEngine(FakeRepository({"run-1": FIXTURE_RESPONSES}))
 
 
+@pytest.mark.req("REQ-CORP-SUM-01")
 def test_summarize_run_pins_exact_totals(engine):
     """The fixed two-record fixture aggregates to exactly these totals -- any drift is a real regression."""
     summary = engine.summarize_run("run-1")
@@ -89,12 +90,14 @@ def test_summarize_run_pins_exact_totals(engine):
     }
 
 
+@pytest.mark.req("REQ-CORP-SUM-01")
 def test_summarize_run_for_unknown_run_id_raises_run_not_found(engine):
     """summarize_run() on a run with no persisted responses raises RunNotFoundError rather than silently returning an empty summary."""
     with pytest.raises(RunNotFoundError):
         engine.summarize_run("never-started")
 
 
+@pytest.mark.req("REQ-CORP-SUM-01")
 def test_summarize_run_with_no_sweep_reports_na(engine):
     """A run with no sweep_param/val on any response reports 'N/A' rather than crashing on min()/max() of nothing."""
     repo = FakeRepository(
@@ -143,6 +146,7 @@ def _response(word_count, v_ok_numeric):
     return {"word_count": word_count, "v_ok_numeric": v_ok_numeric}
 
 
+@pytest.mark.req("REQ-CORP-JUDGE-01")
 def test_compare_judging_modes_pins_pass_rate_and_delta_for_two_runs():
     """3/4 clean self-critic responses pass (0.75), 1/2 clean teacher-judged responses pass (0.5)
     -- delta is exactly 0.25, not recomputed loosely."""
@@ -186,6 +190,7 @@ def test_compare_judging_modes_pins_pass_rate_and_delta_for_two_runs():
     assert result["delta"] == 0.25
 
 
+@pytest.mark.req("REQ-CORP-JUDGE-01")
 def test_compare_judging_modes_unknown_run_raises_run_not_found():
     repo = FakeRepository(responses_by_run={"run-a": [_response(10, 1)]})
 
@@ -193,6 +198,7 @@ def test_compare_judging_modes_unknown_run_raises_run_not_found():
         MetricsEngine(repo).compare_judging_modes("run-a", "never-started")
 
 
+@pytest.mark.req("REQ-CORP-JUDGE-01")
 def test_compare_judging_modes_run_with_only_rejected_responses_reports_none_pass_rate_not_a_crash():
     """A run where every response was Layer-0-rejected (word_count never computed) has real
     responses on disk but nothing to average -- delta must be None, not a ZeroDivisionError."""
@@ -210,6 +216,7 @@ def test_compare_judging_modes_run_with_only_rejected_responses_reports_none_pas
     assert result["delta"] is None
 
 
+@pytest.mark.req("REQ-CORP-JUDGE-01")
 def test_compare_judging_modes_without_run_metadata_reports_unknown_labels_not_a_crash():
     """list_runs() returning nothing for a run_id (e.g. metadata not yet indexed) degrades to
     self_critic=None/teacher_model=None rather than raising."""

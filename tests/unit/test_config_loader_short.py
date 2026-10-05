@@ -7,7 +7,10 @@ sections it resolves (used by the live legacy app and by
 still untouched.
 """
 
+import pytest
 from utils import config_loader_short
+
+pytestmark = pytest.mark.req("REQ-OPS-CFG-01")
 
 
 def test_max_total_tasks_resolves_as_int():

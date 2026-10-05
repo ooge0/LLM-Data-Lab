@@ -1,3 +1,6 @@
+import pytest
+
+pytestmark = pytest.mark.req("REQ-RAG-02")
 # test/test_rag_logic.py
 
 

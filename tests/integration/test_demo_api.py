@@ -13,6 +13,8 @@ from fastapi.testclient import TestClient
 from api.app import app
 from core.services._demo_runner import demo_runner
 
+pytestmark = pytest.mark.req("REQ-GEN-SSE-02")
+
 
 @pytest.fixture
 def client():
@@ -50,6 +52,7 @@ def test_start_returns_202_with_sse_fragment(client):
     assert 'sse-close="progress-done"' in response.text
 
 
+@pytest.mark.req("REQ-GEN-RUN-04")
 def test_second_concurrent_start_is_rejected(client):
     """A second POST /demo/start while one is in flight is rejected with 409 (the concurrent-run guard)."""
     first = client.post("/demo/start")

@@ -73,16 +73,16 @@ of a form. See :doc:`operations` for a full run-through.
   :doc:`operations` for using it standalone).
 - ``structured_judge.py`` -- ``StructuredJudge`` (2026-08-24, replaces the former ``naive_judge.py``
   / ``NaiveJudge``): genuinely parses the judge model's ``{verdict, confidence, rationale}`` JSON
-  instead of substring-matching ``"true"``. CLAUDE.md SS4's author-swap boundary, now crossed by one
-  narrow, explicit exception (CLAUDE.md SS6) -- the judge's own pass/fail *criteria* are still
+  instead of substring-matching ``"true"``. the agent instructions' SS4's author-swap boundary, now crossed by one
+  narrow, explicit exception (the agent instructions SS6) -- the judge's own pass/fail *criteria* are still
   whatever the underlying LLM decides, not authored here.
 - ``prompt_strategy.py`` -- ``NaivePromptStrategy``, the three system-prompt construction modes.
 - ``rag/`` -- ``chunking.py``, ``ingestion.py`` (``RAGEngine``), ``retriever.py``,
   ``vector_store.py`` (FAISS), ``knowledge_base.py`` (the ``RAGKnowledgeBase`` adapter wrapping
   ``RAGEngine`` behind the ``KnowledgeBase`` interface).
 
-``core/analysis/`` -- the metric-computation "moat" (CLAUDE.md SS1)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+``core/analysis/`` -- the metric-computation "moat" (the agent instructions SS1)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Pre-existing, framework-agnostic modules, wired behind ``domain`` interfaces via
 ``ExperimentRunner`` rather than rewritten: ``nlp_science.py`` (``PsychScientist`` -- sentiment,
@@ -94,7 +94,7 @@ KMeans+PCA class -- distinct from ``core/services/cluster_discovery.py``'s newer
 workflow), ``model_evaluation.py`` (``ModelEvaluation``, the ``/model_evo`` baseline classifier).
 ``response_classification.py`` (new 2026-08-24) -- Layer 0 (``classify_response``, deterministic
 validity gates) and Layer 1 (``is_echo_response``, embedding-based echo detection) of the
-per-response cascade (CLAUDE.md SS3a), wired into ``ExperimentRunner._run_one`` ahead of the other
+per-response cascade (the agent instructions SS3a), wired into ``ExperimentRunner._run_one`` ahead of the other
 metrics and the judge call.
 
 Legacy -- reference-only
@@ -104,7 +104,7 @@ Legacy -- reference-only
   reference-only. **Update, 2026-09-05:** its last remaining live descendant,
   ``core/tabs/knowledge_graph.py`` (reached via ``run_knowledge_graph.py``), is now fully migrated
   and deleted -- along with ``core/service/neo4j_service.py`` and
-  ``utils/other/neo4j_services.py``, both dead once their only callers were gone. See CLAUDE.md
+  ``utils/other/neo4j_services.py``, both dead once their only callers were gone. See the agent instructions
   SS1's Neo4j entry and :doc:`wiki/07-knowledge-graph-results` for the full migration record.
 
 Supporting
@@ -118,7 +118,7 @@ Supporting
   ``[EXPERIMENT]`` sections. ``config/config.toml`` -- Streamlit server settings only.
   ``config/knowledge_base.json`` -- unused today, superseded by ``knowledge/rag/``'s directory of
   ``.txt`` files (see the ``DIRECTORIES``-vs-``FILES`` ``knowledge_path`` key collision noted in
-  CLAUDE.md SS5 if you're tracing why).
+  the agent instructions SS5 if you're tracing why).
 - ``knowledge/rag/`` -- the RAG knowledge-base text files.
 - ``tests/`` -- see :doc:`qa` for the full breakdown; ``conftest.py`` provides the session-scoped
   ``rag`` fixture every RAG test shares.

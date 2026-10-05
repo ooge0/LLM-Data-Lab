@@ -118,6 +118,7 @@ Archetype/Bias PageRank; replaces the deleted ``test_knowledge_graph.py``, which
 now-deleted Streamlit tab's query construction/ordering), and Hypothesis Testing/Uncertainty
 Analysis (``test_hypothesis_testing.py``, 10 tests -- pure pandas/scipy, no Neo4j; migrated the
 same day as a separate, new page, not part of ``GraphRepository``) (27 files, 251 tests).
+
 **Integration / API** -- through the real
 FastAPI app via ``TestClient`` (``test_analytics_api.py``, ``test_api_status_api.py``,
 ``test_benchmark_api.py``, ``test_clusters_api.py``, ``test_db_export_api.py``, ``test_demo_api.py``,
@@ -126,14 +127,14 @@ FastAPI app via ``TestClient`` (``test_analytics_api.py``, ``test_api_status_api
 the fixed PageRank/network-viz endpoints), ``test_model_evo_api.py``,
 ``test_monitor_api.py``, ``test_nlp_api.py``, ``test_runs_api.py``
 (now including the judging-comparison endpoint), ``test_status_api.py``; 15 files, 115 tests).
-**Legacy
-RAG suite** -- predates the FastAPI rewrite entirely (``test_contract.py``,
-``test_ingestion_robustness.py``, ``test_rag.py``, ``test_rag_logic.py``; 4 files, 29 tests; a 5th
+
+**Legacy RAG suite** -- predates the FastAPI rewrite entirely (``test_contract.py``, ``test_ingestion_robustness.py``, ``test_rag.py``, ``test_rag_logic.py``; 4 files, 29 tests; a 5th
 file, ``rag_audit.py``, is a manual audit script living alongside them -- its one ``test_``-prefixed
 function was never actually collected by pytest, since the filename itself doesn't match pytest's
 default ``test_*.py`` discovery pattern, so it isn't counted here) -- 0 currently fail (1 xfailed by
-design, not a real failure -- see *Known issues* below). **E2E, Playwright** -- real Chromium
-browser via ``pytest-playwright`` against a real ``uvicorn`` server on a background thread (3
+design, not a real failure -- see *Known issues* below).
+
+**E2E, Playwright** -- real Chromium browser via ``pytest-playwright`` against a real ``uvicorn`` server on a background thread (3
 files, 16 tests): ``test_experiments_e2e.py`` (13 tests) covers exactly what ``TestClient``-based
 tests structurally cannot -- client-side JS behavior on ``/experiments`` -- conditional field
 enabling/disabling for the sweep/RAG/self-critic/prompt-mode controls, dynamic per-parameter

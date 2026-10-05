@@ -33,6 +33,7 @@ def experiments_page(live_server, page):
 # --- Sweep parameter: disabled-by-default, correctly re-enabled -------------
 
 
+@pytest.mark.req("REQ-GEN-UI-03")
 def test_sweep_fields_are_disabled_when_no_sweep_parameter_selected(experiments_page):
     """
     Regression test for the reported bug: 'Steps' (and every other sweep
@@ -44,6 +45,7 @@ def test_sweep_fields_are_disabled_when_no_sweep_parameter_selected(experiments_
         assert form.is_disabled(field_id), f"#{field_id} should start disabled"
 
 
+@pytest.mark.req("REQ-GEN-UI-03")
 def test_selecting_a_sweep_parameter_enables_mode_and_steps_and_delta_mode_fields(experiments_page):
     """Choosing a real sweep parameter enables Mode/Steps, and (since Delta is the default mode) the Delta/Descending fields -- but not the MIN-MAX explicit fields."""
     form = experiments_page
@@ -57,6 +59,7 @@ def test_selecting_a_sweep_parameter_enables_mode_and_steps_and_delta_mode_field
     assert form.is_disabled("sweep_max")
 
 
+@pytest.mark.req("REQ-GEN-UI-03")
 def test_switching_sweep_mode_to_minmax_swaps_which_fields_are_enabled(experiments_page):
     """Switching Mode from Delta to MIN-MAX disables Delta/Descending and enables the explicit min/max fields -- mutually exclusive, not all-editable at once."""
     form = experiments_page
@@ -69,6 +72,7 @@ def test_switching_sweep_mode_to_minmax_swaps_which_fields_are_enabled(experimen
     assert not form.is_disabled("sweep_max")
 
 
+@pytest.mark.req("REQ-GEN-UI-03")
 def test_choosing_none_again_disables_every_sweep_field_again(experiments_page):
     """Selecting a parameter then switching back to None re-disables everything -- the toggle is fully reversible, not one-way."""
     form = experiments_page
@@ -88,6 +92,7 @@ def test_choosing_none_again_disables_every_sweep_field_again(experiments_page):
         ("Presence penalty", "-2", "2"),
     ],
 )
+@pytest.mark.req("REQ-GEN-UI-04")
 def test_sweep_min_max_bounds_are_real_per_parameter_not_a_fixed_fake_range(
     experiments_page, param, expected_min, expected_max
 ):
@@ -111,6 +116,7 @@ def test_sweep_min_max_bounds_are_real_per_parameter_not_a_fixed_fake_range(
 # --- Other conditional fields ------------------------------------------------
 
 
+@pytest.mark.req("REQ-GEN-UI-05")
 def test_self_critic_checkbox_disables_teacher_model_and_shows_hint(experiments_page):
     """Checking self-critic disables the (now-irrelevant) teacher_model select and reveals the 'ignored while self-critic is on' hint."""
     form = experiments_page
@@ -126,6 +132,7 @@ def test_self_critic_checkbox_disables_teacher_model_and_shows_hint(experiments_
     assert not form.is_disabled("teacher_model")
 
 
+@pytest.mark.req("REQ-GEN-UI-05")
 def test_rag_enabled_checkbox_enables_rag_mode_and_top_k(experiments_page):
     """RAG mode/Top-K start disabled and only become editable once 'Enable RAG' is checked."""
     form = experiments_page
@@ -138,6 +145,7 @@ def test_rag_enabled_checkbox_enables_rag_mode_and_top_k(experiments_page):
     assert not form.is_disabled("rag_top_k")
 
 
+@pytest.mark.req("REQ-GEN-UI-05")
 def test_non_tuned_prompt_mode_disables_and_unchecks_exclude_archetype(experiments_page):
     """'Exclude archetype from prompt' only makes sense in Tuned mode -- switching away disables it and clears any existing check, rather than silently submitting a no-op checked value."""
     form = experiments_page
@@ -153,6 +161,7 @@ def test_non_tuned_prompt_mode_disables_and_unchecks_exclude_archetype(experimen
 # --- Required-field validation -----------------------------------------------
 
 
+@pytest.mark.req("REQ-GEN-UI-05")
 def test_submitting_with_no_archetypes_selected_is_blocked_by_the_browser(experiments_page):
     """
     Regression test: student_models/archetypes are required selects; a
@@ -167,6 +176,7 @@ def test_submitting_with_no_archetypes_selected_is_blocked_by_the_browser(experi
 # --- Live setup summary (real htmx round-trip against the live server) ------
 
 
+@pytest.mark.req("REQ-GEN-UI-01")
 def test_preview_panel_updates_live_when_a_field_changes(experiments_page):
     """Changing a real form field triggers a real htmx round-trip to /experiments/preview against the live server, and the setup summary panel reflects the new selection -- not just the bare task count."""
     form = experiments_page

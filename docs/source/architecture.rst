@@ -163,14 +163,14 @@ documented in :doc:`features`).
 Business-flow diagram
 ------------------------
 
-The two evaluation stages CLAUDE.md SS3 requires stay separate: the
+The two evaluation stages the agent instructions SS3 requires stay separate: the
 per-response cascade (write path, ``ExperimentRunner``) never does
 corpus-level work, and the confirmatory-analysis stage (read path,
 Stage 8-12's routers) only ever runs over an already-persisted corpus. These
 two activity diagrams trace one real request through each path.
 
-Write path -- per-response cascade (CLAUDE.md SS3a)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Write path -- per-response cascade (the agent instructions SS3a)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. uml::
 
@@ -187,7 +187,7 @@ Write path -- per-response cascade (CLAUDE.md SS3a)
    endif
    :RunRecord persisted (Repository.save_run);
 
-   partition "Per-response cascade (CLAUDE.md SS3a) -- for each\nstudent x archetype x bias x swept-value" {
+   partition "Per-response cascade (the agent instructions SS3a) -- for each\nstudent x archetype x bias x swept-value" {
      :PromptStrategy.build\n(+ KnowledgeBase.retrieve if RAG-enabled);
      :LLMClient.generate (OllamaClient);
      :extract_best_text;
@@ -199,7 +199,7 @@ Write path -- per-response cascade (CLAUDE.md SS3a)
        :Layer 1 -- is_echo_response\n(semantic_overlap > 0.5)?;
        note right: Threshold is inverted from standard STS\nintuition -- rejects HIGH similarity to the\nbias label (echoed instruction), not low.\nCalibrated against real generated data,\nnot assumed. See wiki/04-llm-analytics.
        :Layer 2 -- check_hallucination\n(NLI cross-encoder vs. rag_context);
-       note right: Runs regardless of the Layer 1 result above --\nonly meaningful (and only run) when RAG is\nenabled; logs a real contradiction score/label\nbut never gates v_ok (CLAUDE.md SS4, 2026-08-24).\nAn echo-rejected response can still show\nlayer2_checked=true.
+       note right: Runs regardless of the Layer 1 result above --\nonly meaningful (and only run) when RAG is\nenabled; logs a real contradiction score/label\nbut never gates v_ok (the agent instructions SS4, 2026-08-24).\nAn echo-rejected response can still show\nlayer2_checked=true.
        if (Layer 1: echo detected?) then (yes, echo)
          :synthesize rejection JudgeVerdict\n(real judge call skipped);
        else (no, genuine)
@@ -210,15 +210,15 @@ Write path -- per-response cascade (CLAUDE.md SS3a)
      :Repository.save_response;
      :progress event -> SSE queue / CLI stdout;
    }
-   note right: Layer 2 is logging-only, not a gate -- no real-data\ncalibration for a rejection threshold exists yet\n(the same discipline that caught Layer 1's own\nthreshold needing to be inverted). Sentiment/toxicity\nclassifiers (CLAUDE.md SS3a's other Layer 2 half)\nremain entirely unbuilt.
+   note right: Layer 2 is logging-only, not a gate -- no real-data\ncalibration for a rejection threshold exists yet\n(the same discipline that caught Layer 1's own\nthreshold needing to be inverted). Sentiment/toxicity\nclassifiers (the agent instructions' SS3a's other Layer 2 half)\nremain entirely unbuilt.
 
    :Run complete -> "done" event;
    stop
 
    @enduml
 
-Read path -- corpus-level confirmatory analysis (CLAUDE.md SS3b)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Read path -- corpus-level confirmatory analysis (the agent instructions SS3b)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. uml::
 
@@ -235,7 +235,7 @@ Read path -- corpus-level confirmatory analysis (CLAUDE.md SS3b)
    endif
    :pandas.json_normalize\n(or LabDataBridge.build_dataframe for /nlp);
 
-   partition "Corpus-level confirmatory analysis (CLAUDE.md SS3b) -- over\nthe WHOLE accumulated corpus, not one response" {
+   partition "Corpus-level confirmatory analysis (the agent instructions SS3b) -- over\nthe WHOLE accumulated corpus, not one response" {
      :linguistic/NLP metric matrix\n(already computed per response, read back);
      :UMAP dimensionality reduction\n(/clusters -- Behavioral topology only);
      :HDBSCAN clustering;
@@ -354,7 +354,7 @@ Added 2026-08-24 at the author's request for a more navigable, "what can I actua
 overview, complementing the component/class/ER diagrams above (which answer "how is it built," not
 "what does it do"). Every branch below is a real, reachable page or a real sub-capability of one --
 traced directly against ``web/templates/_nav.html`` and each router, not invented for the
-diagram. Colors group the same three CLAUDE.md SS3a/SS3b-derived categories the sidebar itself uses
+diagram. Colors group the same three the agent instructions SS3a/SS3b-derived categories the sidebar itself uses
 (``[req]``/``[corpus]``/``[sys]``), plus a fourth for the per-response cascade specifically, since
 it's a cross-cutting concept, not one page. 2026-09-05 saw three updates in one day: a fifth branch
 was added for the then-separate Neo4j knowledge-graph entry point (its own standalone Streamlit
@@ -443,7 +443,7 @@ Corpus-level analysis pipeline (clustering)
 
 The full path from a run's raw JSONL responses to the "Behavioral topology" view's rendered charts
 (:func:`core.services.cluster_discovery.run_behavioral_topology`) -- the single heaviest computation
-in the corpus-level confirmatory-analysis stage (CLAUDE.md SS3b).
+in the corpus-level confirmatory-analysis stage (the agent instructions SS3b).
 
 .. uml::
 
@@ -496,7 +496,7 @@ Neo4j knowledge-graph flow -- fully migrated into the FastAPI app, 2026-09-05
 -------------------------------------------------------------------------------------------------
 
 **Update, 2026-09-05 (later the same day): the quarantine below is fully lifted, not just
-narrowed.** This section originally described a legacy, CLAUDE.md SS1-quarantined subsystem with
+narrowed.** This section originally described a legacy subsystem quarantined per the agent instructions' SS1, with
 two narrow, dated exceptions (a GDS config fix; an additive failure-mode-graph sync). Later the
 same day the author decided to migrate the *entire* remainder too -- the plain Archetype/Bias
 PageRank, the network visualization, Hypothesis Testing, Uncertainty Analysis -- retiring
@@ -544,7 +544,7 @@ graph above), then **promoted the same day, again**, out of ``core/tabs/knowledg
 entirely and into the layered architecture -- a real, full-depth reversal for this one capability
 (``core.domain.interfaces.GraphRepository`` + ``core.adapters.neo4j_repo.Neo4jGraphRepo`` +
 ``api/routers/knowledge_graph.py``), unlike the narrow, docstring-or-config-only exceptions
-recorded elsewhere in CLAUDE.md SS1. It is now reachable as a real page, ``/knowledge_graph``,
+recorded elsewhere in the agent instructions SS1. It is now reachable as a real page, ``/knowledge_graph``,
 appearing in the component diagram above like any other router -- **not** part of the "Untouched
 legacy" package anymore. Models the actual per-response cascade (the same write-path activity
 diagram earlier on this page) as explicit lineage edges, so a failure becomes a graph traversal

@@ -5,7 +5,10 @@ from a third-party library still gets its own pinned-fixture test, not just trus
 is correct.
 """
 
+import pytest
 from core.analysis.syntactic_complexity import dependency_distance
+
+pytestmark = pytest.mark.req("REQ-MET-LING-04")
 
 
 def test_empty_text_returns_zero():

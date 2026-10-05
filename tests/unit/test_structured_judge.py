@@ -8,10 +8,12 @@ old substring-matching bug), and confirms the request shape still asks the model
 JSON.
 """
 
+import pytest
 from core.adapters.structured_judge import StructuredJudge
 from tests.unit.test_experiment_runner import FakeLLMClient
 
 
+@pytest.mark.req("REQ-CASC-L3-01")
 def test_clear_pass_is_parsed_from_real_json():
     """A well-formed judge response is genuinely parsed, not substring-matched -- verdict/confidence/rationale all come from the real JSON fields."""
     llm = FakeLLMClient(
@@ -26,6 +28,7 @@ def test_clear_pass_is_parsed_from_real_json():
     assert verdict.rationale == "Matches the Detached archetype: cold, minimal engagement."
 
 
+@pytest.mark.req("REQ-CASC-L3-01")
 def test_clear_fail_is_parsed_from_real_json():
     """A well-formed 'no' verdict is parsed the same way as a 'yes' -- verdict=False isn't a fallback state here, it's a real judgment."""
     llm = FakeLLMClient(
@@ -40,6 +43,7 @@ def test_clear_fail_is_parsed_from_real_json():
     assert verdict.rationale == "Response is warm and engaged, not detached."
 
 
+@pytest.mark.req("REQ-CASC-L3-02")
 def test_malformed_json_response_falls_back_to_a_distinguishable_false():
     """
     A garbled, non-JSON response resolves to verdict=False -- but unlike the old
@@ -55,6 +59,7 @@ def test_malformed_json_response_falls_back_to_a_distinguishable_false():
     assert verdict.rationale is not None and "not valid JSON" in verdict.rationale
 
 
+@pytest.mark.req("REQ-CASC-L3-02")
 def test_valid_json_missing_verdict_key_falls_back_cleanly():
     """Valid JSON that's missing the required 'verdict' key is still a malformed-response fallback, not a crash."""
     judge = StructuredJudge(FakeLLMClient(response_text='{"confidence": 0.5}'))
@@ -65,6 +70,7 @@ def test_valid_json_missing_verdict_key_falls_back_cleanly():
     assert verdict.rationale is not None and "verdict" in verdict.rationale
 
 
+@pytest.mark.req("REQ-CASC-L3-03")
 def test_confidence_outside_zero_one_range_is_clamped():
     """A judge model returning an out-of-range confidence (e.g. 1.5, or a raw percentage like 92) is clamped to [0, 1] rather than persisted as a nonsensical value."""
     judge = StructuredJudge(
@@ -76,6 +82,7 @@ def test_confidence_outside_zero_one_range_is_clamped():
     assert verdict.confidence == 1.0
 
 
+@pytest.mark.req("REQ-CASC-L3-03")
 def test_missing_confidence_and_rationale_stay_none_not_defaulted():
     """A judge response with only 'verdict' (no confidence/rationale) leaves those fields None -- not silently defaulted to a fake 0.0/empty-string value that would look like real data."""
     judge = StructuredJudge(FakeLLMClient(response_text='{"verdict": true}'))
@@ -87,6 +94,7 @@ def test_missing_confidence_and_rationale_stay_none_not_defaulted():
     assert verdict.rationale is None
 
 
+@pytest.mark.req("REQ-CASC-L3-04")
 def test_judge_model_varies_per_call_for_self_critic_mode():
     """The judge model is a per-call parameter, not fixed at construction -- supports self-critic (judge=student) and teacher-student (judge=teacher_model) routing from the same StructuredJudge instance."""
     llm = FakeLLMClient(response_text='{"verdict": true, "confidence": 0.9, "rationale": "ok"}')
@@ -99,6 +107,7 @@ def test_judge_model_varies_per_call_for_self_critic_mode():
     assert llm.calls[1]["model"] == "llama3:latest"
 
 
+@pytest.mark.req("REQ-CASC-L3-04")
 def test_request_asks_for_structured_json_mode():
     """The request sets json_mode=True and includes the archetype/bias/response text -- confirms the request shape, independent of how the response gets parsed."""
     llm = FakeLLMClient(response_text='{"verdict": true, "confidence": 0.9, "rationale": "ok"}')
@@ -113,6 +122,7 @@ def test_request_asks_for_structured_json_mode():
     assert "the generated text" in call["user_prompt"]
 
 
+@pytest.mark.req("REQ-CASC-L3-02")
 def test_parse_failures_set_the_parse_failed_flag_and_real_judgments_do_not():
     """Both malformed-response fallbacks carry parse_failed=True so callers can tell them from a real 'no' without reading rationale text; a parsed verdict (true or false) never does."""
     not_json = StructuredJudge(FakeLLMClient(response_text="<html>502</html>")).evaluate("t", "Detached", "b", "m")

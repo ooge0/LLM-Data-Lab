@@ -14,6 +14,8 @@ from core.domain.entities import ExperimentConfig, PromptMode, RunRecord
 from core.services.db_export import DBExportError, export_run_to_db
 from tests.unit.test_experiment_runner import FakeRepository
 
+pytestmark = pytest.mark.req("REQ-DATA-EXP-01")
+
 
 def _make_run(run_id="run-1"):
     config = ExperimentConfig(
@@ -50,6 +52,7 @@ def test_export_run_to_db_copies_run_metadata_and_every_response(tmp_path):
     assert target.list_runs()[0].run_id == "run-1"
 
 
+@pytest.mark.req("REQ-DATA-EXP-02")
 def test_export_run_to_db_on_completely_unknown_run_id_raises(tmp_path):
     """No run metadata and no responses at all -- a bogus/typo'd run_id."""
     db_path = str(tmp_path / "nn_lab.db")
@@ -59,6 +62,7 @@ def test_export_run_to_db_on_completely_unknown_run_id_raises(tmp_path):
         export_run_to_db(source, "never-started", db_path=db_path)
 
 
+@pytest.mark.req("REQ-DATA-EXP-02")
 def test_export_run_to_db_on_a_run_that_exists_but_has_no_responses_yet_raises(tmp_path):
     """A real, distinct state from 'unknown run_id': the run was started (save_run called,
     metadata exists) but hasn't produced any responses yet -- e.g. exporting the instant after
@@ -73,6 +77,7 @@ def test_export_run_to_db_on_a_run_that_exists_but_has_no_responses_yet_raises(t
         export_run_to_db(source, "run-just-started", db_path=db_path)
 
 
+@pytest.mark.req("REQ-DATA-EXP-02")
 def test_export_run_to_db_second_export_without_overwrite_raises_not_duplicates(tmp_path):
     """SQLiteRepo.save_response has no dedup key -- a naive re-export would silently duplicate every
     row. Confirms the default (overwrite=False) refuses instead."""
@@ -88,6 +93,7 @@ def test_export_run_to_db_second_export_without_overwrite_raises_not_duplicates(
     assert len(target.load_responses("run-1")) == 2
 
 
+@pytest.mark.req("REQ-DATA-EXP-02")
 def test_export_run_to_db_with_overwrite_replaces_rather_than_duplicates(tmp_path):
     db_path = str(tmp_path / "nn_lab.db")
     source = _source_with_one_run(n_responses=2)
@@ -178,6 +184,7 @@ def test_export_run_to_db_round_trips_edge_case_value_types_through_the_json_col
     assert target.load_responses("run-1") == [edge_case_response]
 
 
+@pytest.mark.req("REQ-DATA-EXP-03")
 def test_get_sync_status_reflects_exported_runs_and_omits_unexported_ones(tmp_path):
     """core.services.db_export.get_sync_status() is a thin wrapper around SQLiteRepo's own method
     -- confirms it's wired to the right database and doesn't invent/omit entries."""
@@ -194,6 +201,7 @@ def test_get_sync_status_reflects_exported_runs_and_omits_unexported_ones(tmp_pa
     assert "run-never-exported" not in status
 
 
+@pytest.mark.req("REQ-DATA-EXP-03")
 def test_get_sync_status_on_a_database_that_does_not_exist_yet_returns_empty_not_a_crash(tmp_path):
     """A fresh checkout has no results/nn_lab.db yet -- the /db_export page's first-ever render
     must show every run as 'not synced', not 500."""

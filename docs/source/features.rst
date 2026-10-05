@@ -48,7 +48,7 @@ template for the other -- a live demonstration that the *same* model
 isn't reliably consistent, and that the judge's own verdict varied
 between the two calls even where the outputs were textually identical
 (real LLM sampling variance in the judge call itself, not a bug --
-exactly the kind of fragility CLAUDE.md SS4 flags "naive judge" for).
+exactly the kind of fragility the agent instructions SS4 flags "naive judge" for).
 
 See :mod:`core.services.experiment_runner`, :mod:`api.routers.experiments`.
 
@@ -60,7 +60,7 @@ server-side ever caught it) instead of a clear message. The live-progress view g
 visual indicator at all, not a styling gap. On completion it now also links directly to
 ``/runs``/``/analytics``/``/nlp``/``/clusters`` -- previously the only way to see a result was to
 already know to navigate to one of those pages and pick the run from its dropdown by hand. All of
-``web/``'s pages gained a shared, minimal stylesheet (``web/static/style.css``) -- CLAUDE.md SS2
+``web/``'s pages gained a shared, minimal stylesheet (``web/static/style.css``) -- the agent instructions SS2
 keeps the frontend deliberately thin ("may be rough"), but every page had *zero* CSS before this,
 not just plain -- unstyled native form controls read as broken to a real user, not merely austere.
 See :doc:`operations` for a full UI + API walkthrough exercising all of this against a real run.
@@ -152,7 +152,7 @@ required unless self-critic is on, validated before any generation
 starts).
 
 As of 2026-08-24, every response passes through a real, ordered cascade
-before ``entry`` is persisted (CLAUDE.md SS3a) -- not a single monolithic
+before ``entry`` is persisted (the agent instructions SS3a) -- not a single monolithic
 judge call:
 
 1. **Layer 0** (:func:`core.analysis.response_classification.classify_response`)
@@ -570,7 +570,7 @@ Service status (Ollama/NLTK reachability)
 
 The FastAPI-era equivalent of the legacy sidebar's three green/red buttons (Ollama/NLP/Neo4j) --
 scoped to **Ollama + NLTK + spaCy**; there is no Neo4j check. That exclusion dates from when the
-Neo4j subsystem was out of scope (CLAUDE.md SS1, reversed 2026-09-05) and was never revisited;
+Neo4j subsystem was out of scope (the agent instructions SS1, reversed 2026-09-05) and was never revisited;
 ``/knowledge_graph`` reports an unreachable server inline instead. Real checks, not
 the legacy pattern: ``check_nltk()`` never calls ``nltk.download()`` (the legacy
 ``ensure_nltk_resources()`` silently downloaded anything missing, which meant its own red "NLP" branch
@@ -665,7 +665,7 @@ directly on full-dimensional scaled features (no UMAP), genuinely distinct from 
 (validity, min word count, no raw JSON, min coherence) -> two independent UMAP embeddings (2D for
 plotting, N-D for the actual clustering -- matching the legacy app's own deliberate split, since
 forcing both onto one 2D projection distorts density) -> HDBSCAN on the N-D embedding ->
-:func:`~core.services.cluster_discovery.compute_fit_indices` (CLAUDE.md SS3b's
+:func:`~core.services.cluster_discovery.compute_fit_indices` (the agent instructions' SS3b's
 silhouette/Davies-Bouldin/label-alignment-ARI construct-validity numbers). Seven sub-views: latent
 projection, HDBSCAN topology (MST + condensed-tree, matplotlib), cluster membership tables,
 research-mode correlation heatmap, behavioral anomalies, and the raw fit indices.

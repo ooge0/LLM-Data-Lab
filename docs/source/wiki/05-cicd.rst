@@ -1,4 +1,4 @@
-05 — CI/CD: Current State and a Concrete Target Pipeline
+05 — CI/CD: Current state and a concrete target pipeline
 ============================================================
 
 Current state: no CI/CD exists
@@ -12,12 +12,12 @@ by hand, by whoever
 is working on the repository at that moment, on their own machine. Nothing enforces that any of them
 actually ran before a commit lands.
 
-This matters specifically for this project's stated purpose: CLAUDE.md frames the test suite itself
+This matters specifically for this project's stated purpose: the agent instructions frame the test suite itself
 as the portfolio artifact (SS7, "the testing approach IS the portfolio signal"). A test suite nobody
 is forced to run is a weaker version of that claim than one a machine enforces on every push.
 
 Why this gap is real and not just an oversight to gloss over: the project's own deployment target is
-explicitly bare-metal Windows and Ubuntu with **no Docker, no cloud** (CLAUDE.md SS2) -- a
+explicitly bare-metal Windows and Ubuntu with **no Docker, no cloud** (the agent instructions SS2) -- a
 single-user local tool has genuinely less pressure toward CI/CD than a deployed multi-user service
 does. That context changes what "add CI" should mean here: not a deploy pipeline (there is nowhere
 automated to deploy *to*), but a **correctness gate on every push** -- lint, type-check, and test,
@@ -40,7 +40,7 @@ Three real constraints, each already documented elsewhere in this wiki, shape wh
    a hosted CI runner has no CUDA driver to use one. CI must install the CPU-only wheel instead, which
    means CI validates **logical correctness**, not GPU-accelerated performance -- an honest scope
    limit to state, not a bug to fix, since paying for GPU-backed CI runners would work against this
-   project's explicit "not a product, no infrastructure spend" framing (CLAUDE.md SS0).
+   project's explicit "not a product, no infrastructure spend" framing (the agent instructions SS0).
 
 3. **There is no packaged artifact to "build."** This project has no ``setup.py``/``pyproject.toml``
    package definition -- it is not published or installed as a library, it is run in place
@@ -127,7 +127,7 @@ drift out of sync with them.
        needs: [unit-and-integration, e2e, docs]
        if: github.ref == 'refs/heads/master'
        steps:
-         - run: echo "No automated deploy target exists -- CLAUDE.md SS2 states bare-metal
+         - run: echo "No automated deploy target exists -- the agent instructions SS2 states bare-metal
              Windows/Ubuntu, no Docker, no cloud. Deployment today is manual: pull this commit
              on the target machine and restart uvicorn. This job is a placeholder marking where
              a real deploy step would go if a target ever exists, not a working deploy step."
@@ -151,5 +151,5 @@ What requires infrastructure later (out of scope for a free GitHub Actions setup
   (e.g. a GPU-specific regression that CPU-only CI already missed).
 - **Any real deploy target.** The ``deploy`` job above is intentionally inert. Automating it for
   real would require deciding on a target machine and access method first (SSH to a bare-metal box,
-  a scheduled task, etc.) -- a decision CLAUDE.md explicitly defers, not one this pipeline should
+  a scheduled task, etc.) -- a decision the agent instructions explicitly defers, not one this pipeline should
   make unilaterally.

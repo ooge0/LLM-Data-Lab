@@ -4,10 +4,13 @@ isolation -- the one line in Stage 1's SSE mechanism that actually crosses
 the worker-thread/event-loop boundary.
 """
 
+import pytest
 import asyncio
 import threading
 
 from core.services._demo_runner import ProgressEvent, bridge_to_queue
+
+pytestmark = pytest.mark.req("REQ-GEN-SSE-01")
 
 
 def test_bridge_to_queue_delivers_event_from_another_thread():

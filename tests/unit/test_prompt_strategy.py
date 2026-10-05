@@ -10,6 +10,8 @@ import pytest
 from core.adapters.prompt_strategy import NaivePromptStrategy
 from core.domain.entities import PromptMode
 
+pytestmark = pytest.mark.req("REQ-GEN-PROMPT-01")
+
 ARCHETYPES = {
     "common": {
         "intro": "Act as a system for behavioral conditioning.",

@@ -16,6 +16,8 @@ from api.app import app
 from core.domain.entities import ExperimentConfig, PromptMode, RunRecord
 from tests.unit.test_experiment_runner import FakeRepository
 
+pytestmark = pytest.mark.req("REQ-DATA-EXP-03")
+
 
 @pytest.fixture
 def client():
@@ -107,6 +109,7 @@ def test_db_export_page_has_bulk_select_checkboxes_wired_to_each_rows_own_button
     assert "htmx.trigger" in response.text
 
 
+@pytest.mark.req("REQ-DATA-EXP-01")
 def test_export_run_copies_responses_and_reports_success(client, fake_repo, _temp_db_path):
     fake_repo.save_run(_make_run("run-a", "2026-08-21T00:00:00Z"))
     fake_repo.save_response("run-a", {"student": "qwen:latest", "v_ok_numeric": 1})
@@ -124,6 +127,7 @@ def test_export_run_copies_responses_and_reports_success(client, fake_repo, _tem
     assert len(target.load_responses("run-a")) == 2
 
 
+@pytest.mark.req("REQ-DATA-EXP-02")
 def test_export_run_for_unknown_run_shows_a_clear_error_not_a_500(client):
     response = client.post("/db_export/export", params={"run_id": "never-started"})
 
@@ -131,6 +135,7 @@ def test_export_run_for_unknown_run_shows_a_clear_error_not_a_500(client):
     assert "No responses found" in response.text
 
 
+@pytest.mark.req("REQ-DATA-EXP-02")
 def test_export_run_twice_without_overwrite_shows_already_exported_with_a_reexport_action(client, fake_repo):
     fake_repo.save_run(_make_run("run-a", "2026-08-21T00:00:00Z"))
     fake_repo.save_response("run-a", {"student": "qwen:latest", "v_ok_numeric": 1})
@@ -143,6 +148,7 @@ def test_export_run_twice_without_overwrite_shows_already_exported_with_a_reexpo
     assert "Re-export (overwrite)" in response.text
 
 
+@pytest.mark.req("REQ-DATA-EXP-02")
 def test_export_run_with_overwrite_true_replaces_rather_than_erroring(client, fake_repo, _temp_db_path):
     fake_repo.save_run(_make_run("run-a", "2026-08-21T00:00:00Z"))
     fake_repo.save_response("run-a", {"student": "qwen:latest", "v_ok_numeric": 1})
@@ -154,6 +160,7 @@ def test_export_run_with_overwrite_true_replaces_rather_than_erroring(client, fa
     assert "1 response(s) re-exported" in response.text
 
 
+@pytest.mark.req("REQ-DATA-EXP-04")
 def test_export_failure_for_one_run_does_not_report_success_for_a_different_run(client, fake_repo, _temp_db_path):
     """Two runs visible on the same /db_export page each get their own status fragment
     (id="db-export-result-{run_id}") so htmx swaps the right row -- confirms a failed export for
@@ -206,6 +213,7 @@ def test_db_export_page_shows_the_real_synced_timestamp_after_an_export(client, 
     assert "Not synced" not in response.text
 
 
+@pytest.mark.req("REQ-DATA-EXP-04")
 def test_export_run_response_includes_an_out_of_band_update_for_the_sync_status_cell(client, fake_repo):
     """A successful export's response fragment carries an hx-swap-oob element updating the
     'Export status' cell in place, so the new timestamp appears without a page reload."""
@@ -220,6 +228,7 @@ def test_export_run_response_includes_an_out_of_band_update_for_the_sync_status_
     assert "UTC" in response.text
 
 
+@pytest.mark.req("REQ-DATA-EXP-04")
 def test_export_run_that_fails_does_not_include_a_sync_status_oob_update(client):
     """Nothing actually changed in the database on a failed export -- the OOB fragment (and its
     'Not synced'-vs-timestamp decision) should not be emitted at all, not emitted with a stale or

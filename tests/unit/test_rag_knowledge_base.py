@@ -6,7 +6,10 @@ existing ``test_rag.py``/``test_rag_logic.py`` suites against the real
 engine).
 """
 
+import pytest
 from core.adapters.rag.knowledge_base import RAGKnowledgeBase
+
+pytestmark = pytest.mark.req("REQ-GEN-RAG-03")
 
 
 class FakeRAGEngine:

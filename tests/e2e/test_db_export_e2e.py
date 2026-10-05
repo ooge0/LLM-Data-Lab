@@ -24,6 +24,8 @@ from core.adapters.sqlite_repo import SQLiteRepo
 from core.domain.entities import ExperimentConfig, PromptMode, RunRecord
 from tests.e2e.pages import DbExportPage
 
+pytestmark = pytest.mark.req("REQ-DATA-EXP-04")
+
 _RUN_ID = "run-e2e-db-export-fixture"
 
 

@@ -19,6 +19,8 @@ import pytest
 from core.adapters.jsonl_store import JSONLStore
 from tests.e2e.pages import NlpPage
 
+pytestmark = pytest.mark.req("REQ-PAGE-NLP-02")
+
 
 def _find_a_real_run_with_responses(min_responses: int = 5):
     store = JSONLStore()

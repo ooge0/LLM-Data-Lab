@@ -15,6 +15,8 @@ missing or, in the weighted graph the app now uses, the counts differ. No Neo4j 
 import networkx as nx
 import pytest
 
+pytestmark = pytest.mark.req("REQ-KG-PR-02")
+
 N_ARCHETYPES = 5
 N_BIASES = 6
 # Recorded live GDS scores from the wiki page; only their ratio is compared (GDS stops after a fixed

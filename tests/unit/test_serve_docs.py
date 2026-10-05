@@ -11,6 +11,8 @@ import pytest
 
 from utils import serve_docs
 
+pytestmark = pytest.mark.req("REQ-OPS-DOC-01")
+
 
 def test_main_raises_system_exit_with_a_helpful_message_when_build_dir_is_missing(tmp_path, monkeypatch):
     monkeypatch.setattr(serve_docs, "_DOCS_HTML_DIR", tmp_path / "not_built_yet")

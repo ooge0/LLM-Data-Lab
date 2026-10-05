@@ -1,4 +1,4 @@
-03 — Feature Implementation: Data Flow and Known Debt
+03 — Feature implementation: Data flow and known debt
 =========================================================
 
 :doc:`01-architecture` establishes the mechanism (layers, threading, SSE). This page walks the two
@@ -10,7 +10,7 @@ whole premise is measurement honesty should audit itself with the same standard.
 it no longer holds. The Neo4j knowledge-graph subsystem is fully migrated into the FastAPI
 architecture this wiki documents (``core.domain.interfaces.GraphRepository`` +
 ``core.adapters.neo4j_repo.Neo4jGraphRepo``, ``/knowledge_graph``); ``core/service/neo4j_service.py``,
-``core/tabs/knowledge_graph.py``, and ``run_knowledge_graph.py`` are all deleted. See CLAUDE.md
+``core/tabs/knowledge_graph.py``, and ``run_knowledge_graph.py`` are all deleted. See the agent instructions
 SS1's Neo4j entry and :doc:`07-knowledge-graph-results` for the full record.
 
 Feature: generating and judging a conditioned response
@@ -37,7 +37,7 @@ threading/SSE mechanism this runs inside) does, in order:
 4. **Layer 0 gate.** :func:`core.analysis.response_classification.classify_response` classifies the
    extracted text as ``VALID``/``EMPTY``/``MALFORMED_JSON``/``TRUNCATED``/``SCHEMA_ERROR`` *before*
    any metric or judge call. A non-``VALID`` result short-circuits the rest of this list entirely --
-   a minimal entry is persisted and the loop moves to the next task. Added 2026-08-24 (CLAUDE.md
+   a minimal entry is persisted and the loop moves to the next task. Added 2026-08-24 (the agent instructions
    SS1's classification requirement); before that, every response reached the metrics and judge
    call unfiltered.
 5. **Metric computation.** Three independent modules each compute a distinct set of linguistic/
@@ -60,10 +60,10 @@ threading/SSE mechanism this runs inside) does, in order:
    stream.
 
 **Each of these eight steps is a place engineering work has landed, at two different levels of
-authorship.** CLAUDE.md's framing is that the author hand-writes the judge/cascade *decision logic*
+authorship.** the agent instructions' framing is that the author hand-writes the judge/cascade *decision logic*
 (what step 4/6/7 actually decide is right or wrong), while the surrounding orchestration (steps 1-3,
 8, and the plumbing of 4-7 into the right order) is this rewrite's engineering work. As of
-2026-08-24, CLAUDE.md SS6 records two narrow, explicit exceptions crossing part of that boundary:
+2026-08-24, the agent instructions SS6 records two narrow, explicit exceptions crossing part of that boundary:
 the AI agent built step 4 (Layer 0) and a narrow step 6 (Layer 1, echo-detection only) at the
 author's direction, and fixed step 7's JSON-parsing bug -- but did not touch the judge's own
 pass/fail *criteria* (still whatever the underlying LLM decides). Later the same day, a second
@@ -71,7 +71,7 @@ exception added a real but deliberately non-gating NLI check (against RAG contex
 Layer 2 -- see :doc:`04-llm-analytics`'s "Why Layer 2 logs a real score but does not reject anything
 (yet)" section for why it stops short of a finished gate; sentiment/toxicity classifiers, the rest
 of Layer 2's original scope, remain unbuilt, still the author's to write.
-See CLAUDE.md SS4 for the permanent record of exactly what changed and what didn't.
+See the agent instructions SS4 for the permanent record of exactly what changed and what didn't.
 
 Feature: corpus-level analysis and chart building
 --------------------------------------------------------
@@ -125,21 +125,21 @@ Known technical debt and duplication -- named plainly
   for the ``/nlp`` read path specifically. See :doc:`04-llm-analytics` for exactly which fields this
   affects and why it matters for measurement validity, not just data hygiene.
 - **The Layer-0/Layer-1 validity-classification seam was named in code but not filled -- resolved
-  2026-08-24.** CLAUDE.md SS1 calls for classifying every response
+  2026-08-24.** the agent instructions SS1 calls for classifying every response
   (``VALID``/``MALFORMED_JSON``/``TRUNCATED``/etc.) *before* the metric-computation step described
   above -- computing full linguistic metrics on a response that turns out to be empty or truncated
   wastes real, measured-as-costly compute for no signal. This is no longer a gap: Layer 0
   (:func:`core.analysis.response_classification.classify_response`) and a narrow, embedding-based
   Layer 1 (:func:`core.analysis.response_classification.is_echo_response`) are both built and wired
   into ``ExperimentRunner._run_one`` ahead of metrics and the judge call, by one narrow, explicit
-  exception to CLAUDE.md SS6's author-writes-the-moat rule. Cascade Layer 2 (NLI/sentiment/toxicity
+  exception to the agent instructions' SS6's author-writes-the-moat rule. Cascade Layer 2 (NLI/sentiment/toxicity
   classifiers) remains the one still-unfilled seam. See :doc:`04-llm-analytics` for the full
   picture, including a real threshold-inversion finding from calibrating Layer 1 against this
   project's own data.
 - **A stray, untracked-workflow ``requirements.txt`` duplicates ``requirements-base.txt`` under a
   different, undocumented name.** Found while reviewing this section: the repo root has both a
   git-tracked ``requirements.txt`` (421 lines, last touched 2026-06-22) and the actively-maintained
-  ``requirements-base.txt`` (555 lines) -- but only the latter appears anywhere in CLAUDE.md SS11's
+  ``requirements-base.txt`` (555 lines) -- but only the latter appears anywhere in the agent instructions' SS11's
   documented ``pip-compile`` commands, the README's "Dependency Architecture" section, or this
   session's own extensive ``pip-compile`` history (see the roadmap's found-after-the-fact log). Its
   most likely origin: a bare ``pip-compile requirements.in`` invocation at some point (no
@@ -152,7 +152,7 @@ Known technical debt and duplication -- named plainly
   is an untracked scratch note proposing a different dependency-split design (separate
   ``requirements-linux.in``/``requirements-windows.in`` overlay files) that was never adopted --
   neither overlay file exists on disk; the design actually implemented (documented in README and
-  CLAUDE.md SS11) compiles ``requirements-linux.txt`` directly from the shared ``requirements.in``
+  the agent instructions SS11) compiles ``requirements-linux.txt`` directly from the shared ``requirements.in``
   on native Ubuntu instead. Flagged here as a real, disclosed finding, not silently cleaned up --
   removing a git-tracked file is the author's call, not a default "clean up whatever's found"
   action.
@@ -165,7 +165,7 @@ Known technical debt and duplication -- named plainly
   this project has already caught twice this session (``semantic_overlap``, the benchmark
   leaderboard's ``mimicry_score`` -- see :doc:`04-llm-analytics`). Building either for real would
   need either a labeled dataset to validate a rule-based classifier against, or a second LLM call
-  (functionally another cascade layer, with its own latency/scope tradeoffs CLAUDE.md SS6 reserves
+  (functionally another cascade layer, with its own latency/scope tradeoffs the agent instructions SS6 reserves
   for the author). Neither is built; both are named honestly as unexplored, not silently skipped.
 - **Interpretability stack (Integrated Gradients / Attention Rollout / Probing Tasks / Captum /
   TransformerLens) -- architecturally blocked by the current model-serving choice, not just

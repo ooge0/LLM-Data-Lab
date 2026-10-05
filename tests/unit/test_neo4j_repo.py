@@ -10,6 +10,7 @@ for real, driving the actual FastAPI app against a live Neo4j install (see
 ``docs/source/wiki/07-knowledge-graph-results.rst``).
 """
 
+import pytest
 from core.adapters.neo4j_repo import (
     Neo4jGraphRepo,
     _build_failure_mode_rows,
@@ -88,6 +89,7 @@ class _FakeGraph:
 # --- _parse_rag_chunks -----------------------------------------------------------------------
 
 
+@pytest.mark.req("REQ-KG-SYNC-01")
 def test_parse_rag_chunks_recovers_archetype_and_category_from_the_real_serialized_format():
     ctx = "[baseline | Behavior]\nSome behavior text.\n\n[paranoid | Speech]\nSome speech text."
     assert _parse_rag_chunks(ctx) == [
@@ -96,6 +98,7 @@ def test_parse_rag_chunks_recovers_archetype_and_category_from_the_real_serializ
     ]
 
 
+@pytest.mark.req("REQ-KG-SYNC-01")
 def test_parse_rag_chunks_handles_empty_and_none_input():
     assert _parse_rag_chunks("") == []
     assert _parse_rag_chunks(None) == []
@@ -104,6 +107,7 @@ def test_parse_rag_chunks_handles_empty_and_none_input():
 # --- _build_failure_mode_rows (plain dict, no pandas) -----------------------------------------
 
 
+@pytest.mark.req("REQ-KG-SYNC-01")
 def test_build_rows_layer0_rejected_response_reaches_nothing_past_layer0():
     responses = [
         {
@@ -128,6 +132,7 @@ def test_build_rows_layer0_rejected_response_reaches_nothing_past_layer0():
     assert row["chunks"] == []
 
 
+@pytest.mark.req("REQ-KG-SYNC-01")
 def test_build_rows_echo_rejected_response_can_still_reach_layer2_but_never_the_judge():
     """Real, non-obvious pipeline behavior: Layer 2's hallucination check runs unconditionally on
     echo status, so an echo-rejected response can have layer2_checked=True even though it never
@@ -157,6 +162,7 @@ def test_build_rows_echo_rejected_response_can_still_reach_layer2_but_never_the_
     assert row["reached_judge"] is False, "an echo-rejected response must never be attributed to a real judge call"
 
 
+@pytest.mark.req("REQ-KG-SYNC-01")
 def test_build_rows_a_response_that_reaches_a_real_judge_call_is_marked_correctly():
     responses = [
         {
@@ -181,6 +187,7 @@ def test_build_rows_a_response_that_reaches_a_real_judge_call_is_marked_correctl
     assert row["teacher"] == "mistral:7b-instruct-q4_K_M"
 
 
+@pytest.mark.req("REQ-KG-SYNC-01")
 def test_build_rows_parses_real_rag_chunks_only_when_rag_enabled():
     base = {
         "step": "4/10",
@@ -205,6 +212,7 @@ def test_build_rows_parses_real_rag_chunks_only_when_rag_enabled():
 # --- _summarize_similarity_pairs (Stage 5) ------------------------------------------------------
 
 
+@pytest.mark.req("REQ-KG-ST-02")
 def test_summarize_similarity_pairs_dedupes_directed_rows_keeping_the_max_similarity():
     """gds.knn.stream returns each real-world pair twice (once from each node's own top-K list),
     with slightly different scores possible -- must collapse to one row, keeping the higher score."""
@@ -236,6 +244,7 @@ def test_summarize_similarity_pairs_dedupes_directed_rows_keeping_the_max_simila
     ]
 
 
+@pytest.mark.req("REQ-KG-ST-02")
 def test_summarize_similarity_pairs_excludes_self_pairs():
     raw = [
         {
@@ -251,6 +260,7 @@ def test_summarize_similarity_pairs_excludes_self_pairs():
     assert result["most_anomalous"] is None
 
 
+@pytest.mark.req("REQ-KG-ST-02")
 def test_summarize_similarity_pairs_caps_at_five_sorted_descending():
     raw = [
         {
@@ -269,6 +279,7 @@ def test_summarize_similarity_pairs_caps_at_five_sorted_descending():
     assert scores[0] == 0.7
 
 
+@pytest.mark.req("REQ-KG-ST-02")
 def test_summarize_similarity_pairs_flags_the_node_whose_best_match_is_weakest_as_anomalous():
     """Real Stage 5 finding, not invented: a node can have a merely-ordinary similarity to one
     neighbor while its overall *best* match is still far weaker than every other node's best
@@ -293,6 +304,7 @@ def test_summarize_similarity_pairs_flags_the_node_whose_best_match_is_weakest_a
     assert result["most_anomalous"] == {"node_type": "Bias", "name": "personalization", "best_similarity": 0.0}
 
 
+@pytest.mark.req("REQ-KG-ST-02")
 def test_summarize_similarity_pairs_handles_empty_input():
     result = _summarize_similarity_pairs([])
     assert result == {"top_similar_pairs": [], "most_anomalous": None}
@@ -301,6 +313,7 @@ def test_summarize_similarity_pairs_handles_empty_input():
 # --- Neo4jGraphRepo ----------------------------------------------------------------------------
 
 
+@pytest.mark.req("REQ-KG-SYNC-02")
 def test_sync_sends_the_bootstrap_and_the_unwind_sync_and_returns_the_real_count():
     fake_graph = _FakeGraph()
     repo = Neo4jGraphRepo(graph=fake_graph)
@@ -339,6 +352,7 @@ def test_sync_sends_the_bootstrap_and_the_unwind_sync_and_returns_the_real_count
     assert sync_call["params"]["rows"][0]["run_id"] == "run-a"
 
 
+@pytest.mark.req("REQ-KG-SYNC-02")
 def test_sync_with_zero_responses_does_not_send_the_unwind_query_and_returns_zero():
     fake_graph = _FakeGraph()
     repo = Neo4jGraphRepo(graph=fake_graph)
@@ -347,6 +361,7 @@ def test_sync_with_zero_responses_does_not_send_the_unwind_query_and_returns_zer
     assert not any("UNWIND $rows AS row" in c["query"] for c in fake_graph.calls)
 
 
+@pytest.mark.req("REQ-KG-Q-01")
 def test_echo_rejections_by_model_returns_the_real_query_shape():
     fake_graph = _FakeGraph()
     repo = Neo4jGraphRepo(graph=fake_graph)
@@ -354,6 +369,7 @@ def test_echo_rejections_by_model_returns_the_real_query_shape():
     assert rows == [{"model": "mistral", "echo_count": 27}, {"model": "qwen", "echo_count": 12}]
 
 
+@pytest.mark.req("REQ-KG-Q-01")
 def test_terminal_stage_by_archetype_passes_the_archetype_param():
     fake_graph = _FakeGraph()
     repo = Neo4jGraphRepo(graph=fake_graph)
@@ -362,6 +378,7 @@ def test_terminal_stage_by_archetype_passes_the_archetype_param():
     assert fake_graph.calls[0]["params"] == {"archetype": "Defensive"}
 
 
+@pytest.mark.req("REQ-KG-Q-01")
 def test_rag_chunks_linked_to_echo_returns_the_real_query_shape():
     fake_graph = _FakeGraph()
     repo = Neo4jGraphRepo(graph=fake_graph)
@@ -372,6 +389,7 @@ def test_rag_chunks_linked_to_echo_returns_the_real_query_shape():
 # --- behavioral_communities (Stage 4, docs/source/wiki/08-graph-representation-learning.rst) ---
 
 
+@pytest.mark.req("REQ-KG-ST-01")
 def test_behavioral_communities_returns_modularity_count_and_rows():
     fake_graph = _FakeGraph()
     repo = Neo4jGraphRepo(graph=fake_graph)
@@ -387,6 +405,7 @@ def test_behavioral_communities_returns_modularity_count_and_rows():
     ]
 
 
+@pytest.mark.req("REQ-KG-ST-01")
 def test_behavioral_communities_materializes_cooccurrence_then_projects_before_running_leiden():
     fake_graph = _FakeGraph()
     repo = Neo4jGraphRepo(graph=fake_graph)
@@ -402,6 +421,7 @@ def test_behavioral_communities_materializes_cooccurrence_then_projects_before_r
     assert cooccur_idx < project_idx < leiden_idx, "must materialize co-occurrence, then project, then run Leiden"
 
 
+@pytest.mark.req("REQ-KG-ST-01")
 def test_behavioral_communities_drops_the_projected_graph_both_before_and_after():
     """Real GDS behavior: a stale in-memory graph catalog entry from a previous call would make a
     second gds.graph.project call fail outright -- drop-if-exists must run before projecting, and
@@ -418,6 +438,7 @@ def test_behavioral_communities_drops_the_projected_graph_both_before_and_after(
         assert c["params"] == {"graph_name": "behavioral-communities"}
 
 
+@pytest.mark.req("REQ-KG-ST-01")
 def test_behavioral_communities_still_drops_the_graph_when_leiden_itself_raises():
     class _RaisingGraph(_FakeGraph):
         def run(self, query, **params):
@@ -442,6 +463,7 @@ def test_behavioral_communities_still_drops_the_graph_when_leiden_itself_raises(
 # --- Neo4jGraphRepo.structural_similarity (Stage 5) ---------------------------------------------
 
 
+@pytest.mark.req("REQ-KG-ST-02")
 def test_structural_similarity_returns_the_summarized_shape():
     fake_graph = _FakeGraph()
     repo = Neo4jGraphRepo(graph=fake_graph)
@@ -467,6 +489,7 @@ def test_structural_similarity_returns_the_summarized_shape():
     ]
 
 
+@pytest.mark.req("REQ-KG-ST-02")
 def test_structural_similarity_mutates_embeddings_before_running_knn():
     fake_graph = _FakeGraph()
     repo = Neo4jGraphRepo(graph=fake_graph)
@@ -479,6 +502,7 @@ def test_structural_similarity_mutates_embeddings_before_running_knn():
     assert mutate_idx < knn_idx, "embeddings must be written before gds.knn can consume them"
 
 
+@pytest.mark.req("REQ-KG-ST-02")
 def test_structural_similarity_still_drops_the_graph_when_knn_itself_raises():
     class _RaisingGraph(_FakeGraph):
         def run(self, query, **params):
@@ -504,6 +528,7 @@ def test_structural_similarity_still_drops_the_graph_when_knn_itself_raises():
 # (migrated from core/tabs/knowledge_graph.py's PageRank scripts, fixed rather than ported as-is)
 
 
+@pytest.mark.req("REQ-KG-PR-01")
 def test_archetype_bias_pagerank_returns_the_real_query_shape():
     fake_graph = _FakeGraph()
     repo = Neo4jGraphRepo(graph=fake_graph)
@@ -516,6 +541,7 @@ def test_archetype_bias_pagerank_returns_the_real_query_shape():
     ]
 
 
+@pytest.mark.req("REQ-KG-PR-01")
 def test_archetype_bias_pagerank_deletes_weightless_edges_before_projecting():
     """Real, self-caught bug: a weight-less ASSOCIATED_WITH edge makes gds.pageRank.stream's
     relationshipWeightProperty silently return NaN for every connected node, not an error --
@@ -533,6 +559,7 @@ def test_archetype_bias_pagerank_deletes_weightless_edges_before_projecting():
     assert materialize_idx < delete_idx < project_idx
 
 
+@pytest.mark.req("REQ-KG-PR-01")
 def test_archetype_bias_pagerank_drops_the_projected_graph_both_before_and_after():
     fake_graph = _FakeGraph()
     repo = Neo4jGraphRepo(graph=fake_graph)
@@ -545,6 +572,7 @@ def test_archetype_bias_pagerank_drops_the_projected_graph_both_before_and_after
         assert c["params"] == {"graph_name": "archetype-bias-pagerank"}
 
 
+@pytest.mark.req("REQ-KG-PR-01")
 def test_archetype_bias_graph_data_returns_deduplicated_nodes_and_real_edges():
     fake_graph = _FakeGraph()
     repo = Neo4jGraphRepo(graph=fake_graph)
@@ -561,6 +589,7 @@ def test_archetype_bias_graph_data_returns_deduplicated_nodes_and_real_edges():
     ]
 
 
+@pytest.mark.req("REQ-KG-PR-01")
 def test_archetype_bias_graph_data_also_deletes_weightless_edges_first():
     fake_graph = _FakeGraph()
     repo = Neo4jGraphRepo(graph=fake_graph)

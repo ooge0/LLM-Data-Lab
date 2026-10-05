@@ -13,6 +13,8 @@ from pathlib import Path
 
 import pytest
 
+pytestmark = pytest.mark.req("REQ-OPS-ARCH-02")
+
 REPO_ROOT = Path(__file__).resolve().parents[2]
 CORE_DIR = REPO_ROOT / "core"
 

@@ -2,6 +2,8 @@ import pytest
 
 from core.adapters.rag.ingestion import RAGEngine
 
+pytestmark = pytest.mark.req("REQ-RAG-02")
+
 # ====================================================
 # FIXTURES: Setting up temporary test environments
 # ====================================================
@@ -46,6 +48,7 @@ def test_load_knowledge_base_error_handling(temp_knowledge_base):
     assert hasattr(rag.store, "index")
 
 
+@pytest.mark.req("REQ-RAG-01")
 def test_metadata_integrity(temp_knowledge_base):
     """Best Practice: Ensure archetype label is correctly mapped from filename."""
     rag = RAGEngine()
@@ -75,6 +78,7 @@ def test_retrieval_isolation_negative(temp_knowledge_base):
     assert len(results) == 0, "Should not leak other archetypes when a filter is applied."
 
 
+@pytest.mark.req("REQ-RAG-01")
 def test_chunk_granularity(temp_knowledge_base):
     """Verify that every line in a file is treated as a unique chunk."""
     rag = RAGEngine()

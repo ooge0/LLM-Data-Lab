@@ -12,6 +12,8 @@ from cli.manage import build_parser, main
 from core.domain.entities import ExperimentConfig, PromptMode, RunRecord
 from core.services.db_export import DBExportError
 
+pytestmark = pytest.mark.req("REQ-OPS-CLI-01")
+
 
 def _make_run(run_id, started_at="2026-08-21T00:00:00Z", total_tasks=2):
     config = ExperimentConfig(

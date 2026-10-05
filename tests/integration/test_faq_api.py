@@ -10,6 +10,8 @@ from fastapi.testclient import TestClient
 
 from api.app import app
 
+pytestmark = pytest.mark.req("REQ-PAGE-FAQ-01")
+
 
 @pytest.fixture
 def client():

@@ -180,7 +180,7 @@ Retrieval-Augmented Generation (RAG)
 
    Knowledge base
       The corpus of reference text a RAG system retrieves from. Here: the archetype-behavior text
-      files under ``knowledge/rag/`` (see CLAUDE.md SS5 for a note on their current file naming).
+      files under ``knowledge/rag/`` (see the agent instructions SS5 for a note on their current file naming).
 
 LLM evaluation and the judge/cascade pipeline
 -----------------------------------------------------
@@ -207,7 +207,7 @@ LLM evaluation and the judge/cascade pipeline
       A judge's one-sentence natural-language explanation for its verdict. As of the 2026-08-24
       :class:`~core.adapters.structured_judge.StructuredJudge` fix, a parse failure produces a
       *distinguishable* rationale ("...not valid JSON...") rather than silently looking identical
-      to a genuine "no" -- CLAUDE.md SS4's original top-priority defect.
+      to a genuine "no" -- the agent instructions' SS4's original top-priority defect.
 
    Structured output / JSON mode
       Requesting (and, critically, actually parsing) a model's response as machine-readable JSON
@@ -216,7 +216,7 @@ LLM evaluation and the judge/cascade pipeline
       mode but decided pass/fail via ``"true" in text.lower()``, discarding the structure entirely.
 
    Cascade (evaluation cascade)
-      This project's four-layer per-response evaluation pipeline (CLAUDE.md SS3a): Layer 0
+      This project's four-layer per-response evaluation pipeline (the agent instructions SS3a): Layer 0
       (deterministic validity gates), Layer 1 (embedding-based echo detection), Layer 2 (NLI
       factual-contradiction check against RAG context), Layer 3 (the LLM judge). Routing between
       layers is static Python control flow, deliberately **not** LLM-orchestrated -- see
@@ -233,7 +233,7 @@ LLM evaluation and the judge/cascade pipeline
    Construct validity
       Whether a measurement actually captures the underlying concept it claims to measure (as
       opposed to *reliability*, whether it measures *something* consistently). This project's
-      stated core differentiator (CLAUDE.md SS0) is demonstrating construct validity work directly
+      stated core differentiator (the agent instructions SS0) is demonstrating construct validity work directly
       -- e.g. :func:`~core.services.cluster_discovery.compute_fit_indices`'s docstring frames
       Silhouette/Davies-Bouldin/ARI explicitly as "construct-validity proxies, not a pass/fail
       judgment."
@@ -324,7 +324,7 @@ Core NLP techniques
       A structured collection of text used for analysis or training. Used in two senses in this
       project: the reference/background corpus a technique like :term:`TF-IDF` might be normalized
       against, and this project's own accumulated response records (the "corpus-level confirmatory
-      analysis" of CLAUDE.md SS3b) -- the second sense is this project's dominant one.
+      analysis" of the agent instructions SS3b) -- the second sense is this project's dominant one.
 
    Lexicon
       A structured word list, often tagged with categories or scores, used for rule-based text
@@ -503,7 +503,7 @@ Machine learning and statistics
    Clustering
       Grouping data points by similarity with no predefined labels (*unsupervised* -- contrast
       :term:`Supervised learning`). This project's whole corpus-level confirmatory analysis
-      (CLAUDE.md SS3b) is built on clustering linguistic-feature vectors and checking whether the
+      (the agent instructions SS3b) is built on clustering linguistic-feature vectors and checking whether the
       resulting groups line up with the archetype labels chosen at generation time.
 
    K-means
@@ -567,7 +567,7 @@ Machine learning and statistics
       In density-based clustering (:term:`HDBSCAN`), the fraction of points that don't fit densely
       into any cluster and are explicitly labeled ``-1`` ("noise") rather than force-assigned. This
       project's ``noise_ratio`` field, and the "outliers" table in the Behavioral Topology view --
-      a real, usable signal for CLAUDE.md's "noisy data" question, not a placeholder.
+      a real, usable signal for the agent instructions' "noisy data" question, not a placeholder.
 
 Project-specific terms
 ---------------------------

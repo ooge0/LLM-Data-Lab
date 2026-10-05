@@ -14,6 +14,8 @@ from api.app import app
 from core.domain.entities import ExperimentConfig, PromptMode, RunRecord
 from tests.unit.test_experiment_runner import FakeRepository
 
+pytestmark = pytest.mark.req("REQ-PAGE-BE-01")
+
 
 @pytest.fixture
 def client():
@@ -97,6 +99,7 @@ def test_benchmark_report_renders_overview_and_leaderboard_for_a_populated_run(c
     assert "chart-" in response.text
 
 
+@pytest.mark.req("REQ-CORP-BENCH-02")
 def test_leaderboard_states_that_its_weights_are_hand_picked_and_scores_are_run_relative(client, fake_repo):
     """The leaderboard carries a visible caveat: the 0.4/0.3/0.3 weights are hand-picked and unvalidated, and speed_score is relative to the fastest model in this run, so scores are comparable only within one run."""
     fake_repo.save_run(_make_run("run-a", "2026-08-22T00:00:00Z"))

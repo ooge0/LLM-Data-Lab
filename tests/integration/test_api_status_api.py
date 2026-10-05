@@ -9,6 +9,8 @@ from fastapi.testclient import TestClient
 
 from api.app import app
 
+pytestmark = pytest.mark.req("REQ-OPS-ST-03")
+
 
 @pytest.fixture
 def client():

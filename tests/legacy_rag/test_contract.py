@@ -2,6 +2,8 @@ import pytest
 
 from core.analysis.data_contract import LabDataBridge, LabSchema
 
+pytestmark = pytest.mark.req("REQ-DATA-CON-01")
+
 # --- FIXTURES & HELPERS ---
 
 

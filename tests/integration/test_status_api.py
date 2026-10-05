@@ -12,6 +12,8 @@ from fastapi.testclient import TestClient
 import api.routers.status as status_router
 from api.app import app
 
+pytestmark = pytest.mark.req("REQ-OPS-ST-02")
+
 
 @pytest.fixture
 def client():

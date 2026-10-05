@@ -5,6 +5,7 @@ full grid, judge, RAG, sweep, self-critic) against fakes, pinning exact call
 shapes and the full persisted entry shape.
 """
 
+import pytest
 import asyncio
 
 from core.domain.entities import ExperimentConfig, GenerationResult, JudgeVerdict, PromptMode, RunRecord
@@ -33,11 +34,13 @@ ARCHETYPES = {
 # --- extract_best_text -------------------------------------------------
 
 
+@pytest.mark.req("REQ-GEN-RUN-06")
 def test_extract_best_text_from_json_with_text_key():
     """A JSON-object response with a "text" key returns that key's value, not the raw JSON string."""
     assert extract_best_text('{"text": "hello"}') == "hello"
 
 
+@pytest.mark.req("REQ-GEN-RUN-06")
 def test_extract_best_text_plain_text_falls_back_to_raw():
     """A response that isn't valid JSON is returned as-is, unchanged."""
     assert extract_best_text("plain prose") == "plain prose"
@@ -46,27 +49,32 @@ def test_extract_best_text_plain_text_falls_back_to_raw():
 # --- compute_sweep_range -------------------------------------------------
 
 
+@pytest.mark.req("REQ-GEN-RUN-01")
 def test_compute_sweep_range_single_step_returns_v_min():
     """steps <= 1 returns a single-point list at v_min, matching the legacy else-branch."""
     assert compute_sweep_range(0.5, 0.9, steps=1) == [0.5]
     assert compute_sweep_range(0.5, 0.9, steps=0) == [0.5]
 
 
+@pytest.mark.req("REQ-GEN-RUN-01")
 def test_compute_sweep_range_linear_interpolation_pinned():
     """Pinned against streamlit_app.py's exact formula (lines 593-594) on a known input."""
     assert compute_sweep_range(0.0, 1.0, steps=5) == [0.0, 0.25, 0.5, 0.75, 1.0]
 
 
+@pytest.mark.req("REQ-GEN-RUN-01")
 def test_compute_sweep_range_delta_style_center_plus_minus():
     """A 'Delta' sweep (center=0.7, delta=0.2 -> v_min=0.5, v_max=0.9) matches hand-computed values."""
     assert compute_sweep_range(0.5, 0.9, steps=3) == [0.5, 0.7, 0.9]
 
 
+@pytest.mark.req("REQ-GEN-RUN-01")
 def test_compute_sweep_range_descending():
     """ascending=False returns the same interpolated values sorted high-to-low, matching the legacy DESC checkbox."""
     assert compute_sweep_range(0.0, 1.0, steps=3, ascending=False) == [1.0, 0.5, 0.0]
 
 
+@pytest.mark.req("REQ-GEN-RUN-01")
 def test_compute_sweep_range_rounds_to_two_decimals():
     """Every interpolated value is rounded to 2 decimals, not left as a raw float division result."""
     values = compute_sweep_range(0.1, 0.2, steps=4)
@@ -84,6 +92,7 @@ class FakeLLMClient:
         self.calls = []
 
     def generate(self, model, system_prompt, user_prompt, **params):
+        """Simulate a generation call, recording the inputs and returning a canned GenerationResult."""
         self.calls.append(
             {"model": model, "system_prompt": system_prompt, "user_prompt": user_prompt, "params": params}
         )
@@ -95,45 +104,55 @@ class FakeLLMClient:
 
 
 class FakeRepository:
+    """Simulate a repository that records saved runs and responses in memory, and returns canned lists of runs and responses."""
     def __init__(self):
         self.saved_runs = []
         self.saved_responses = []
 
     def save_run(self, run: RunRecord) -> str:
+        """Simulate saving a run record, returning the run_id and recording it in memory."""
         self.saved_runs.append(run)
         return run.run_id
 
     def save_response(self, run_id, response) -> None:
+        """Simulate saving a response for a run, recording it in memory."""
         self.saved_responses.append((run_id, response))
 
     def load_responses(self, run_id=None):
+        """Simulate loading responses, returning all responses if run_id is None, or only those for the given run_id."""
         return [r for rid, r in self.saved_responses if run_id is None or rid == run_id]
 
     def list_runs(self):
+        """Simulate listing runs, returning them sorted by started_at descending (most recent first)."""
         return sorted(self.saved_runs, key=lambda r: r.started_at, reverse=True)
 
 
 class FakePromptStrategy:
+    """Simulate a prompt strategy that returns a canned system prompt and records the calls made to it."""
     def __init__(self, prompt="the system prompt"):
         self.prompt = prompt
         self.calls = []
 
     def build(self, archetype, bias, mode, **kwargs):
+        """Simulate building a prompt, recording the inputs and returning a canned prompt."""
         self.calls.append({"archetype": archetype, "bias": bias, "mode": mode, "kwargs": kwargs})
         return self.prompt
 
 
 class FakeJudge:
+    """Simulate a judge that returns a canned verdict and records the calls made to it."""
     def __init__(self, verdict: bool = True):
         self.verdict = verdict
         self.calls = []
 
     def evaluate(self, response_text, archetype, bias, model):
+        """Simulate evaluating a response, recording the inputs and returning a canned JudgeVerdict."""
         self.calls.append({"response_text": response_text, "archetype": archetype, "bias": bias, "model": model})
         return JudgeVerdict(verdict=self.verdict)
 
 
 class FakeKnowledgeBase:
+    """Simulate a knowledge base that returns canned chunks and records the calls made to it."""
     def __init__(self, chunks=None):
         self.chunks = (
             chunks
@@ -143,11 +162,13 @@ class FakeKnowledgeBase:
         self.calls = []
 
     def retrieve(self, query, top_k=5, archetype=None):
+        """Simulate retrieving chunks, recording the inputs and returning canned chunks."""
         self.calls.append({"query": query, "top_k": top_k, "archetype": archetype})
         return self.chunks
 
 
 def _make_config(**overrides):
+    """Build an ExperimentConfig with defaults, overridden by any provided kwargs."""
     defaults = dict(
         student_models=["qwen:latest"],
         teacher_model="qwen:latest",
@@ -160,6 +181,7 @@ def _make_config(**overrides):
 
 
 def _make_runner(**kwargs):
+    """Build an ExperimentRunner with fakes for all dependencies, overridden by any provided kwargs."""
     defaults = dict(
         llm_client=FakeLLMClient(),
         repository=FakeRepository(),
@@ -172,6 +194,7 @@ def _make_runner(**kwargs):
 
 
 def _start_and_drain(runner, config):
+    """Start the runner with the given config and drain all events until done, returning the list of events."""
     async def scenario():
         loop = asyncio.get_running_loop()
         queue = runner.try_start(loop, config)
@@ -194,6 +217,7 @@ def _start_and_drain(runner, config):
     return asyncio.run(scenario())
 
 
+@pytest.mark.req("REQ-GEN-RUN-02")
 def test_compute_total_tasks_multiplies_all_four_dimensions():
     """total_tasks = students x archetypes x biases x sweep_steps -- all four dimensions multiply, not add."""
     config = _make_config(
@@ -208,12 +232,14 @@ def test_compute_total_tasks_multiplies_all_four_dimensions():
     assert ExperimentRunner.compute_total_tasks(config) == 2 * 2 * 3 * 5
 
 
+@pytest.mark.req("REQ-GEN-RUN-02")
 def test_compute_total_tasks_without_sweep_is_one_per_combination():
     """No sweep_param means the sweep dimension collapses to 1 point, not 0 -- a static run still counts as one value per combination."""
     config = _make_config(student_models=["a"], archetypes=["Detached"], biases=["x", "y"])
     assert ExperimentRunner.compute_total_tasks(config) == 2  # 1 student * 1 archetype * 2 biases * 1
 
 
+@pytest.mark.req("REQ-GEN-RUN-03")
 def test_try_start_raises_on_missing_teacher_model_when_not_self_critic():
     """teacher_model is required unless self_critic is set -- matches the legacy app's own Teacher validation."""
     runner = _make_runner()
@@ -232,6 +258,7 @@ def test_try_start_raises_on_missing_teacher_model_when_not_self_critic():
     asyncio.run(scenario())
 
 
+@pytest.mark.req("REQ-GEN-RUN-03")
 def test_try_start_raises_on_sweep_param_without_resolved_range():
     """A sweep_param set without sweep_min/sweep_max is a misconfigured request, rejected before any generation."""
     runner = _make_runner()
@@ -250,6 +277,7 @@ def test_try_start_raises_on_sweep_param_without_resolved_range():
     asyncio.run(scenario())
 
 
+@pytest.mark.req("REQ-GEN-RUN-03")
 def test_try_start_raises_too_many_tasks_before_touching_the_guard():
     """A config over the max_total_tasks cap is rejected before the concurrent-run guard is engaged -- running stays False, not falsely left True."""
     runner = _make_runner(max_total_tasks=5)
@@ -268,6 +296,7 @@ def test_try_start_raises_too_many_tasks_before_touching_the_guard():
     asyncio.run(scenario())
 
 
+@pytest.mark.req("REQ-MET-REC-02")
 def test_persists_ollama_performance_fields_and_computes_tokens_per_second():
     """GenerationResult's token counts and Ollama timing breakdown land in the entry unchanged, plus a derived tokens_per_second."""
     repo = FakeRepository()
@@ -297,6 +326,7 @@ def test_persists_ollama_performance_fields_and_computes_tokens_per_second():
     assert entry["tokens_per_second"] == 200.0  # 8 tokens / (40.0ms / 1000)
 
 
+@pytest.mark.req("REQ-MET-REC-02")
 def test_tokens_per_second_is_none_when_ollama_fields_are_unavailable():
     """A backend that can't supply the performance fields (default FakeLLMClient, all None) leaves tokens_per_second None rather than raising ZeroDivisionError/TypeError."""
     repo = FakeRepository()
@@ -310,6 +340,7 @@ def test_tokens_per_second_is_none_when_ollama_fields_are_unavailable():
     assert entry["tokens_per_second"] is None
 
 
+@pytest.mark.req("REQ-MET-REC-01")
 def test_persists_full_entry_shape_with_no_key_collisions():
     """The full entry dict includes generation, judge, RAG, and metrics fields, with the
     self_focus/word_count/ms_per_word collision fix applied (both values survive)."""
@@ -360,6 +391,7 @@ def test_persists_full_entry_shape_with_no_key_collisions():
     assert "ms_per_word_raw" in entry
 
 
+@pytest.mark.req("REQ-CASC-L3-04")
 def test_self_critic_routes_judge_to_the_student_model():
     """self_critic=True routes the judge call to the student model itself, and persists it under "teacher" too (CLAUDE.md SS4's sycophancy-risk mode)."""
     repo = FakeRepository()
@@ -374,6 +406,7 @@ def test_self_critic_routes_judge_to_the_student_model():
     assert entry["teacher"] == "qwen:latest"
 
 
+@pytest.mark.req("REQ-CASC-L3-04")
 def test_teacher_student_mode_routes_judge_to_teacher_model():
     """self_critic=False routes the judge call to the configured teacher_model, not the student being evaluated."""
     repo = FakeRepository()
@@ -386,6 +419,7 @@ def test_teacher_student_mode_routes_judge_to_teacher_model():
     assert judge.calls[0]["model"] == "phi3:latest"
 
 
+@pytest.mark.req("REQ-GEN-RAG-01", "REQ-CASC-L2-01")
 def test_rag_enabled_retrieves_and_injects_context():
     """rag_enabled=True builds the retrieval query from archetype+bias, injects the retrieved chunks into the user prompt, and persists the RAG fields."""
     repo = FakeRepository()
@@ -409,6 +443,7 @@ def test_rag_enabled_retrieves_and_injects_context():
     assert 0.0 <= entry["layer2_contradiction_score"] <= 1.0
 
 
+@pytest.mark.req("REQ-GEN-RAG-01")
 def test_rag_disabled_ignores_knowledge_base_even_if_provided():
     """rag_enabled=False never calls the knowledge base, even when one is configured on the runner -- the config flag gates it, not just object presence."""
     repo = FakeRepository()
@@ -423,6 +458,7 @@ def test_rag_disabled_ignores_knowledge_base_even_if_provided():
     assert entry["rag_context"] == ""
 
 
+@pytest.mark.req("REQ-GEN-RUN-01")
 def test_sweep_iterates_the_full_computed_range_and_overrides_one_param():
     """A temperature sweep generates one call per computed value, overriding only that one sampling param while the rest stay at their base values."""
     repo = FakeRepository()
@@ -443,6 +479,7 @@ def test_sweep_iterates_the_full_computed_range_and_overrides_one_param():
     assert sweep_params == ["Temperature", "Temperature", "Temperature"]
 
 
+@pytest.mark.req("REQ-GEN-RUN-02")
 def test_full_grid_produces_students_times_archetypes_times_biases_entries():
     """Every (student, archetype) combination is actually generated, not just the count -- checked by the real combo set, not a length assertion alone."""
     repo = FakeRepository()
@@ -465,6 +502,7 @@ def test_full_grid_produces_students_times_archetypes_times_biases_entries():
     }
 
 
+@pytest.mark.req("REQ-GEN-RUN-04")
 def test_second_concurrent_start_is_rejected():
     """A second try_start() call while one run is still in flight returns None instead of starting a competing run -- the single-user concurrent-run guard."""
     runner = _make_runner(llm_client=FakeLLMClient(delay_seconds=0.2))
@@ -484,6 +522,7 @@ def test_second_concurrent_start_is_rejected():
     asyncio.run(scenario())
 
 
+@pytest.mark.req("REQ-GEN-RUN-04")
 def test_generation_error_emits_error_event_and_clears_guard():
     """A real generation failure (e.g. Ollama unreachable) surfaces as an "error" progress event and releases the concurrent-run guard, rather than hanging the run or leaving `running` stuck True."""
 
@@ -505,12 +544,14 @@ def test_generation_error_emits_error_event_and_clears_guard():
 # --- request_stop --------------------------------------------------------
 
 
+@pytest.mark.req("REQ-GEN-RUN-05")
 def test_request_stop_with_no_run_in_progress_returns_false():
     """Calling request_stop() when nothing is running reports nothing to stop, rather than silently succeeding."""
     runner = _make_runner()
     assert runner.request_stop() is False
 
 
+@pytest.mark.req("REQ-GEN-RUN-05")
 def test_request_stop_mid_run_halts_before_the_full_grid_completes():
     """
     request_stop() called after the first response is cooperative, not
@@ -555,6 +596,7 @@ def test_request_stop_mid_run_halts_before_the_full_grid_completes():
     assert runner.running is False
 
 
+@pytest.mark.req("REQ-GEN-RUN-05")
 def test_stop_requested_flag_is_cleared_by_a_fresh_try_start():
     """A stop flag left set by a previous (stopped) run doesn't leak into and immediately kill the next run."""
     repo = FakeRepository()
@@ -574,6 +616,7 @@ def test_stop_requested_flag_is_cleared_by_a_fresh_try_start():
 # --- Layer 0 / Layer 1 cascade integration (CLAUDE.md SS3a, SS4/SS6) -----------------------------
 
 
+@pytest.mark.req("REQ-CASC-L0-04")
 def test_layer0_empty_response_skips_judge_and_metrics():
     """A response whose extracted text is blank is rejected by Layer 0 before the judge or any metric computation ever runs -- no wasted judge call, no metric fields in the persisted entry."""
     llm = FakeLLMClient(response_text='{"text": ""}')
@@ -592,6 +635,7 @@ def test_layer0_empty_response_skips_judge_and_metrics():
     assert "coherence" not in entry
 
 
+@pytest.mark.req("REQ-CASC-L0-04")
 def test_layer0_malformed_response_skips_judge_and_metrics():
     """A response that isn't valid JSON at all (and doesn't look cut off) is classified MALFORMED_JSON and rejected the same way as an empty one."""
     llm = FakeLLMClient(response_text="The model ignored the JSON instruction entirely and just chatted.")
@@ -607,6 +651,7 @@ def test_layer0_malformed_response_skips_judge_and_metrics():
     assert entry["v_ok"] is False
 
 
+@pytest.mark.req("REQ-CASC-L1-02")
 def test_layer1_echo_response_skips_judge_call_but_still_computes_metrics():
     """
     A response that echoes its own bias instruction back (real failure pattern, CLAUDE.md SS0's
@@ -631,6 +676,7 @@ def test_layer1_echo_response_skips_judge_call_but_still_computes_metrics():
     assert "sentiment" in entry  # metrics WERE computed, unlike a Layer 0 rejection
 
 
+@pytest.mark.req("REQ-CASC-ROUTE-01")
 def test_genuine_substantive_response_reaches_the_real_judge():
     """A real, substantive, non-echo response passes both Layer 0 and Layer 1 and reaches the actual judge -- the cascade doesn't reject legitimate content."""
     llm = FakeLLMClient(
@@ -669,6 +715,7 @@ def _recording_nli(calls):
     return check
 
 
+@pytest.mark.req("REQ-CASC-L0-04", "REQ-CASC-ROUTE-02")
 def test_layer0_rejection_is_marked_layer0_and_keeps_the_raw_text_in_output():
     """
     Layer 0 judges the RAW text strictly while extract_best_text is tolerant (it falls back to the raw
@@ -687,6 +734,7 @@ def test_layer0_rejection_is_marked_layer0_and_keeps_the_raw_text_in_output():
     assert entry["output"] == prose
 
 
+@pytest.mark.req("REQ-CASC-L1-02", "REQ-CASC-L2-03", "REQ-CASC-ROUTE-02")
 def test_layer1_echo_is_marked_layer1_and_with_rag_never_calls_the_nli_check(monkeypatch):
     """An echo-rejected response skips the NLI cross-encoder even when RAG is on: its result could never change the outcome, so the compute is wasted."""
     calls = []
@@ -711,6 +759,7 @@ def test_layer1_echo_is_marked_layer1_and_with_rag_never_calls_the_nli_check(mon
     assert entry["layer2_predicted_label"] is None
 
 
+@pytest.mark.req("REQ-CASC-L2-03")
 def test_non_echo_response_with_rag_still_runs_the_nli_check_once(monkeypatch):
     """The NLI skip is only for echo rows: a genuine response with RAG enabled still gets its (logging-only) Layer 2 check."""
     calls = []
@@ -733,6 +782,7 @@ def test_non_echo_response_with_rag_still_runs_the_nli_check_once(monkeypatch):
     assert entry["v_decided_by"] == "judge"
 
 
+@pytest.mark.req("REQ-CASC-ROUTE-02")
 def test_a_genuine_judge_no_is_marked_as_decided_by_the_judge():
     """A real 'no' from a working judge is v_decided_by='judge', not a parse failure and not a deterministic layer."""
     repo = FakeRepository()
@@ -749,6 +799,7 @@ def test_a_genuine_judge_no_is_marked_as_decided_by_the_judge():
     assert entry["v_decided_by"] == "judge"
 
 
+@pytest.mark.req("REQ-CASC-ROUTE-02")
 def test_judge_parse_failure_is_marked_distinctly_from_a_real_judge_no():
     """A judge verdict flagged parse_failed gets v_decided_by='judge_parse_failure', so aggregates need not read rationale text to separate it from a genuine 'no'."""
 

@@ -9,6 +9,8 @@ import pytest
 
 from core.analysis.neuro_metrics import NeuroMetrics
 
+pytestmark = pytest.mark.req("REQ-MET-LING-03")
+
 
 @pytest.fixture
 def neuro():

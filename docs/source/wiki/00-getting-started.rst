@@ -1,4 +1,4 @@
-00 — Getting Started: Local Deployment and Operations
+00 — Getting started: Local deployment and operations
 =========================================================
 
 Every other page in this wiki (:doc:`index`) answers *why* -- engineering rationale, grounded in
@@ -19,7 +19,7 @@ alongside it -- check there first.
   targets this interpreter specifically (see :doc:`02-tools-and-stack`).
 - **git**, to clone the repository.
 - **Ollama** (`ollama.com <https://ollama.com>`_), running locally -- every generation call in this
-  project goes through it; there is no paid-API code path (CLAUDE.md SS1).
+  project goes through it; there is no paid-API code path (the agent instructions SS1).
 - **Optional: an NVIDIA GPU + CUDA drivers.** The app runs on CPU too (slower embedding/NLI/spaCy
   calls); Windows installs a CUDA-specific PyTorch build by default (step 2 below), Ubuntu's lock
   file does the equivalent.
@@ -326,7 +326,7 @@ raw ``curl`` against the API, then inspecting the resulting JSONL/SQLite directl
    * - Format
      - ``black .``
    * - Build docs
-     - ``cd docs/source && make html``
+     -  ``sphinx-build docs/source docs/source/_build/html`` or ``cd docs/source && make html``
    * - Serve docs with working search
      - ``python utils/serve_docs.py``
    * - Regenerate a dependency lock file

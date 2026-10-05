@@ -1,7 +1,7 @@
-04 — LLM Analytics: What Is Actually Measured, and How Well
+04 — LLM Analytics: what is actually measured, and how well
 ================================================================
 
-This is the most detailed page in this wiki, deliberately -- CLAUDE.md's own stated differentiator
+This is the most detailed page in this wiki, deliberately -- the agent instructions' own stated differentiator
 for this whole project is "measurement validity: proving a metric measures what it claims and that
 the signal is not noise," not breadth of features. This page audits that claim directly against the
 code: every metric this project computes, how they connect across levels of granularity, what
@@ -144,7 +144,7 @@ Token/phrase level -- computed per single response
      - Mean dependency-tree distance between syntactically related token pairs -- a validated
        complexity/intellectualization marker (Oakes 2017, Lu 2010), independent of raw sentence
        length. The only spaCy-based (not NLTK-based) computation in the per-response pipeline.
-       CLAUDE.md SS7 names both ``textdescriptives`` and ``lexicalrichness`` as preferred libraries;
+       the agent instructions SS7 names both ``textdescriptives`` and ``lexicalrichness`` as preferred libraries;
        neither had actually been wired into any code until this metric
 
 Cross-response / model-comparison level
@@ -198,7 +198,7 @@ compared across many rows, grouped by model/archetype/bias. Corpus-level analysi
 have accumulated -- clustering, fit indices, and the benchmark leaderboard all read the *persisted*
 corpus back out, they never touch a live in-progress run. This two-stage separation (per-response
 cascade vs. corpus-level confirmatory analysis) is a named, deliberate architectural rule in
-CLAUDE.md SS3, not an implementation detail -- the two stages must not be collapsed into one flow,
+the agent instructions SS3, not an implementation detail -- the two stages must not be collapsed into one flow,
 because clustering fundamentally needs the whole accumulated set to form clusters at all, while a
 per-response verdict has to be decidable from one response alone.
 
@@ -239,7 +239,7 @@ output word sets. No embedding model, no cosine similarity in a learned vector s
 "semantic" about it in the sense the field name implies -- the function's own docstring cited
 "Jaccard similarity" as one of its own references in the same breath as the field name
 ``semantic_overlap``, suggesting the gap between name and technique had never actually been
-scrutinized. This is exactly the kind of construct-validity problem CLAUDE.md's own framing exists
+scrutinized. This is exactly the kind of construct-validity problem the agent instructions' own framing exists
 to catch: a metric that looks like it measures meaning-level similarity, but actually measures
 surface token overlap, silently overstates how much semantic fidelity the pipeline is verifying
 wherever the field feeds a downstream number -- including, as it turned out, the benchmark
@@ -302,7 +302,7 @@ persisted schema compares one model's response to another model's response for t
 
 That naming gap alone would have been worth fixing on its own -- but it became an active
 contradiction, not just an inaccurate label, once ``semantic_overlap`` became the real embedding
-value CLAUDE.md SS4's Layer 1 fix (see :doc:`06-qa-testing-strategy` and the cascade section below)
+value the agent instructions' SS4's Layer 1 fix (see :doc:`06-qa-testing-strategy` and the cascade section below)
 also reuses: :func:`core.analysis.response_classification.is_echo_response` rejects a response
 specifically **because** its ``semantic_overlap`` is high -- that is the project's own, calibrated
 signal for "the model echoed its bias/archetype instruction back instead of generating real
@@ -311,7 +311,7 @@ rewarding models with **higher** ``final_score`` for exactly that same high-``se
 behavior, in direct opposition to what the cascade had just been built to reject. A model that
 echoed its instructions more often, all else equal, would have ranked *better* on the leaderboard's
 own "teacher-mimicry" dimension -- the kind of internal metric disagreement this project's whole
-"measurement validity" framing (CLAUDE.md SS0) exists to catch before it goes unnoticed.
+"measurement validity" framing (the agent instructions SS0) exists to catch before it goes unnoticed.
 
 **Fixed**: ``mimicry_score`` removed from ``final_score`` entirely, rather than pointed at a
 different (still-unvalidated) proxy field -- no genuine "closeness to teacher" metric currently
@@ -329,12 +329,12 @@ scoring contradiction.
 What is built of the intended evaluation cascade, and what is not
 --------------------------------------------------------------------------
 
-CLAUDE.md SS3a specifies a four-layer per-response cascade: deterministic gates, then STS
+the agent instructions SS3a specifies a four-layer per-response cascade: deterministic gates, then STS
 embeddings, then NLI/specialized classifiers, then a generative judge, in that order, with routing
 that is static and deterministic rather than LLM-orchestrated. As of **2026-08-24**, all four layers
 have real, working code behind them for the first time, following a direct code-review pushback
 from the author (see :doc:`06-qa-testing-strategy` for the exact review that triggered this) and one
-narrow, explicit exception CLAUDE.md SS6 records to its own "author writes the moat" rule -- not a
+narrow, explicit exception the agent instructions SS6 records to its own "author writes the moat" rule -- not a
 general lifting of that rule. Layer 2 is the one still qualified: real and tested as a mechanism,
 but deliberately not yet trusted as a rejection gate (see below). What follows is the state *before*
 that date (for the historical record) and *after*.
@@ -344,7 +344,7 @@ the entire pipeline**, and it routed straight through ``NaiveJudge`` -- no orche
 layer, nothing for a router to route *between*. ``ExperimentRunner._run_one`` carried its own
 standing comment marking precisely where Layer 0 validity classification belonged, and stated
 plainly: "today this seam passes everything through unfiltered." The judge itself was the same
-fragile mechanism CLAUDE.md SS4 names as the single most load-bearing, most fragile piece of the
+fragile mechanism the agent instructions SS4 names as the single most load-bearing, most fragile piece of the
 whole system: it asked for structured JSON output (``json_mode=True``) but never parsed the response
 as JSON -- it checked whether the literal substring ``"true"`` appeared in the lowercased response
 text. A malformed, truncated, or entirely non-JSON response (an HTML error page, say) silently
@@ -357,14 +357,14 @@ populated.
 - **Layer 0** (:func:`core.analysis.response_classification.classify_response`) is built: a pure,
   model-free classification of the raw response -- ``VALID``/``EMPTY``/``MALFORMED_JSON``/
   ``TRUNCATED``/``SCHEMA_ERROR`` -- run in ``ExperimentRunner._run_one`` *before* any metric or
-  judge call. A non-``VALID`` result short-circuits both. 5 of CLAUDE.md SS1's 7 classes are covered
+  judge call. A non-``VALID`` result short-circuits both. 5 of the agent instructions' SS1's 7 classes are covered
   (``API_ERROR``/``FORMAT_ERROR`` are not -- see the module's own docstring for why: a real
   transport failure already surfaces as an exception before a response ever reaches this function,
   and ``FORMAT_ERROR`` isn't syntactically distinguishable from the others).
 - **Layer 1** (:func:`core.analysis.response_classification.is_echo_response`) is built, but
-  narrowly -- not the general topical-proximity gate CLAUDE.md SS3a's "STS embeddings" name implies.
+  narrowly -- not the general topical-proximity gate the agent instructions' SS3a's "STS embeddings" name implies.
   It flags one specific, real, previously-undetected failure mode: the model echoing its own
-  archetype/bias instruction back instead of generating conditioned text (CLAUDE.md SS0's
+  archetype/bias instruction back instead of generating conditioned text (the agent instructions' SS0's
   empirically-confirmed judge gap -- 7/125 real outputs in the original audit). It reuses
   ``semantic_overlap`` (see *A fixed naming/technique gap* above) rather than computing a second
   embedding comparison.
@@ -380,11 +380,11 @@ populated.
   contradiction score, does not touch ``v_ok``). No real-data calibration exists yet for a rejection
   threshold, unlike Layer 1's -- see the dedicated section below for the full reasoning. Sentiment/
   toxicity classifiers remain entirely unbuilt. Still substantially the author's to hand-write and
-  calibrate, per CLAUDE.md SS6 -- this is a mechanism, not a finished, trustworthy gate.
+  calibrate, per the agent instructions SS6 -- this is a mechanism, not a finished, trustworthy gate.
 
 Cross-model judging *is* structurally supported and tested (the judge model can be the student
 itself in self-critic mode, or a distinct teacher model otherwise), but no code anywhere computes or
-logs the self-critic-vs-cross-model pass-rate delta CLAUDE.md SS4 calls for "at minimum" -- the
+logs the self-critic-vs-cross-model pass-rate delta the agent instructions SS4 calls for "at minimum" -- the
 routing exists, the comparison it was meant to enable still does not.
 
 Why Layer 2 logs a real score but does not reject anything (yet)
@@ -401,7 +401,7 @@ as the right cutoff for Layer 1's echo detector.
 
 Shipping an uncalibrated rejection threshold here would not be a neutral placeholder -- it would
 silently start rejecting or accepting real responses based on a number nobody has verified means
-what it's assumed to mean, exactly the failure mode CLAUDE.md's "measurement validity" framing
+what it's assumed to mean, exactly the failure mode the agent instructions' "measurement validity" framing
 (SS0) exists to prevent. So Layer 2, as shipped, is a genuine, real capability with a real, honestly
 reported score -- but it is presentation and data-collection infrastructure for the calibration step
 that has to happen *before* a threshold is trustworthy, not the threshold itself. The `argmax`
@@ -438,7 +438,7 @@ the "prompt" is a label, not a question. Reversing the threshold direction (reje
 similarity, not low) is a direct, correct consequence of that cause -- not an arbitrary flip. This is
 a concrete, verified example of testing surfacing the *opposite* conclusion from the naive first
 assumption, caught by calibrating against real data before writing the check, not after it shipped
-wrong -- exactly the discipline CLAUDE.md's "measurement validity" framing (SS0) calls for. The
+wrong -- exactly the discipline the agent instructions' "measurement validity" framing (SS0) calls for. The
 exact threshold, ``0.5``, sits in the wide, clean gap between the two observed clusters above; both
 the classes and this rationale are pinned in
 ``core/analysis/response_classification.py::is_echo_response``'s calibration comment and in
@@ -457,7 +457,7 @@ territory precisely so a real, potentially important lesson about what ``bias`` 
 contain is not silently lost the way the threshold-direction assumption almost was -- not guessed
 at, and not quietly folded into the fix above as if it were the same question.
 
-The **corpus-level half of the cascade (CLAUDE.md SS3b) is genuinely built and live**, not just
+The **corpus-level half of the cascade (the agent instructions SS3b) is genuinely built and live**, not just
 designed: UMAP dimensionality reduction, HDBSCAN clustering, and the fit-index math described above
 are real, reachable via ``/clusters``, and tested -- with an honest, explicitly-documented limit that
 exact cluster-ID assignment isn't pinned in tests (non-deterministic across library versions even
@@ -514,7 +514,7 @@ Coverage against industry-standard LLM-evaluation technique
        vectors *should* recover structure aligned with the archetype labels. A high ARI is real
        evidence the archetype-conditioning prompts produce linguistically distinguishable text; a
        low ARI alongside acceptable Silhouette would instead suggest real structure exists but
-       tracks something other than the intended labels. This is the differentiator CLAUDE.md SS0
+       tracks something other than the intended labels. This is the differentiator the agent instructions SS0
        claims, implemented as real, tested code rather than left as an aspiration.
 
 Concrete business cases: answerable today vs. not yet
@@ -539,7 +539,7 @@ Concrete business cases: answerable today vs. not yet
   ``JudgeVerdict.confidence``/``.rationale`` are now genuinely populated by ``StructuredJudge`` when
   the judge model supplies them (left ``None``, not faked, when it doesn't).
 - *Is a malformed, empty, truncated, or schema-broken response being scored differently from a
-  genuine content failure?* -- partially: Layer 0 classifies 5 of CLAUDE.md SS1's 7 classes
+  genuine content failure?* -- partially: Layer 0 classifies 5 of the agent instructions' SS1's 7 classes
   (``API_ERROR``/``FORMAT_ERROR`` excluded, see above) before either metrics or the judge run.
 - *Is a response factually contradictory to the RAG context it was given?* -- partially, and
   logging-only: Layer 2's NLI cross-encoder gives a real contradiction score whenever RAG is
@@ -550,7 +550,7 @@ Concrete business cases: answerable today vs. not yet
 
 - *Should a response be automatically rejected for contradicting its RAG context?* -- Layer 2 logs
   the signal (see above) but does not act on it; no real-data calibration exists yet for a rejection
-  threshold, and sentiment/toxicity classifiers (the rest of CLAUDE.md SS3a's original Layer 2
+  threshold, and sentiment/toxicity classifiers (the rest of the agent instructions' SS3a's original Layer 2
   description) remain entirely unbuilt.
 - *Is a response topically on-target against the full archetype/prompt, not just the bias label,
   before spending a generative-judge call on it?* -- Layer 1 only checks similarity to the terse

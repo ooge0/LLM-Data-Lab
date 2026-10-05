@@ -1915,7 +1915,7 @@ main
 
 === README.MD ===
 
-# LLM data lab / Psycho-Data-Augmentor
+# LLM data lab / LLM Data Lab
 
 **Quick Summary – Psych Data Lab**
 - App purpose: run AI/NLP models in different modes (Teacher–Student, Self‑Critic, Blind Mode) and collect structured results.
@@ -21060,7 +21060,7 @@ main
 
 === README.MD ===
 
-# LLM data lab / Psycho-Data-Augmentor
+# LLM data lab / LLM Data Lab
 
 **Quick Summary – Psych Data Lab**
 - App purpose: run AI/NLP models in different modes (Teacher–Student, Self‑Critic, Blind Mode) and collect structured results.

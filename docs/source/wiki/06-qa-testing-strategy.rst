@@ -1,7 +1,7 @@
-06 — QA: Testing as the Product, Not an Afterthought
+06 — QA: Testing as the product, not an afterthought
 ========================================================
 
-CLAUDE.md SS7 states this plainly: because this project demonstrates *testing* competence, the test
+the agent instructions SS7 states this plainly: because this project demonstrates *testing* competence, the test
 suite is not a quality gate bolted onto the side of the work, it is one of the things being
 demonstrated. This page is not a duplicate of :doc:`../qa` (that page is the exhaustive, generated
 roster -- every test file, every test name, the coverage number, the traceability matrix). This page
@@ -29,7 +29,7 @@ framework-free genuinely is.
 Pinned-fixture tests for borrowed math -- not just business logic
 --------------------------------------------------------------------------
 
-CLAUDE.md SS7 is explicit that a metric imported from a third-party library, or computed by
+the agent instructions SS7 is explicit that a metric imported from a third-party library, or computed by
 hand-rolled formula, is not assumed correct for this project's use -- it gets pinned against a known
 expected value on a fixed input, the same way business logic does. :doc:`04-llm-analytics` already
 covers ``zipf_deviation`` (RMSE against a hand-computed expected curve) and
@@ -49,7 +49,7 @@ confirmed the code produces exactly that), plus a saturation test proving the se
 actually caps rather than merely existing in a comment. Both modules had **no dedicated test file at
 all** before these fixes -- confirmed by direct search, not assumed -- despite computing metrics
 persisted on every single response the whole application generates. Finding and closing that gap is
-the same discipline CLAUDE.md SS7 asks for, exercised on the spot, not just described in the abstract.
+the same discipline the agent instructions SS7 asks for, exercised on the spot, not just described in the abstract.
 
 Regression-fence tests: a distinct pattern from "this is correct"
 --------------------------------------------------------------------------
@@ -62,12 +62,12 @@ right. The clearest example lived, until 2026-08-24, in
 ``tests/unit/test_naive_judge.py::test_malformed_input_pins_the_existing_bug_as_a_regression_fence``
 -- its own name and docstring said exactly what it was: "pins TODAY'S WRONG BEHAVIOUR deliberately...
 it is a regression fence, not a correctness claim." This pattern existed specifically because
-``NaiveJudge`` was CLAUDE.md's explicitly-marked author-swap boundary (SS4/SS6) -- the test's job was
+``NaiveJudge`` was the agent instructions' explicitly-marked author-swap boundary (SS4/SS6) -- the test's job was
 to make sure nobody, including an AI coding agent working elsewhere in the codebase, silently "fixed"
 the judge's parsing behavior as a side effect of an unrelated task.
 
 That fence did get rewritten, as part of finally building the real structured judge -- see
-:doc:`04-llm-analytics` for the full story of the fix and CLAUDE.md SS4 for the permanent record of
+:doc:`04-llm-analytics` for the full story of the fix and the agent instructions SS4 for the permanent record of
 the author's explicit decision to lift this boundary. ``test_naive_judge.py`` was deleted alongside
 ``core/adapters/naive_judge.py``; ``tests/unit/test_structured_judge.py`` replaces it, and its
 malformed-input test (``test_malformed_json_response_falls_back_to_a_distinguishable_false``) now
@@ -81,7 +81,7 @@ Coverage: measured for real, no exclusions left
 
 ``.coveragerc`` originally omitted exactly three files from coverage measurement --
 ``core/service/neo4j_service.py``, ``core/tabs/knowledge_graph.py``,
-``utils/other/neo4j_services.py`` -- the Neo4j/knowledge-graph subsystem CLAUDE.md SS1 put out of
+``utils/other/neo4j_services.py`` -- the Neo4j/knowledge-graph subsystem the agent instructions SS1 put out of
 scope. **Update, 2026-09-05:** that subsystem is fully migrated and all three files are deleted; the
 omit list is empty now. Everything in ``core/``, ``api/``, ``cli/``, ``web/``, ``utils/`` is
 measured with no carve-outs, and :doc:`../qa` reports the real resulting percentage.

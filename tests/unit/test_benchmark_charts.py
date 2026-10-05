@@ -18,9 +18,12 @@ for the full story:
    real, un-filtered per-student mean.
 """
 
+import pytest
 import pandas as pd
 
 from web.plotting.benchmark_charts import build_benchmark_view
+
+pytestmark = pytest.mark.req("REQ-CORP-BENCH-01")
 
 
 def _row(student, v_ok, coherence, ms_per_word, semantic_overlap=0.9):

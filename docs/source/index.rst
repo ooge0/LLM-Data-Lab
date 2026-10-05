@@ -1,7 +1,7 @@
-nn_lab documentation
+LLM Data Lab documentation
 ======================
 
-``nn_lab`` (Psycho-Data-Augmentor) is a portfolio project built to demonstrate one specific skill:
+``nn_lab`` (LLM Data Lab) is a portfolio project built to demonstrate one specific skill:
 testing large language models rigorously, not just using them. It generates synthetic text by
 conditioning local LLMs (via `Ollama <https://ollama.com>`_, no paid API) on behavioral archetypes,
 then runs a validation and linguistic/statistical analysis pipeline over the resulting corpus to
@@ -17,6 +17,16 @@ the Neo4j knowledge-graph one that stayed on its own separate Streamlit entry po
 has a tested FastAPI/CLI equivalent -- there is no more separate Streamlit UI to run. The rebuild
 itself is part of what's being demonstrated -- staged, tested, documented software engineering, not
 a one-shot script. It is not a product and isn't meant to scale past one user on one machine.
+
+***Documentation***
+
+Full documentation is built with Sphinx and published on
+[ReadTheDocs](https://python-ta-web-api-framework.readthedocs.io/en/latest/index.html).
+To build locally:
+
+```bash
+sphinx-build -b html docs/source docs/html
+```
 
 UI layers
 ------------
@@ -131,6 +141,7 @@ full field reference (mirrors :class:`~core.domain.entities.ExperimentConfig` ex
    features
    operations
    qa
+   qa/index
    glossary
    dev_reference
    roadmap

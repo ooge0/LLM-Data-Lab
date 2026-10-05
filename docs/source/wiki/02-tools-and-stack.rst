@@ -1,4 +1,4 @@
-02 — Tools, Stack, and Engineering Conventions
+02 — Tools, stack, and engineering conventions
 =================================================
 
 This page answers a narrower question than :doc:`01-architecture`: not *how the pieces fit
@@ -79,7 +79,7 @@ LLM/analysis stack
        ``adjusted_rand_score`` in :mod:`core.services.cluster_discovery`) and the baseline
        classifier in :mod:`core.analysis.model_evaluation` -- a single, well-tested numerical
        library for both jobs rather than a bespoke metric implementation, which matters directly
-       for CLAUDE.md's own "measurement validity" framing: the *math* is borrowed and trusted, the
+       for the agent instructions' own "measurement validity" framing: the *math* is borrowed and trusted, the
        *interpretation* (does this cluster correspond to a real archetype) is what's being tested.
    * - HDBSCAN
      - 0.8.43
@@ -90,7 +90,7 @@ LLM/analysis stack
        has two separate chart-rendering paths at all (see :doc:`01-architecture`).
    * - umap-learn
      - 0.5.12
-     - Dimensionality reduction ahead of HDBSCAN -- CLAUDE.md's own architecture note states raw
+     - Dimensionality reduction ahead of HDBSCAN -- the agent instructions' own architecture note states raw
        linguistic features collapse into one indistinct cluster without it, i.e. UMAP isn't a
        cosmetic 2D-projection step, it's load-bearing for HDBSCAN finding any structure at all.
    * - NLTK
@@ -98,7 +98,7 @@ LLM/analysis stack
      - Tokenization, POS tagging, and VADER sentiment across :mod:`core.analysis.nlp_science` and
        :mod:`core.analysis.neuro_metrics`. An older, less actively developed library than e.g.
        spaCy, kept specifically because it's what the original Streamlit prototype already used and
-       every pinned-fixture metric test (CLAUDE.md SS7) was written against its exact tokenization
+       every pinned-fixture metric test (the agent instructions SS7) was written against its exact tokenization
        behavior -- swapping tokenizers mid-project would silently change what every metric measures.
    * - sentence-transformers
      - 5.5.1
@@ -137,7 +137,7 @@ Documentation and reporting stack
      - 2.16.0
      - Chosen over plain ``pytest-html`` alone specifically because Allure renders each test's own
        docstring as its displayed description in the report, not just the bare function name --
-       directly serving CLAUDE.md SS7's stated goal ("Allure shows real descriptions, not bare
+       directly serving the agent instructions' SS7's stated goal ("Allure shows real descriptions, not bare
        names"), since this project's test suite doubles as portfolio evidence, not just a pass/fail
        gate.
    * - pytest-playwright
@@ -160,13 +160,13 @@ separate ``e2e`` environment runs Playwright alone. This is a process-isolation 
 by a library interaction, not a stylistic preference for small folders -- see :doc:`05-cicd` for how
 it shapes the proposed CI pipeline's job split.
 
-**Pinned-fixture tests for borrowed math, not just business logic.** CLAUDE.md SS7 states plainly
+**Pinned-fixture tests for borrowed math, not just business logic.** the agent instructions SS7 states plainly
 that a metric imported from a third-party package is not assumed correct for this project's use --
 e.g. ``zipf_deviation`` (:mod:`core.analysis.nlp_science`) is tested against a hand-computed RMSE on
 a fixed, controlled word-frequency distribution (``tests/unit/test_nlp_science.py``), and
 ``compute_fit_indices`` (:mod:`core.services.cluster_discovery`) is tested against two perfectly
 separated synthetic 2-point clusters where the correct silhouette/Davies-Bouldin answer is known in
-advance (``tests/unit/test_cluster_discovery.py``). This is the direct, concrete form CLAUDE.md's
+advance (``tests/unit/test_cluster_discovery.py``). This is the direct, concrete form the agent instructions'
 "measurement validity" claim takes in the test suite, not just a stated intention.
 
 **Docstrings as documentation, not decoration.** NumPy-style docstrings (``Main Description`` /
@@ -207,7 +207,7 @@ Known, disclosed gaps (not silently fixed, not silently hidden)
   ``pip install`` command, see :doc:`../roadmap`'s environment setup) and was removed 2026-10-02. See
   :doc:`03-feature-implementation`'s technical-debt section for a *different*, genuinely stray
   ``requirements.txt`` found alongside these two, which is not part of this documented split.
-- **``requirements-linux.txt`` is stale, confirmed 2026-08-24, real risk to CLAUDE.md SS2's
+- **``requirements-linux.txt`` is stale, confirmed 2026-08-24, real risk to the agent instructions' SS2's
   bare-metal-Ubuntu deployment target -- not yet fixed.** Its last modification date is
   2026-06-22, two months before the FastAPI rewrite (Stage 0 onward, 2026-08-21+) added ``fastapi``,
   ``sqlalchemy``, and roughly 30 other packages (the full docs/testing toolchain -- ``sphinx``,
@@ -231,7 +231,7 @@ Real incidents this project's own history documents (why the discipline above ex
 -------------------------------------------------------------------------------------------
 
 Two concrete, previously-observed failures directly justify the "never hand-edit the compiled
-``requirements-*.txt`` files, always regenerate via ``pip-compile``" rule stated in CLAUDE.md SS11:
+``requirements-*.txt`` files, always regenerate via ``pip-compile``" rule stated in the agent instructions SS11:
 
 1. A plain ``pip install -r requirements-base.txt --upgrade`` once silently replaced a working CUDA
    build of torch (``2.5.1+cu121``) with a CPU-only build (``2.12.0+cpu``) -- no explicit "remove

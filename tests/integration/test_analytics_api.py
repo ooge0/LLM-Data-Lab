@@ -14,6 +14,8 @@ from api.app import app
 from core.domain.entities import ExperimentConfig, PromptMode, RunRecord
 from tests.unit.test_experiment_runner import FakeRepository
 
+pytestmark = pytest.mark.req("REQ-PAGE-AN-01")
+
 
 @pytest.fixture
 def client():
@@ -117,6 +119,7 @@ def test_analytics_charts_fragment_for_unknown_run_returns_404_with_message(clie
     assert "No responses found" in response.text
 
 
+@pytest.mark.req("REQ-PAGE-AN-02")
 def test_analytics_charts_does_not_500_on_a_sparse_pre_stage6_run(client, fake_repo):
     """
     Regression test for a real bug found on real disk data: an early
@@ -143,6 +146,7 @@ def test_analytics_charts_does_not_500_on_a_sparse_pre_stage6_run(client, fake_r
     assert "chart-" in response.text  # Latency and Workload distribution should still render
 
 
+@pytest.mark.req("REQ-PAGE-AN-02")
 def test_analytics_charts_does_not_500_when_some_but_not_all_responses_lack_word_count(client, fake_repo):
     """
     Regression test for a real bug reproduced against a real 500-response live run: a Layer-0-
@@ -177,6 +181,7 @@ def test_analytics_charts_does_not_500_when_some_but_not_all_responses_lack_word
     assert "Style distribution" in response.text  # the previously-crashing chart now renders
 
 
+@pytest.mark.req("REQ-PAGE-AN-02")
 def test_analytics_charts_skips_high_dim_and_zipf_gracefully_when_columns_missing(client, fake_repo):
     """A run whose responses lack the high-dim/zipf columns renders the adherence charts but shows the graceful skip message for the others, not a 500."""
     fake_repo.save_run(_make_run("run-a", "2026-08-21T00:00:00Z"))
@@ -205,6 +210,7 @@ def test_analytics_charts_skips_high_dim_and_zipf_gracefully_when_columns_missin
     assert "No Zipf deviation scores found" in response.text
 
 
+@pytest.mark.req("REQ-PAGE-AN-02")
 def test_analytics_charts_include_prompt_strategy_charts_when_strategy_and_coherence_present(client, fake_repo):
     """Added 2026-08-24: 'strategy' was persisted on every response but never used as a chart
     grouping dimension anywhere -- these two charts answer 'does prompt structure affect stability.'"""

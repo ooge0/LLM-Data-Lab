@@ -11,8 +11,11 @@ constructed ``ollama.Client`` is swapped for a fake after construction,
 since building the client object itself makes no network call.
 """
 
+import pytest
 from core.adapters.ollama_client import OllamaClient, _native_host
 from utils import config_loader_short
+
+pytestmark = pytest.mark.req("REQ-GEN-OLL-01")
 
 
 class FakeMessage:
@@ -109,6 +112,7 @@ def test_generate_no_json_mode_sends_none_format():
     assert client._client.calls[0]["format"] is None
 
 
+@pytest.mark.req("REQ-GEN-OLL-02")
 def test_generate_maps_token_counts_from_the_native_response():
     """prompt_tokens/completion_tokens come from Ollama's own prompt_eval_count/eval_count -- real counts, not a word-count proxy."""
     client = OllamaClient()
@@ -120,6 +124,7 @@ def test_generate_maps_token_counts_from_the_native_response():
     assert result.completion_tokens == 3
 
 
+@pytest.mark.req("REQ-GEN-OLL-02")
 def test_generate_converts_ollama_nanosecond_durations_to_milliseconds():
     """The ollama_*_duration_ms fields are Ollama's own nanosecond fields divided by 1e6, not otherwise altered."""
     client = OllamaClient()
@@ -141,6 +146,7 @@ def test_generate_converts_ollama_nanosecond_durations_to_milliseconds():
     assert result.ollama_eval_duration_ms == 38.281
 
 
+@pytest.mark.req("REQ-GEN-OLL-02")
 def test_generate_leaves_ollama_fields_none_when_the_response_omits_them():
     """A response missing the performance fields (e.g. a stub/older server) leaves them None rather than crashing."""
     client = OllamaClient()

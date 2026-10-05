@@ -13,6 +13,8 @@ from api.app import app
 from core.domain.entities import ExperimentConfig, PromptMode, RunRecord
 from tests.unit.test_experiment_runner import FakeRepository
 
+pytestmark = pytest.mark.req("REQ-PAGE-MON-01")
+
 
 @pytest.fixture
 def client():

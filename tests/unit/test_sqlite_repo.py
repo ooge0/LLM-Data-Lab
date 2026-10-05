@@ -3,8 +3,11 @@ Unit tests for :class:`core.adapters.sqlite_repo.SQLiteRepo` -- CRUD against
 an in-memory SQLite database (``:memory:``, no file left behind).
 """
 
+import pytest
 from core.adapters.sqlite_repo import SQLiteRepo
 from core.domain.entities import ExperimentConfig, PromptMode, RunRecord
+
+pytestmark = pytest.mark.req("REQ-DATA-SQL-01")
 
 
 def _make_run(run_id="run-1"):
@@ -136,6 +139,7 @@ def test_list_runs_on_empty_repo_returns_empty_list():
     assert repo.list_runs() == []
 
 
+@pytest.mark.req("REQ-DATA-SQL-02")
 def test_save_run_stamps_last_synced_at_and_get_sync_status_reports_it():
     """save_run() records its own write time (not the run's started_at) -- get_sync_status()
     exposes it for the /db_export page's "Export status" column."""
@@ -153,6 +157,7 @@ def test_save_run_stamps_last_synced_at_and_get_sync_status_reports_it():
     assert parsed.year >= 2026
 
 
+@pytest.mark.req("REQ-DATA-SQL-02")
 def test_get_sync_status_omits_runs_never_saved():
     """A run_id that was never save_run()'d is simply absent from the dict, not None or a KeyError."""
     repo = SQLiteRepo(db_path=":memory:")
@@ -163,6 +168,7 @@ def test_get_sync_status_omits_runs_never_saved():
     assert "run-b" not in status
 
 
+@pytest.mark.req("REQ-DATA-SQL-02")
 def test_save_run_twice_updates_last_synced_at_to_the_newer_write():
     """Re-exporting an already-synced run refreshes its timestamp, matching the merge/upsert
     behavior save_run already has for the rest of the row."""
@@ -178,6 +184,7 @@ def test_save_run_twice_updates_last_synced_at_to_the_newer_write():
     assert second > first
 
 
+@pytest.mark.req("REQ-DATA-SQL-02")
 def test_opening_a_database_created_before_last_synced_at_existed_self_heals(tmp_path):
     """A pre-2026-08-25 database's runs table lacks last_synced_at entirely -- confirmed by
     building one by hand (bypassing SQLiteRepo's current schema) rather than assumed. Opening it

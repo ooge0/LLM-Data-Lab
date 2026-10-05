@@ -77,6 +77,7 @@ BASE_FORM = {
 }
 
 
+@pytest.mark.req("REQ-GEN-UI-01")
 def test_experiments_page_lists_archetypes_and_prompt_modes(client):
     """GET /experiments renders the real archetype names and prompt-mode options, not a placeholder form."""
     response = client.get("/experiments")
@@ -85,6 +86,7 @@ def test_experiments_page_lists_archetypes_and_prompt_modes(client):
     assert "Behavioral conditioning (Tuned)" in response.text
 
 
+@pytest.mark.req("REQ-GEN-UI-01")
 def test_experiments_page_renders_a_real_initial_preview_not_undefined(client):
     """
     Regression test: the initial GET must render a real setup-summary
@@ -99,6 +101,7 @@ def test_experiments_page_renders_a_real_initial_preview_not_undefined(client):
     assert "qwen:latest" in response.text  # the form's own default student
 
 
+@pytest.mark.req("REQ-GEN-UI-01")
 def test_preview_renders_the_full_setup_summary_including_sweep_range(client):
     """POST /experiments/preview shows a full recap (students/archetypes/biases/judge/sweep), including the real computed sweep value list, not just the bare task count."""
     response = client.post(
@@ -119,6 +122,7 @@ def test_preview_renders_the_full_setup_summary_including_sweep_range(client):
     assert "Temperature, 3 step(s): 0.4, 0.7, 1.0" in response.text
 
 
+@pytest.mark.req("REQ-GEN-UI-01")
 def test_preview_shows_no_sweep_when_sweep_param_is_unset(client):
     """When sweep_param is empty, the preview clearly states no sweep is active, rather than showing a stale or misleading range."""
     response = client.post("/experiments/preview", data=BASE_FORM)
@@ -126,6 +130,7 @@ def test_preview_shows_no_sweep_when_sweep_param_is_unset(client):
     assert "None -- every combination runs once at the base sampling values above" in response.text
 
 
+@pytest.mark.req("REQ-GEN-UI-01")
 def test_preview_returns_total_tasks_without_starting_anything(client):
     """POST /experiments/preview computes and returns the real total_tasks count for the submitted config, without starting a run (runner.running stays False)."""
     response = client.post(
@@ -137,6 +142,7 @@ def test_preview_returns_total_tasks_without_starting_anything(client):
     assert experiments._runner.running is False
 
 
+@pytest.mark.req("REQ-GEN-UI-02")
 def test_start_returns_202_with_sse_fragment(client):
     """POST /experiments/start with a valid config returns 202 and the htmx SSE-connecting fragment, not a full page."""
     response = client.post("/experiments/start", data=BASE_FORM)
@@ -144,6 +150,7 @@ def test_start_returns_202_with_sse_fragment(client):
     assert 'sse-connect="/experiments/stream"' in response.text
 
 
+@pytest.mark.req("REQ-GEN-RUN-03")
 def test_start_over_the_cap_returns_413_and_does_not_start(client):
     """A config computing to more than the configured max_total_tasks cap is refused with 413 before any generation starts."""
     # max_total_tasks=10 in the fixture; 4 archetypes * 3 split biases * 1 = 12 > 10
@@ -161,6 +168,7 @@ def test_start_over_the_cap_returns_413_and_does_not_start(client):
     assert experiments._runner.running is False
 
 
+@pytest.mark.req("REQ-GEN-RUN-04")
 def test_second_concurrent_start_is_rejected(client):
     """A second POST /experiments/start while one is already running is rejected with 409, at the API layer (the concurrent-run guard's HTTP-facing behavior)."""
     first = client.post("/experiments/start", data=BASE_FORM)
@@ -170,6 +178,7 @@ def test_second_concurrent_start_is_rejected(client):
     assert second.status_code == 409
 
 
+@pytest.mark.req("REQ-GEN-RUN-05")
 def test_stop_with_no_run_in_progress_returns_409(client):
     """POST /experiments/stop with nothing running is refused with 409, at the API layer -- there is nothing to stop."""
     response = client.post("/experiments/stop")
@@ -177,6 +186,7 @@ def test_stop_with_no_run_in_progress_returns_409(client):
     assert "no run" in response.text.lower()
 
 
+@pytest.mark.req("REQ-GEN-RUN-05")
 def test_stop_mid_run_returns_200_and_the_run_actually_halts_early(client, fakes):
     """
     POST /experiments/stop while a run is in progress returns 200 and asks
@@ -197,6 +207,7 @@ def test_stop_mid_run_returns_200_and_the_run_actually_halts_early(client, fakes
     assert len(fakes["repo"].saved_responses) < 2
 
 
+@pytest.mark.req("REQ-GEN-UI-02")
 def test_self_critic_checkbox_is_honored(client, fakes):
     """When the self_critic checkbox is present, the fake judge is called with the student model."""
     client.post("/experiments/start", data={**BASE_FORM, "self_critic": "on"})
@@ -204,6 +215,7 @@ def test_self_critic_checkbox_is_honored(client, fakes):
     assert fakes["judge"].calls[0]["model"] == "qwen:latest"
 
 
+@pytest.mark.req("REQ-GEN-UI-02")
 def test_split_biases_produces_one_entry_per_bias(client, fakes):
     """split_biases=on with a comma-separated biases_raw string generates one response per bias, not one response for the whole raw string."""
     client.post("/experiments/start", data={**BASE_FORM, "biases_raw": "a, b, c", "split_biases": "on"})
@@ -212,6 +224,7 @@ def test_split_biases_produces_one_entry_per_bias(client, fakes):
     assert {e["bias"] for _, e in fakes["repo"].saved_responses} == {"a", "b", "c"}
 
 
+@pytest.mark.req("REQ-GEN-RAG-02")
 def test_rag_enabled_lazily_builds_the_knowledge_base(client, fakes, monkeypatch):
     """rag_enabled=on triggers _get_knowledge_base(), which is monkeypatched here to avoid a real model load."""
     fake_kb = FakeKnowledgeBase()
@@ -232,6 +245,7 @@ def test_rag_enabled_lazily_builds_the_knowledge_base(client, fakes, monkeypatch
     assert entry["rag_enabled"] is True
 
 
+@pytest.mark.req("REQ-GEN-RAG-02")
 def test_get_knowledge_base_does_not_cache_a_failed_load(monkeypatch):
     """
     Regression test for the caching bug itself (not just the route's error
@@ -259,6 +273,7 @@ def test_get_knowledge_base_does_not_cache_a_failed_load(monkeypatch):
     assert experiments._knowledge_base is result
 
 
+@pytest.mark.req("REQ-GEN-RAG-02")
 def test_rag_enabled_with_unbuildable_knowledge_base_returns_400_not_500(client, monkeypatch):
     """
     Regression test: if RAGEngine.load_knowledge_base raises (e.g. an
@@ -283,6 +298,7 @@ def test_rag_enabled_with_unbuildable_knowledge_base_returns_400_not_500(client,
     assert experiments._runner.running is False
 
 
+@pytest.mark.req("REQ-GEN-SSE-03")
 def test_progress_fragment_renders_a_real_progress_element_not_just_text():
     """
     Regression test: every non-terminal progress fragment must include a
@@ -297,6 +313,7 @@ def test_progress_fragment_renders_a_real_progress_element_not_just_text():
     assert "3/10" in generating
 
 
+@pytest.mark.req("REQ-GEN-SSE-03")
 def test_progress_fragment_on_done_links_to_every_read_side_page():
     """The terminal 'done' fragment links directly to /runs, /analytics, /nlp, /clusters -- previously there was no way to reach results from the progress view at all."""
     done = experiments._progress_fragment(
@@ -308,6 +325,7 @@ def test_progress_fragment_on_done_links_to_every_read_side_page():
         assert f'href="{path}"' in done
 
 
+@pytest.mark.req("REQ-GEN-SSE-03")
 def test_progress_fragment_on_stopped_reports_partial_progress_and_links_to_results():
     """The terminal 'stopped' fragment (from a Stop-button click) reports how many responses actually completed and still links to the read-side pages -- partial results are real results, not discarded."""
     stopped = experiments._progress_fragment(
@@ -318,6 +336,7 @@ def test_progress_fragment_on_stopped_reports_partial_progress_and_links_to_resu
     assert '<a href="/runs">Run summary</a>' in stopped
 
 
+@pytest.mark.req("REQ-GEN-SSE-03")
 def test_progress_fragment_while_in_progress_includes_a_stop_button():
     """Every non-terminal fragment (started/generating) includes a real Stop button, restoring the legacy sidebar's 'Stop generation' control."""
     started = experiments._progress_fragment(RunProgressEvent(stage="started", total_tasks=10))
@@ -327,6 +346,7 @@ def test_progress_fragment_while_in_progress_includes_a_stop_button():
     assert 'hx-post="/experiments/stop"' in generating
 
 
+@pytest.mark.req("REQ-GEN-SSE-03")
 def test_progress_fragment_on_terminal_stages_omits_the_stop_button():
     """done/stopped/error fragments do not show a Stop button -- there is nothing left to stop once the run has already ended."""
     for event in [
@@ -337,6 +357,7 @@ def test_progress_fragment_on_terminal_stages_omits_the_stop_button():
         assert 'hx-post="/experiments/stop"' not in experiments._progress_fragment(event)
 
 
+@pytest.mark.req("REQ-GEN-SSE-03")
 def test_progress_fragment_on_error_shows_the_message():
     """The terminal 'error' fragment shows the real error text, not a generic message."""
     error = experiments._progress_fragment(
@@ -345,6 +366,7 @@ def test_progress_fragment_on_error_shows_the_message():
     assert "Ollama connection refused" in error
 
 
+@pytest.mark.req("REQ-GEN-SSE-02")
 def test_stream_without_a_started_run_sends_error_and_closes(client):
     """GET /experiments/stream with no active run (queue is None) sends an error event and closes immediately, rather than hanging."""
     experiments._runner._queue = None

@@ -20,6 +20,7 @@ def scientist():
     return PsychScientist()
 
 
+@pytest.mark.req("REQ-MET-LING-01")
 def test_zipf_deviation_pinned_on_a_hand_computed_distribution(scientist):
     """
     "a a a b b c" -> word frequencies {a:3, b:2, c:1}, ranks [1,2,3].
@@ -31,16 +32,19 @@ def test_zipf_deviation_pinned_on_a_hand_computed_distribution(scientist):
     assert scientist.zipf_deviation("a a a b b c") == pytest.approx(expected, abs=1e-9)
 
 
+@pytest.mark.req("REQ-MET-LING-01")
 def test_zipf_deviation_on_text_with_no_alphabetic_words_is_zero(scientist):
     """A string with no alphabetic tokens (only punctuation/numbers) returns 0.0 rather than dividing by zero."""
     assert scientist.zipf_deviation("123 456 !!! ???") == 0.0
 
 
+@pytest.mark.req("REQ-MET-LING-01")
 def test_zipf_deviation_on_empty_string_is_zero(scientist):
     """An empty string returns 0.0, matching the no-words guard."""
     assert scientist.zipf_deviation("") == 0.0
 
 
+@pytest.mark.req("REQ-MET-LING-01")
 def test_zipf_deviation_is_non_negative(scientist):
     """zipf_deviation is an RMSE-based score, normalized -- always >= 0 for any real text."""
     score = scientist.zipf_deviation("The quick brown fox jumps over the lazy dog. The dog barks.")
@@ -50,6 +54,7 @@ def test_zipf_deviation_is_non_negative(scientist):
 # --- social_focus (added 2026-08-24) -----------------------------------------------------
 
 
+@pytest.mark.req("REQ-MET-LING-02")
 def test_social_focus_contrasts_with_self_focus_on_a_symmetric_sentence(scientist):
     """8 words, 2 self-pronouns (i, we) and 2 social-pronouns (you, your) -- both ratios pinned equal by construction."""
     result = scientist.analyze_text("I told you that we appreciate your help.")
@@ -57,6 +62,7 @@ def test_social_focus_contrasts_with_self_focus_on_a_symmetric_sentence(scientis
     assert result["social_focus"] == 0.25
 
 
+@pytest.mark.req("REQ-MET-LING-02")
 def test_social_focus_is_zero_when_no_social_pronouns_present(scientist):
     result = scientist.analyze_text("I think we should decide now.")
     assert result["social_focus"] == 0.0
@@ -65,6 +71,7 @@ def test_social_focus_is_zero_when_no_social_pronouns_present(scientist):
 # --- hedge_ratio / booster_ratio (added 2026-08-24, Hyland 2005 metadiscourse categories) --------
 
 
+@pytest.mark.req("REQ-MET-LING-02")
 def test_hedge_ratio_pinned_on_a_fixed_sentence(scientist):
     """9 words, 3 hedge words (might, possibly, could) -> 3/9."""
     result = scientist.analyze_text("This might possibly work but it could also fail.")
@@ -72,6 +79,7 @@ def test_hedge_ratio_pinned_on_a_fixed_sentence(scientist):
     assert result["booster_ratio"] == 0.0
 
 
+@pytest.mark.req("REQ-MET-LING-02")
 def test_booster_ratio_pinned_on_a_fixed_sentence(scientist):
     """7 words, 2 booster words (definitely, absolutely) -> 2/7."""
     result = scientist.analyze_text("This is definitely true and absolutely certain.")
@@ -79,6 +87,7 @@ def test_booster_ratio_pinned_on_a_fixed_sentence(scientist):
     assert result["hedge_ratio"] == 0.0
 
 
+@pytest.mark.req("REQ-MET-LING-02")
 def test_hedge_and_booster_ratio_are_zero_on_empty_text(scientist):
     result = scientist.analyze_text("")
     assert result["hedge_ratio"] == 0

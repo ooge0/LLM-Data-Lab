@@ -1,0 +1,18 @@
+# Known, documented gaps in requirement coverage (CLAUDE.md section 7).
+#
+# One line per gap: REQ-ID | reason | closing condition. utils/check_traceability.py treats every
+# REQ-ID below as expected to have NO covering test. It fails if:
+#   - a REQ-ID here does not exist in tests/qa/catalogue.toml (stale entry), or
+#   - a REQ-ID here is covered by a real (non-xfail) test anyway (the gap has been closed and this
+#     line should be deleted, not left behind).
+# A requirement not listed here and not covered by any test is a real, unflagged hole, and the gate
+# fails on it the same way.
+
+REQ-CASC-L0-05 | A generation failure ends the run with an error event instead of producing a row, so there is nowhere to attach an API_ERROR classification; no rule defines FORMAT_ERROR either | The runner's error handling changes to persist a row for a failed generation call, by the author's decision
+REQ-CASC-L2-04 | No real-data calibration exists for a Layer 2 rejection threshold with RAG enabled | A real RAG-enabled run is collected, the threshold is calibrated the way Layer 1's was, then a test pins it
+REQ-CASC-L2-05 | Sentiment and toxicity classifiers are not built; out of scope for the weak-hardware constraint this session is working under | A separate author decision to build them
+REQ-MET-LING-05 | TTR, readability ARI, coherence, modality and self focus are only covered indirectly through whole-entry shape assertions | Stage C adds a hand-computed pinned test per metric, on a fixed input, independent of the function's own output
+REQ-CORP-BENCH-03 | No human-labelled ground truth exists to validate the 0.4/0.3/0.3 leaderboard weights against | A labelled evaluation set is collected
+REQ-KG-ST-03 | Leiden operates over graph nodes (archetype/bias/model); UMAP/HDBSCAN operates over response rows; comparing them needs an explicit node-to-response mapping that does not exist yet, and a live Neo4j to compute it against | The mapping is designed, then NMI is computed against a live Neo4j instance
+REQ-OPS-DOC-02 | utils/list_tests.py generates the QA test roster but has no tests of its own, despite two real bugs having been found in it by hand | Stage C adds unit tests for it
+REQ-RAG-04 | test_feature_correlation_consistency is xfail(strict=True): both its baseline and actual correlation matrices are hardcoded literal arrays, so it has never computed anything from real data | The check is reimplemented against real generated data and the xfail marker is removed
