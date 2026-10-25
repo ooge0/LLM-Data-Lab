@@ -1,0 +1,86 @@
+# ==============================================================================
+# CORE SYSTEM & DATA PIPELINE
+# ==============================================================================
+numpy>=1.26.0,<2.0.0
+pandas>=2.2.0,<3.0.0
+pandas-stubs>=3.0.3.260530
+pydantic>=2.7.0,<3.0.0
+sqlalchemy>=2.0.0,<3.0.0
+loguru>=0.7.2
+
+# ==============================================================================
+# NLP & SCIENCE STACK
+# ==============================================================================
+nltk>=3.9.1
+textblob>=0.18.0
+# Ubuntu-only: upper bound dropped. umap-learn>=0.5.12 needs scikit-learn>=1.6, so the <1.6.0 cap
+# in requirements.in makes resolution impossible on Linux. Windows (requirements.in) is unchanged.
+scikit-learn>=1.4.0
+# Ubuntu-only: preshed 3.0.14 raises OverflowError on any 64-bit spaCy hash >= 2**63 (PreshMap),
+# which breaks spacy.load('en_core_web_sm') and every test that loads it. 3.0.13 verified working.
+preshed>=3.0.10,<3.0.14
+scipy-stubs>=1.17.1.5
+hdbscan>=0.8.33
+umap-learn>=0.5.12
+spacy>=3.8.0,<3.9.0
+textdescriptives>=2.8.0
+python-Levenshtein>=0.25.0
+
+# ==============================================================================
+# DEEP LEARNING & VECTOR SEARCH
+# ==============================================================================
+# Locked together to match PyTorch 2.6.x binary compatibility
+torch>=2.6.0,<2.7.0
+torchvision>=0.21.0,<0.22.0
+sentence-transformers>=3.0.0
+faiss-cpu>=1.7.4
+
+# ==============================================================================
+# WEB & API LAYER
+# ==============================================================================
+fastapi>=0.135.0,<0.142.0
+uvicorn>=0.48.0
+streamlit>=1.33.0,<1.40.0
+jinja2>=3.1.6
+markdown-it-py>=3.0.0,<5.0.0
+openai>=1.30.0
+ollama>=0.3.0
+
+# ==============================================================================
+# VISUALIZATION & REPORTING
+# ==============================================================================
+matplotlib>=3.8.0,<4.0.0
+seaborn>=0.13.0
+plotly>=5.20.0
+wordcloud>=1.9.3
+pyvis>=0.3.2
+py2neo>=2021.2.4
+altair>=5.0.0
+
+# ==============================================================================
+# TESTING & DEVOPS / DOCUMENTATION
+# ==============================================================================
+pytest>=9.0.0
+pytest-html>=4.2.0
+faker>=40.15.0
+pylint>=3.0.0
+sphinx>=7.1.2,<8.0.0
+sphinx-autodoc-typehints==1.25.2
+sphinx-rtd-theme==2.0.0
+sphinxcontrib-napoleon==0.7
+sphinxcontrib-applehelp==1.0.4
+sphinxcontrib-devhelp==1.0.2
+sphinxcontrib-htmlhelp==2.0.1
+sphinxcontrib-jsmath==1.0.1
+sphinxcontrib-qthelp==1.0.3
+sphinxcontrib-serializinghtml==1.1.9
+myst-parser>=3.0.0
+furo>=2024.8.6
+sphinxcontrib-plantuml>=0.31
+
+# ==============================================================================
+# LINUX-ONLY ACCELERATION & DISTRIBUTED DL STACK
+# (Automatically ignored during Windows resolution/installation)
+# ==============================================================================
+#triton>=3.1.0; sys_platform == 'linux'
+nvidia-nccl-cu12>=2.20.5; sys_platform == 'linux'
