@@ -56,6 +56,32 @@ def test_classify_response_genuinely_garbled_non_json_is_malformed():
     )
 
 
+# --- FORMAT_ERROR (Layer 0, template-echo placeholder detection) ----------
+
+
+@pytest.mark.req("REQ-CASC-L0-04")
+def test_classify_response_template_echo_placeholder_is_format_error():
+    """The exact failure mode confirmed in run-1792697949526: tinyllama returned
+    {"text": "<rewritten output>"} for 38% of its rows. The entire text value is an
+    XML-tag-like placeholder, not a real generated response."""
+    import json
+    assert classify_response(json.dumps({"text": "<rewritten output>"})) == ResponseClassification.FORMAT_ERROR
+
+
+@pytest.mark.req("REQ-CASC-L0-04")
+def test_classify_response_single_tag_placeholder_is_format_error():
+    import json
+    assert classify_response(json.dumps({"text": "<output>"})) == ResponseClassification.FORMAT_ERROR
+
+
+@pytest.mark.req("REQ-CASC-L0-03")
+def test_classify_response_text_containing_but_not_only_angle_brackets_is_valid():
+    """A real response that happens to contain XML-like markup is not a placeholder --
+    fullmatch requires the entire text to be one tag, not just contain one."""
+    import json
+    assert classify_response(json.dumps({"text": "Use <b>bold</b> to emphasize key points."})) == ResponseClassification.VALID
+
+
 # --- is_echo_response (Layer 1) -------------------------------------------
 #
 # Thresholds pinned on the real semantic_overlap values found calibrating this check against

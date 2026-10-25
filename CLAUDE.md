@@ -176,6 +176,14 @@ Not gimmicks, not micro-optimizations — habits from people who actually unders
 - Authentication.
 - Hosted inference migration (stay on local Ollama for now).
 - Any product/marketing/"client-facing metrics" layer.
+- **LLM fuzzing suite (independent future stage, not v1).** Run each local model
+  with a fixed set of adversarial/boundary-condition inputs before trusting it in an experiment
+  run; collect failure-mode patterns (template echo, repetition loops, hallucinated JSON, etc.)
+  and turn confirmed patterns into Layer 0 checks. The `<rewritten output>` placeholder finding
+  (run-1792697949526, 38% of tinyllama rows, 2026-10-25) is the first real entry in this catalog
+  and is now handled by `FORMAT_ERROR` in `classify_response()`. A systematic fuzzing stage
+  would generate the catalog proactively rather than reactively. Requires Ollama running
+  (integration test tier, not unit). Do not start without explicit stage approval.
 
 ---
 

@@ -27,6 +27,7 @@ would still need.
 """
 
 import json
+import re
 from enum import Enum
 
 
@@ -38,6 +39,7 @@ class ResponseClassification(str, Enum):
     MALFORMED_JSON = "MALFORMED_JSON"
     TRUNCATED = "TRUNCATED"
     SCHEMA_ERROR = "SCHEMA_ERROR"
+    FORMAT_ERROR = "FORMAT_ERROR"
 
 
 def classify_response(raw_text: str) -> ResponseClassification:
@@ -58,15 +60,18 @@ def classify_response(raw_text: str) -> ResponseClassification:
         distinguished by a simple heuristic (unbalanced braces/quotes, or not ending on a sentence-
         or structure-closing character, suggests the response was cut off mid-generation rather
         than genuinely malformed from the start). ``SCHEMA_ERROR`` if it's valid JSON but not the
-        expected ``{"text": "..."}`` shape. ``VALID`` otherwise.
+        expected ``{"text": "..."}`` shape. ``FORMAT_ERROR`` if the extracted text is an XML-tag-
+        like placeholder (entire text matches ``<...>``) -- a real failure mode first confirmed in
+        run-1792697949526 where tinyllama returned ``{"text": "<rewritten output>"}`` for 38% of
+        its rows. ``VALID`` otherwise (extracted text is substantive, non-placeholder content).
 
     Notes
     -----
     Deliberately strict: good prose that was not wrapped in the requested JSON envelope is rejected
     here, even though :func:`core.services.experiment_runner.extract_best_text` could salvage it.
     Generation runs in JSON mode, so this is rare (3 of 500 responses in one large run, all
-    ``TRUNCATED``). ``API_ERROR`` and ``FORMAT_ERROR`` are never returned: a generation failure ends
-    the run with an error event instead of producing a row, and no rule defines ``FORMAT_ERROR``.
+    ``TRUNCATED``). ``API_ERROR`` is never returned: a generation failure ends the run with an
+    error event instead of producing a row.
     """
     if not raw_text or not raw_text.strip():
         return ResponseClassification.EMPTY
@@ -84,8 +89,11 @@ def classify_response(raw_text: str) -> ResponseClassification:
 
     if not isinstance(parsed, dict) or "text" not in parsed:
         return ResponseClassification.SCHEMA_ERROR
-    if not str(parsed.get("text", "")).strip():
+    text_val = str(parsed.get("text", "")).strip()
+    if not text_val:
         return ResponseClassification.EMPTY
+    if re.fullmatch(r"<[^>]+>", text_val):
+        return ResponseClassification.FORMAT_ERROR
     return ResponseClassification.VALID
 
 
