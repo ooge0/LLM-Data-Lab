@@ -60,7 +60,8 @@ This section describes the generation and model interaction mechanisms:
 
 * **Sweep-experiments** performed for parameters: Temperature, Top P, Frequency penalty, Presence penalty.
   Formally:
-$Sweep(Parameter) = {p_{min}, p_{min} + \Delta, \dots, p_{max}}$
+
+Sweep(Parameter) = {p_{min}, p_{min} + \Delta, \dots, p_{max}}
 
 * **Prompt strategies:** - *Expert psychologist* — strategy with an emphasis on psycholinguistic features.
 
@@ -69,7 +70,8 @@ $Sweep(Parameter) = {p_{min}, p_{min} + \Delta, \dots, p_{max}}$
 
 * **RAG (retrieval augmented generation):** support for modes: *Psychotype only* and *Full context*.
   The Top-K parameter determines the number of relevant documents to load:
-$Context = {d_1, d_2, \dots, d_K}$
+
+Context = {d_1, d_2, \dots, d_K}
 
 * **Bias split function:** allows for separating the influence of systemic and user biases in generation.
 
@@ -88,9 +90,7 @@ This section describes model performance and latency metrics:
 * **Speed and latency metrics** measure the efficiency of text generation and validation.
 
 * **Velocity (generation speed):** formula for calculating the average time per word:
-  $
-  Velocity = \frac{Time\ (ms)}{Word\ Count}
-  $
+$Velocity = \frac{Time\ (ms)}{Word\ Count}$
 
 * **Total generation + validation time** includes the total time spent creating the text and its verification.
 
@@ -332,10 +332,12 @@ This section contains information on the comprehensive evaluation of models:
   * students / teachers (distribution by roles in Student–Teacher modes)
 
 * **Validation success rate** percentage of successful validation passes for each model:
-$Pass\ Rate = \frac{Valid\ Samples}{Total\ Samples} \cdot 100%$
+
+Pass\ Rate = \frac{Valid\ Samples}{Total\ Samples} \cdot 100%
 
 * **Performance metrics (inference speed)** measures generation speed:
-$Velocity = \frac{Time\ (ms)}{Word\ Count}$
+
+Velocity = \frac{Time\ (ms)}{Word\ Count}
 
 * **Quality metrics heatmap** visualization of quality based on:
 
