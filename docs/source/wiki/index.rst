@@ -26,6 +26,7 @@ Read in order -- each page assumes the ones before it:
    06-qa-testing-strategy
    07-knowledge-graph-results
    08-graph-representation-learning
+   09-neo4j-advanced-analysis
 
 0. :doc:`00-getting-started` -- environment setup from scratch, running every front end, service
    manipulations, tests, reports, and a manual verification checklist.
@@ -52,3 +53,8 @@ Read in order -- each page assumes the ones before it:
    anomaly/analogy detection, link prediction -- to surface patterns nobody wrote a query for,
    grounded in five real, cited academic sources rather than invented, with every GDS procedure
    named confirmed available on the actual live install.
+9. :doc:`09-neo4j-advanced-analysis` -- theory and implementation notes for the Neo4j/GDS
+   analytics layer: property graph model, Leiden/FastRP/kNN/PageRank with formulas, root-cause
+   queries, and the gap between available per-response linguistic metrics and what the graph
+   currently uses -- plus four concrete extensions (metric-enriched nodes, JSD-weighted edges,
+   community-relative anomaly scoring, sweep path analysis) and a GraphQL layer sketch.

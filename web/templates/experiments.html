@@ -19,7 +19,7 @@
     } catch (e) {}
   })();
   </script>
-  <title>nn_lab -- Experiment (Stage 6)</title>
+  <title>nn_lab -- Experiment</title>
   <link rel="stylesheet" href="/static/style.css">
   <script src="/static/vendor/htmx/htmx.min.js"></script>
   <script src="/static/vendor/htmx/sse.js"></script>
@@ -29,8 +29,6 @@
   {% include "_nav.html" %}
   <main>
   <h1>Run an experiment</h1>
-  <p>Stage 6: full <code>tab_gen</code> parity -- judge, prompt mode, parameter sweep, RAG toggle, self-critic.</p>
-
   <!-- action/method: a plain, working fallback if htmx.js fails to load or is blocked -- without
        this the form does nothing at all in that case (hx-post silently no-ops, there is no native
        submission to fall back to). With JS present, htmx intercepts the submit and this attribute
@@ -42,16 +40,17 @@
       <fieldset hx-post="/experiments/preview" hx-trigger="change from:#experiment-form, input from:#experiment-form delay:300ms"
                 hx-target="#task-preview" hx-swap="innerHTML">
         <legend>Models</legend>
-        <label>
-          Students (generators) -- select at least one (Ctrl/Cmd-click for multiple)
-          <select name="student_models" multiple size="5" required>
-            <option value="tinyllama:latest">tinyllama:latest</option>
-            <option value="qwen:latest" selected>qwen:latest</option>
-            <option value="phi3:latest">phi3:latest</option>
-            <option value="llama3:latest">llama3:latest</option>
-            <option value="mistral:7b-instruct-q4_K_M">mistral:7b-instruct-q4_K_M</option>
-          </select>
-        </label>
+        <fieldset class="check-list-group">
+          <legend class="check-list-label">Students (generators) -- select at least one</legend>
+          <div class="check-list" role="group">
+            <label class="check-list-item check-list-all"><input type="checkbox" class="select-all" data-group="student_models"> All</label>
+            <label class="check-list-item"><input type="checkbox" name="student_models" value="tinyllama:latest"> tinyllama:latest</label>
+            <label class="check-list-item"><input type="checkbox" name="student_models" value="qwen:latest" checked> qwen:latest</label>
+            <label class="check-list-item"><input type="checkbox" name="student_models" value="phi3:latest"> phi3:latest</label>
+            <label class="check-list-item"><input type="checkbox" name="student_models" value="llama3:latest"> llama3:latest</label>
+            <label class="check-list-item"><input type="checkbox" name="student_models" value="mistral:7b-instruct-q4_K_M"> mistral:7b-instruct-q4_K_M</label>
+          </div>
+        </fieldset>
         <label class="inline">
           <input type="checkbox" name="self_critic" id="self_critic"> Self-critic mode (student judges itself)
         </label>
@@ -85,14 +84,15 @@
 
       <fieldset>
         <legend>Experiment data</legend>
-        <label>
-          Archetypes -- select at least one (Ctrl/Cmd-click for multiple)
-          <select name="archetypes" multiple size="5" required>
+        <fieldset class="check-list-group">
+          <legend class="check-list-label">Archetypes -- select at least one</legend>
+          <div class="check-list" role="group">
+            <label class="check-list-item check-list-all"><input type="checkbox" class="select-all" data-group="archetypes"> All</label>
             {% for name in archetypes %}
-            <option value="{{ name }}">{{ name }}</option>
+            <label class="check-list-item"><input type="checkbox" name="archetypes" value="{{ name }}"> {{ name }}</label>
             {% endfor %}
-          </select>
-        </label>
+          </div>
+        </fieldset>
         <label>
           Target biases (comma-separated)
           <input type="text" name="biases_raw" value="personalization, formal, toxic" required>
@@ -224,6 +224,48 @@
     byId("self_critic").addEventListener("change", updateTeacherField);
     byId("rag_enabled").addEventListener("change", updateRagFields);
     byId("prompt_mode").addEventListener("change", updatePromptModeFields);
+
+    // "All" checkbox: toggle all items in group; sync indeterminate state on partial selection.
+    function syncSelectAll(groupName) {
+      var all = document.querySelector('.select-all[data-group="' + groupName + '"]');
+      if (!all) return;
+      var items = document.querySelectorAll('input[name="' + groupName + '"]');
+      var checked = Array.from(items).filter(function(cb) { return cb.checked; }).length;
+      all.checked = checked === items.length;
+      all.indeterminate = checked > 0 && checked < items.length;
+    }
+    document.querySelectorAll(".select-all").forEach(function(allCb) {
+      var groupName = allCb.dataset.group;
+      allCb.addEventListener("change", function() {
+        document.querySelectorAll('input[name="' + groupName + '"]').forEach(function(cb) {
+          cb.checked = allCb.checked;
+        });
+      });
+    });
+    document.querySelectorAll(".check-list input[type='checkbox']:not(.select-all)").forEach(function(cb) {
+      cb.addEventListener("change", function() { syncSelectAll(cb.name); });
+    });
+    // initialise indeterminate state (e.g. only qwen pre-checked)
+    ["student_models", "archetypes"].forEach(syncSelectAll);
+
+    // Client-side validation for check-list groups (replaces <select multiple required>).
+    byId("experiment-form").addEventListener("submit", function (e) {
+      var modelsChecked = document.querySelectorAll('input[name="student_models"]:checked').length > 0;
+      var archetypesChecked = document.querySelectorAll('input[name="archetypes"]:checked').length > 0;
+      if (!modelsChecked || !archetypesChecked) {
+        e.preventDefault();
+        e.stopPropagation();
+        if (!modelsChecked) document.querySelector('.check-list-group:has(input[name="student_models"])').style.outline = "2px solid var(--fail)";
+        if (!archetypesChecked) document.querySelector('.check-list-group:has(input[name="archetypes"])').style.outline = "2px solid var(--fail)";
+        return false;
+      }
+      document.querySelectorAll(".check-list-group").forEach(function(el) { el.style.outline = ""; });
+    });
+    document.querySelectorAll('input[name="student_models"], input[name="archetypes"]').forEach(function(cb) {
+      cb.addEventListener("change", function() {
+        cb.closest(".check-list-group").style.outline = "";
+      });
+    });
 
     updateSweepFields();
     updateTeacherField();

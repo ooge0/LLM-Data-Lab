@@ -128,3 +128,24 @@ def test_reexport_updates_the_sync_status_cell_to_the_new_timestamp_not_the_old_
     assert (
         first_timestamp not in second_timestamp
     ), f"old and new timestamps both present, stacked: {second_timestamp!r}"
+
+
+def test_bulk_export_button_is_disabled_until_a_row_is_checked(
+    live_server, page, real_run_with_one_response
+):
+    """
+    Regression test: the 'Send selected to DB' button must be disabled on page load (no rows
+    pre-checked) so clicking it before selecting anything is a no-op at the browser level.
+    JS must enable it when the first checkbox is checked and disable it again when unchecked.
+    """
+    db_export = DbExportPage(page, live_server).open()
+
+    btn = page.locator("#export-selected-btn")
+    assert btn.is_disabled(), "button should be disabled on load when no rows are checked"
+
+    first_cb = page.locator(".run-select").first
+    first_cb.check()
+    assert btn.is_enabled(), "button should be enabled after checking a row"
+
+    first_cb.uncheck()
+    assert btn.is_disabled(), "button should be disabled again after unchecking the only checked row"

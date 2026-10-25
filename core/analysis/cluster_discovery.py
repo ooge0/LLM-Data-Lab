@@ -105,6 +105,9 @@ class ClusterDiscovery:
             return df
 
         numeric_df = numeric_df.fillna(numeric_df.mean())
+        numeric_df = numeric_df.dropna(axis=1)  # drop cols where mean itself was NaN (all-NaN col)
+        if numeric_df.empty or numeric_df.shape[1] == 0:
+            return df
         self.feature_names = numeric_df.columns.tolist()
 
         scaled_data = self.scaler.fit_transform(numeric_df)

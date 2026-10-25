@@ -60,7 +60,9 @@ class StructuredJudge:
     def evaluate(self, response_text: str, archetype: str, bias: str, model: str) -> JudgeVerdict:
         """See :meth:`core.domain.interfaces.Judge.evaluate`."""
         user_prompt = f"Type: {archetype}\nBias: {bias}\nText: {response_text}"
-        result = self._llm_client.generate(model, _SYSTEM_PROMPT, user_prompt, json_mode=True)
+        result = self._llm_client.generate(
+            model, _SYSTEM_PROMPT, user_prompt, json_mode=True, max_tokens=256, temperature=0.1
+        )
         return self._parse_verdict(result.text)
 
     @staticmethod

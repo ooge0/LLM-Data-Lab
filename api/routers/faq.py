@@ -12,6 +12,7 @@ from fastapi import APIRouter, Request
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from markdown_it import MarkdownIt
+from mdit_py_plugins.dollarmath import dollarmath_plugin
 
 from api._paths import REPO_ROOT, TEMPLATES_DIR
 
@@ -19,7 +20,7 @@ router = APIRouter(prefix="/faq", tags=["faq"])
 templates = Jinja2Templates(directory=str(TEMPLATES_DIR))
 
 _FAQ_FILES = {"English": REPO_ROOT / "faq_eng.md", "Українська": REPO_ROOT / "faq_ua.md"}
-_md = MarkdownIt()
+_md = MarkdownIt().use(dollarmath_plugin)
 
 
 @router.get("", response_class=HTMLResponse)

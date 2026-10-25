@@ -33,6 +33,11 @@
   /* nav-specific -- a subtle tint distinct from --surface-hover so an active
      sidebar link and a merely-hovered one no longer look identical (see .sidebar) */
   --nav-active-bg: rgba(111, 155, 216, 0.10);
+  /* <select multiple> checked-option highlight -- must be clearly distinct from
+     --surface and --surface-hover; the linear-gradient trick (see option:checked rule)
+     forces the browser to use these instead of the system selection color */
+  --select-checked-bg: #243354;
+  --select-checked-text: #a8c4f0;
   /* :focus-visible ring -- reuses --link rather than introducing a 5th accent */
   --focus-ring: var(--link);
 
@@ -71,6 +76,8 @@
   --text: #1b1d23;
   --text-muted: #6b6e76;
   --nav-active-bg: rgba(60, 90, 160, 0.08);
+  --select-checked-bg: #c8d9f5;
+  --select-checked-text: #1e3a6e;
 }
 
 * { box-sizing: border-box; }
@@ -294,12 +301,65 @@ select[multiple] {
   padding: 0.25rem;
 }
 select[multiple] option:checked {
-  background: var(--surface-hover) linear-gradient(0deg, var(--surface-hover) 0%, var(--surface-hover) 100%);
-  color: var(--link);
+  /* linear-gradient forces our color over the browser's system selection tint */
+  background: var(--select-checked-bg) linear-gradient(0deg, var(--select-checked-bg) 0%, var(--select-checked-bg) 100%);
+  color: var(--select-checked-text);
+  font-weight: 500;
 }
 option {
   background: var(--surface);
   color: var(--text);
+}
+
+/* Checkbox-list replacement for <select multiple> -- full CSS control regardless of focus state */
+.check-list-group {
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  padding: 0;
+  margin: 0;
+}
+.check-list-label {
+  font-size: var(--text-sm);
+  color: var(--text);
+  padding: 0 var(--space-2);
+}
+.check-list {
+  background: var(--surface);
+  border-radius: 0 0 3px 3px;
+  overflow-y: auto;
+  max-height: 9rem;
+}
+.check-list-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 0.2rem var(--space-3);
+  cursor: pointer;
+  font-size: var(--text-sm);
+  color: var(--text);
+  user-select: none;
+}
+.check-list-item:hover {
+  background: var(--surface-hover);
+}
+.check-list-item input[type="checkbox"] {
+  accent-color: var(--link);
+  margin: 0;
+  flex-shrink: 0;
+}
+.check-list-item:has(input:checked) {
+  background: var(--select-checked-bg);
+  color: var(--select-checked-text);
+  font-weight: 500;
+}
+.check-list-all {
+  border-bottom: 1px solid var(--border);
+  font-style: italic;
+  color: var(--text-muted);
+}
+.check-list-all:has(input:checked),
+.check-list-all:has(input:indeterminate) {
+  color: var(--select-checked-text);
 }
 input:disabled, select:disabled {
   background: var(--bg);
@@ -535,4 +595,16 @@ hr {
 .status-badge.status-fail {
   color: var(--fail);
   border-color: var(--fail);
+}
+
+/* KaTeX math rendering on /faq.
+   dollarmath_plugin outputs $...$ as <span class="math inline">.
+   A formula that stands alone in its own <p> gets block/centered treatment;
+   one embedded inside prose stays inline. */
+p:has(> .math.inline:only-child) {
+  text-align: center;
+  margin: 0.9em 0;
+}
+p:has(> .math.inline:only-child) .math.inline {
+  display: inline-block;
 }

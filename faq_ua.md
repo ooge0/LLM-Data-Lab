@@ -58,9 +58,7 @@
 - **Sweep‑експерименти**  
   Виконуються для параметрів: Temperature, Top P, Frequency Penalty, Presence Penalty.  
   Формально:  
-  $$
-  Sweep(Parameter) = \{p_{min}, p_{min} + \Delta, \dots, p_{max}\}
-  $$
+$Sweep(Parameter) = \{p_{min}, p_{min} + \Delta, \dots, p_{max}\}$
 
 - **Prompt Strategies:**  
   - *Expert Psychologist* — стратегія з акцентом на психолінгвістичні особливості.  
@@ -70,9 +68,7 @@
 - **RAG (Retrieval Augmented Generation):**  
   Підтримка режимів: *Psychotype Only* та *Full Context*.  
   Параметр Top‑K визначає кількість релевантних документів для підвантаження:  
-  $$
-  Context = \{d_1, d_2, \dots, d_K\}
-  $$
+$Context = \{d_1, d_2, \dots, d_K\}$
 
 - **Функція розділення зміщення (bias split):**  
   Дозволяє відокремлювати вплив системних та користувацьких упереджень у генерації.
@@ -95,9 +91,7 @@
 
 - **Velocity (швидкість генерації):**  
   Формула для розрахунку середнього часу на слово:  
-  $$
-  Velocity = \frac{Час\ (мс)}{Кількість\ слів}
-  $$
+$Velocity = \frac{Час\ (мс)}{Кількість\ слів}$
 
 - **Загальний час генерації + валідації**  
   Включає сумарний час, витрачений на створення тексту та його перевірку.
@@ -122,12 +116,8 @@
 - **Scatter Plot: Semantic Overlap vs Expansion**  
   Використовується для візуалізації співвідношення між семантичним перекриттям та розширенням тексту.  
   Формально:  
-  $$
-  Overlap = \frac{|Tokens_{gen} \cap Tokens_{ref}|}{|Tokens_{ref}|}
-  $$
-  $$
-  Expansion = \frac{|Tokens_{gen}|}{|Tokens_{ref}|}
-  $$
+$Overlap = \frac{|Tokens_{gen} \cap Tokens_{ref}|}{|Tokens_{ref}|}$
+$Expansion = \frac{|Tokens_{gen}|}{|Tokens_{ref}|}$
 
 - **Інтерпретація Scatter Plot:**  
   - Верхній лівий кут → креативне розширення (низьке перекриття, високе розширення)  
@@ -137,15 +127,11 @@
 - **Візуалізація впливу гіперпараметрів на стиль і якість**  
   Дослідження залежності між Temperature, Top P, Penalties та характеристиками тексту.  
   Наприклад:  
-  $$
-  Style\ Shift = f(Temperature, TopP, Penalties)
-  $$
+$Style\ Shift = f(Temperature, TopP, Penalties)$
 
 - **Heatmap успішності верифікації**  
   Показує відсоток успішних генерацій для різних комбінацій параметрів:  
-  $$
-  Success\ Rate = \frac{Valid\ Generations}{Total\ Generations} \cdot 100\%
-  $$
+$Success\ Rate = \frac{Valid\ Generations}{Total\ Generations} \cdot 100\%$
 
 ---
 
@@ -162,9 +148,7 @@
   - більше VERB → динамічний, дієвий стиль
 
 #### Когнітивна складність: ARI + TTR (Readability vs Diversity)  
-$$
-Cognitive\ Load = \frac{Складні\ слова}{Загальна\ кількість\ слів}
-$$
+$Cognitive\ Load = \frac{Складні\ слова}{Загальна\ кількість\ слів}$
 
 - ARI (індекс читабельності)
 - corrected TTR (лексична різноманітність)
@@ -172,13 +156,9 @@ $$
 **Призначення:** вимір рівня абстракції та когнітивного навантаження.
 
 #### Емоційний профіль: (Subjectivity vs Sentiment) 
-$$
-Subjectivity = \frac{Суб’єктивні\ слова}{Загальна\ кількість\ слів}
-$$  
+$Subjectivity = \frac{Суб’єктивні\ слова}{Загальна\ кількість\ слів}$  
 
-$$
-Sentiment = \frac{Positive - Negative}{Total}
-$$
+$Sentiment = \frac{Positive - Negative}{Total}$
 
 - Subjectivity (TextBlob)
 - Sentiment (VADER)
@@ -192,33 +172,25 @@ $$
 - низька → стабільний / нейтральний стиль
 
 #### Повторюваність (Repetition Score)
-$$
-Repetition = \frac{Повторювані\ токени}{Загальна\ кількість\ токенів}
-$$
+$Repetition = \frac{Повторювані\ токени}{Загальна\ кількість\ токенів}$
 
 Оцінює частоту повторення слів та структур.
 - високе значення → фіксація / обмежене мислення
 - низьке значення → гнучкий словник
 
 #### Структура речень  
-$$
-Rigidity = \frac{Imperatives + Repetitions}{Total\ Sentences}
-$$
+$Rigidity = \frac{Imperatives + Repetitions}{Total\ Sentences}$
 
 Середня довжина речень для кожного психотипу.
 - короткі речення → контроль / ригідність
 - довгі речення → наративність / експресивність
 
 #### Індекс самофокусування  
-$$
-SelfFocus = \frac{Self\ Pronouns}{Total\ Pronouns}
-$$
+$SelfFocus = \frac{Self\ Pronouns}{Total\ Pronouns}$
 
 
 #### Швидкість обробки
-$$
-\text{Velocity} = \frac{\text{Час (мс)}}{\text{Кількість слів}}
-$$
+$\text{Velocity} = \frac{\text{Час (мс)}}{\text{Кількість слів}}$
 
 #### Латентність
 Загальний час генерації та валідації відповіді.
@@ -268,35 +240,27 @@ $$
 - **Індекси якості кластеризації:**  
   - **CPI (Silhouette):**  
 
-$$
-s(i) = \frac{b(i) - a(i)}{\max\{a(i), b(i)\}}
-$$
+$s(i) = \frac{b(i) - a(i)}{\max\{a(i), b(i)\}}$
 
-  де $$a(i)$$ — середня відстань до точок свого кластера, $$b(i)$$ — мінімальна середня відстань до іншого кластера.  
+  де $a(i)$ — середня відстань до точок свого кластера, $b(i)$ — мінімальна середня відстань до іншого кластера.  
 
   - **RMSEA (DBI – Davies–Bouldin Index):**  
 
-$$
-DBI = \frac{1}{k} \sum_{i=1}^{k} \max_{j \neq i} \frac{\sigma_i + \sigma_j}{d(c_i, c_j)}
-$$
+$DBI = \frac{1}{k} \sum_{i=1}^{k} \max_{j \neq i} \frac{\sigma_i + \sigma_j}{d(c_i, c_j)}$
 
-  де $$\sigma_i$$ — середнє відхилення у кластері $$i$$, $$d(c_i, c_j)$$ — відстань між центроїдами.  
+  де $\sigma_i$ — середнє відхилення у кластері $i$, $d(c_i, c_j)$ — відстань між центроїдами.  
 
   - **ARI (Adjusted Rand Index):**  
 
-$$
-ARI = \frac{RI - E[RI]}{\max(RI) - E[RI]}
-$$
+$ARI = \frac{RI - E[RI]}{\max(RI) - E[RI]}$
 
-  де $$RI$$ — Rand Index, що вимірює узгодженість кластеризації з еталонними мітками.
+  де $RI$ — Rand Index, що вимірює узгодженість кластеризації з еталонними мітками.
 
 - **Behavioral Anomaly Analysis**  
   Виявлення аутлайєрів (аномальних генерацій), що не відповідають очікуваним психотипам.  
   - Відсоток аутлайєрів:  
 
-$$
-Outlier\ Rate = \frac{N_{outliers}}{N_{total}} \cdot 100\%
-$$
+$Outlier\ Rate = \frac{N_{outliers}}{N_{total}} \cdot 100\%$
 
   - Приклади текстів із кластерів та шумових точок.
 
@@ -321,27 +285,17 @@ $$
 
 - **Test Size (train/test split)**  
   Визначає пропорцію даних для тренування та тестування:  
-  $$
-  Train\ Size + Test\ Size = 1
-  $$
+$Train\ Size + Test\ Size = 1$
 
 - **Метрики оцінки:**  
   - Accuracy:  
-  $$
-  Accuracy = \frac{TP + TN}{TP + TN + FP + FN}
-  $$  
+$Accuracy = \frac{TP + TN}{TP + TN + FP + FN}$  
   - Precision:  
-  $$
-  Precision = \frac{TP}{TP + FP}
-  $$  
+$Precision = \frac{TP}{TP + FP}$  
   - Recall:  
-  $$
-  Recall = \frac{TP}{TP + FN}
-  $$  
+$Recall = \frac{TP}{TP + FN}$  
   - F1‑Score:  
-  $$
-  F1 = 2 \cdot \frac{Precision \cdot Recall}{Precision + Recall}
-  $$  
+$F1 = 2 \cdot \frac{Precision \cdot Recall}{Precision + Recall}$  
 
 - **Запуск оцінки через кнопку Run Evaluation**  
   Виконує тренування, після чого відображає результати у вигляді таблиць та графіків.
@@ -363,15 +317,11 @@ $$
 
 - **Validation Success Rate**  
   Відсоток успішних проходжень валідації для кожної моделі:  
-  $$
-  Pass\ Rate = \frac{Valid\ Samples}{Total\ Samples} \cdot 100\%
-  $$
+$Pass\ Rate = \frac{Valid\ Samples}{Total\ Samples} \cdot 100\%$
 
 - **Performance Metrics (Inference speed)**  
   Вимірює швидкість генерації:  
-  $$
-  Velocity = \frac{Time\ (ms)}{Word\ Count}
-  $$
+$Velocity = \frac{Time\ (ms)}{Word\ Count}$
 
 - **Quality Metrics Heatmap**  
   Візуалізація якості за ознаками:  

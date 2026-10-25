@@ -136,22 +136,13 @@ full field reference (mirrors :class:`~core.domain.entities.ExperimentConfig` ex
 
 .. toctree::
    :maxdepth: 3
-   :caption: Contents:
 
    architecture
    wiki/index
    features
    operations
    qa
-   qa/index
-   glossary
-   dev_reference
    roadmap
-   modules
-   core
-   utils
-   tests
-   ../interface_and_components_v2_eng.md
-   ../interface_and_components_v2_ua.md
-   ../faq_eng.md
-   ../faq_ua.md
+   reference/index
+   history/index
+   glossary

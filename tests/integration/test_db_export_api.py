@@ -109,6 +109,21 @@ def test_db_export_page_has_bulk_select_checkboxes_wired_to_each_rows_own_button
     assert "htmx.trigger" in response.text
 
 
+@pytest.mark.req("REQ-OPS-DB-01")
+def test_bulk_export_button_renders_disabled_by_default(client, fake_repo):
+    """Send-selected button must carry the HTML `disabled` attribute on page load (no rows
+    pre-checked) so clicking it before selecting anything is blocked at the HTML level,
+    not silently ignored. Dynamic enable/disable via JS is covered by the E2E suite."""
+    fake_repo.save_run(_make_run("run-a", "2026-08-21T00:00:00Z"))
+    fake_repo.save_response("run-a", {"student": "qwen:latest", "v_ok_numeric": 1})
+
+    response = client.get("/db_export")
+
+    assert response.status_code == 200
+    assert 'id="export-selected-btn"' in response.text
+    assert 'id="export-selected-btn" disabled' in response.text
+
+
 @pytest.mark.req("REQ-DATA-EXP-01")
 def test_export_run_copies_responses_and_reports_success(client, fake_repo, _temp_db_path):
     fake_repo.save_run(_make_run("run-a", "2026-08-21T00:00:00Z"))

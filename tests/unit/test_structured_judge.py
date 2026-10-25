@@ -122,6 +122,24 @@ def test_request_asks_for_structured_json_mode():
     assert "the generated text" in call["user_prompt"]
 
 
+@pytest.mark.req("REQ-CASC-L3-04")
+def test_judge_uses_capped_tokens_and_low_temperature():
+    """
+    Regression test for a real production crash: qwen:latest entered an infinite token-repeat
+    loop when the judge call had no max_tokens limit, causing Ollama to abort with HTTP 500.
+    The fix pins max_tokens=256 (hard stop) and temperature=0.1 (deterministic JSON) on every
+    judge call, independent of any experiment sweep temperature.
+    """
+    llm = FakeLLMClient(response_text='{"verdict": true, "confidence": 0.9, "rationale": "ok"}')
+    judge = StructuredJudge(llm)
+
+    judge.evaluate("some text", "Detached", "formal", "qwen:latest")
+
+    params = llm.calls[0]["params"]
+    assert params.get("max_tokens") == 256
+    assert params.get("temperature") == pytest.approx(0.1)
+
+
 @pytest.mark.req("REQ-CASC-L3-02")
 def test_parse_failures_set_the_parse_failed_flag_and_real_judgments_do_not():
     """Both malformed-response fallbacks carry parse_failed=True so callers can tell them from a real 'no' without reading rationale text; a parsed verdict (true or false) never does."""

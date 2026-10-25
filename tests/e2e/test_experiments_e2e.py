@@ -162,15 +162,15 @@ def test_non_tuned_prompt_mode_disables_and_unchecks_exclude_archetype(experimen
 
 
 @pytest.mark.req("REQ-GEN-UI-05")
-def test_submitting_with_no_archetypes_selected_is_blocked_by_the_browser(experiments_page):
+def test_submitting_with_no_archetypes_selected_is_blocked_by_js(experiments_page):
     """
-    Regression test: student_models/archetypes are required selects; a
-    browser must refuse to submit the form while archetypes has nothing
-    selected (native HTML5 constraint validation), rather than silently
-    POSTing a config that resolves to a real-but-empty 0-task run.
+    Regression test: archetypes are now a checkbox list (not a required <select>); JS validation
+    must block the form submit when no archetype is checked, rather than silently POSTing a
+    config that resolves to a real-but-empty 0-task run. Confirm none are checked on page load
+    (the form default) so the guard has something to block.
     """
     form = experiments_page
-    assert form.archetypes_select_is_valid() is False
+    assert form.archetypes_none_checked() is True
 
 
 # --- Live setup summary (real htmx round-trip against the live server) ------

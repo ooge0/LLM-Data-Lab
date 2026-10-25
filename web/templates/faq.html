@@ -19,9 +19,11 @@
     } catch (e) {}
   })();
   </script>
-  <title>nn_lab -- FAQ (Stage 14)</title>
+  <title>nn_lab -- FAQ</title>
   <link rel="stylesheet" href="/static/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.11/katex.min.css" crossorigin="anonymous">
   <script src="/static/vendor/htmx/htmx.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.11/katex.min.js" crossorigin="anonymous" defer></script>
 </head>
 <body>
 <div class="app-shell">
@@ -46,5 +48,21 @@
   {% endif %}
   </main>
 </div>
+<script>
+  // Render math elements produced by the dollarmath markdown-it plugin.
+  // Single-dollar formulas become <span class="math inline">;
+  // block-styled (standalone paragraph) formulas are centered via CSS.
+  document.addEventListener("DOMContentLoaded", function () {
+    if (typeof katex === "undefined") return;
+    document.querySelectorAll(".math.block").forEach(function (el) {
+      try { katex.render(el.textContent, el, { displayMode: true, throwOnError: false }); }
+      catch (e) {}
+    });
+    document.querySelectorAll(".math.inline").forEach(function (el) {
+      try { katex.render(el.textContent, el, { displayMode: false, throwOnError: false }); }
+      catch (e) {}
+    });
+  });
+</script>
 </body>
 </html>

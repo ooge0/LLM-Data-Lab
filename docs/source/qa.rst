@@ -43,46 +43,24 @@ Test suite at a glance
    :header-rows: 0
 
    * - Test files
-     - 47
+     - 55
    * - Test cases (``def test_*``)
-     - 359
+     - 497
    * - Lines of test code
-     - 6897
+     - 8678
    * - Test framework
      - pytest 9.0.3 + pytest-playwright (``tests/e2e`` only)
    * - Reporting
      - Allure (``results/allure-results/``) + pytest-html (``results/pytest_test_results/``)
 
-All figures (47 files, 359 cases, 6897 lines) are independently confirmed via
-``pytest tests --collect-only -q`` and a plain line count, not just counted by hand -- re-run and
-re-counted directly for this refresh, not hand-incremented from the previous figure (which was
-itself found to be internally inconsistent: the table above and the prose count two paragraphs down
-had drifted apart, and ``test_api_status_api.py`` had never been counted in either one -- see the
-2026-09-05 note just below for how that was found). This is the count after 2026-08-24's
-fix/feature passes (see :doc:`wiki/04-llm-analytics` and :doc:`wiki/06-qa-testing-strategy`), that
-same day's RAG-suite fixes (3 of the 4 long-tracked pre-existing failures actually fixed, the 4th
-marked ``xfail`` with a disclosed-gap reason rather than left silently red -- see *Known issues*
-below), the self-critic-vs-teacher-judging pass-rate-delta feature
-(``MetricsEngine.compare_judging_modes``), 2026-08-25's real bug fix (``/analytics``'s
-NaN-marker-size crash), the JSONL-to-SQLite "Export to DB" feature (``core.services.db_export``)
-with its full 9-scenario matrix, its progress-indicator/bulk-select UI addition, and the ``cli.manage``
-operational console (``serve``/``status``/``list-runs``/``export-db``, ``test_cli_manage.py``).
+All figures re-measured 2026-10-25 via ``pytest --collect-only -q`` and ``wc -l``.
+All figures re-measured 2026-11-25 via ``pytest --collect-only -q`` and ``wc -l``.
 
-**2026-09-05, two more passes, both re-verified against a live Neo4j and a full doc rebuild rather
-than assumed correct:** a frontend visual/UX redesign (new color palette, spacing/type scale, sidebar
-active-state fix, table readability, a shared muted chart palette in
-:func:`web.plotting.render.figure_to_div`, project-wide emoji removal) touched no test *counts*
-directly but did require fixing two tests that had pinned removed emoji as literal strings
-(``test_status_api.py``, ``test_model_evo_api.py``) -- caught by actually running the suite, not by
-the code diff alone. Separately, a real, disclosed GDS-configuration bug in the quarantined Neo4j
-subsystem (CLAUDE.md SS1's two narrow, explicit, dated exceptions) was found and fixed, verified
-live, and given its first-ever test coverage: ``tests/unit/test_knowledge_graph.py`` (new file, 11
-tests, mocked ``py2neo.Graph`` + ``streamlit.testing.v1.AppTest`` -- no live server, matching this
-project's no-Docker constraint). Full story, real captured proof, and the honest scope boundary
-(no refactor, no promotion into this project's own testing/architecture discipline):
-:doc:`wiki/07-knowledge-graph-results`.
+All figures re-measured 2026-09-25 via ``pytest --collect-only -q`` and ``wc -l``.
 
-.. list-table:: Test suite breakdown (411 tests -- re-measured 2026-09-05, was 359)
+All figures re-measured 2026-09-25 via ``pytest tests --collect-only -q`` and ``wc -l``.
+
+.. list-table:: Test suite breakdown (497 tests -- re-measured 2026-10-25)
    :widths: 40 15 45
    :header-rows: 1
 
@@ -90,43 +68,31 @@ project's no-Docker constraint). Full story, real captured proof, and the honest
      - Count
      - Share
    * - Unit (``tests/unit``)
-     - 251
-     - 61%
+     - 330
+     - 66%
    * - Integration / API (``tests/integration``)
-     - 115
-     - 28%
+     - 121
+     - 24%
    * - Legacy RAG suite (``tests/legacy_rag``)
      - 29
-     - 7%
+     - 6%
    * - E2E, Playwright (``tests/e2e``)
-     - 16
-     - 4%
+     - 17
+     - 3%
 
-**Unit** -- domain interfaces, adapters, services/orchestration logic, config loader, the CLI batch
-runner (``cli.run_experiment``) and operational console (``cli.manage``), service-status checks,
-linguistic-metric measurement validity, the Layer 0/1 cascade
-(``test_response_classification.py``), the structured judge (``test_structured_judge.py``,
-replacing the deleted ``test_naive_judge.py``), Layer 2 (``test_hallucination_check.py``),
-syntactic complexity (``test_syntactic_complexity.py``), the benchmark leaderboard
-(``test_benchmark_charts.py``), the judging-mode pass-rate delta
-(new cases in ``test_metrics_engine.py``), the docs-search-over-HTTP wrapper
-(``test_serve_docs.py``), the JSONL-to-SQLite export service's 9-scenario matrix
-(``test_db_export.py``, plus a new case in ``test_sqlite_repo.py``), the
-now-fully-migrated-and-fixed ``GraphRepository``/``Neo4jGraphRepo`` (``test_neo4j_repo.py``, 28
-tests -- the failure-mode graph, Leiden communities, structural similarity, and the fixed
-Archetype/Bias PageRank; replaces the deleted ``test_knowledge_graph.py``, which covered the
-now-deleted Streamlit tab's query construction/ordering), and Hypothesis Testing/Uncertainty
-Analysis (``test_hypothesis_testing.py``, 10 tests -- pure pandas/scipy, no Neo4j; migrated the
-same day as a separate, new page, not part of ``GraphRepository``) (27 files, 251 tests).
+**Unit** -- domain interfaces, adapters, services/orchestration logic, config loader, CLI batch
+runner and operational console, service-status checks, linguistic-metric measurement validity,
+Layer 0/1/2 cascade, structured judge, syntactic complexity, benchmark leaderboard,
+judging-mode pass-rate delta, docs-over-HTTP wrapper, JSONL-to-SQLite export,
+``GraphRepository``/``Neo4jGraphRepo``, Hypothesis Testing/Uncertainty Analysis
+(33 files, 330 tests).
 
-**Integration / API** -- through the real
-FastAPI app via ``TestClient`` (``test_analytics_api.py``, ``test_api_status_api.py``,
+**Integration / API** -- through the real FastAPI app via ``TestClient``
+(15 files, 121 tests: ``test_analytics_api.py``, ``test_api_status_api.py``,
 ``test_benchmark_api.py``, ``test_clusters_api.py``, ``test_db_export_api.py``, ``test_demo_api.py``,
 ``test_experiments_api.py``, ``test_faq_api.py``, ``test_hypothesis_testing_api.py``,
-``test_knowledge_graph_api.py`` (17 tests -- root-cause queries, Leiden, structural similarity, and
-the fixed PageRank/network-viz endpoints), ``test_model_evo_api.py``,
-``test_monitor_api.py``, ``test_nlp_api.py``, ``test_runs_api.py``
-(now including the judging-comparison endpoint), ``test_status_api.py``; 15 files, 115 tests).
+``test_knowledge_graph_api.py``, ``test_model_evo_api.py``,
+``test_monitor_api.py``, ``test_nlp_api.py``, ``test_runs_api.py``, ``test_status_api.py``).
 
 **Legacy RAG suite** -- predates the FastAPI rewrite entirely (``test_contract.py``, ``test_ingestion_robustness.py``, ``test_rag.py``, ``test_rag_logic.py``; 4 files, 29 tests; a 5th
 file, ``rag_audit.py``, is a manual audit script living alongside them -- its one ``test_``-prefixed
@@ -134,20 +100,14 @@ function was never actually collected by pytest, since the filename itself doesn
 default ``test_*.py`` discovery pattern, so it isn't counted here) -- 0 currently fail (1 xfailed by
 design, not a real failure -- see *Known issues* below).
 
-**E2E, Playwright** -- real Chromium browser via ``pytest-playwright`` against a real ``uvicorn`` server on a background thread (3
-files, 16 tests): ``test_experiments_e2e.py`` (13 tests) covers exactly what ``TestClient``-based
-tests structurally cannot -- client-side JS behavior on ``/experiments`` -- conditional field
-enabling/disabling for the sweep/RAG/self-critic/prompt-mode controls, dynamic per-parameter
-min/max bounds, native HTML5 required-field blocking, and a live htmx round-trip updating the
-setup-summary panel; ``test_db_export_e2e.py`` (2 tests) is a real regression fence for a browser
-HTML-table-parsing bug (an htmx out-of-band swap into a bare ``<td>`` silently failed to replace its
-content -- invisible to any ``TestClient``-based assertion, since the raw HTML text is identical
-either way); ``test_tabs_chart_resize_e2e.py`` (1 test) is a real regression fence for a Plotly
-chart-width measurement bug (a chart inside a ``display:none`` tab panel gets measured at zero
-width the instant it renders, never recovering without a real browser resize event). All three
-close the same CLAUDE.md SS7 Playwright-layer gap this page used to flag as entirely open (see the
-*Known issues* section for why they must run as their own process, never mixed into the same
-``pytest`` invocation as the rest of the suite).
+**E2E, Playwright** -- real Chromium browser via ``pytest-playwright`` against a real ``uvicorn``
+server (3 files, 17 tests): ``test_experiments_e2e.py`` (13 tests) covers client-side JS on
+``/experiments`` -- conditional field enabling/disabling, dynamic per-parameter bounds, native
+required-field validation, live htmx preview-panel round-trip; ``test_db_export_e2e.py`` (3 tests)
+covers an htmx out-of-band swap into a bare ``<td>`` (invisible to ``TestClient``), and the
+disabled-until-checked bulk-export button; ``test_tabs_chart_resize_e2e.py`` (1 test) covers a
+Plotly chart measured at zero width inside a ``display:none`` tab panel. All three must run as their
+own process (see *Known issues*).
 
 Test coverage
 -----------------
@@ -164,85 +124,23 @@ completely unmeasured (Stage 0's original ``--cov`` flags predate them).
 ``utils/other/neo4j_services.py``) is fully migrated and deleted -- see CLAUDE.md SS1's Neo4j entry.
 The omit list is empty now; there's nothing left to carve out of coverage measurement.
 
-**Overall: 78% (2503 / 3225 statements)** -- re-measured 2026-09-05 after the Neo4j subsystem
-migration (was 71% / 1595 of 2240) -- both the scope shrinking (the deleted legacy files are gone,
-not just omitted) and the newly-added, fully-tested ``hypothesis_testing.py``/``neo4j_repo.py``/
-``knowledge_graph_charts.py`` moved the real number, not a stale carry-forward.
+Coverage figures are generated by ``utils/refresh_qa_numbers.py`` (run it to update) --
+reproduce manually with::
 
-.. list-table:: Coverage by package
-   :widths: 30 15 15 15
-   :header-rows: 1
+   pytest tests --ignore=tests/e2e --cov=core --cov=api --cov=cli --cov=web --cov=utils \
+       --cov-report=term-missing tests
 
-   * - Package
-     - Statements
-     - Missed
-     - Coverage
-   * - ``api`` (app + ``_paths``)
-     - 29
-     - 1
-     - 97%
-   * - ``api/routers``
-     - 399
-     - 34
-     - 91%
-   * - ``cli``
-     - 61
-     - 11
-     - 82%
-   * - ``core/services``
-     - 302
-     - 6
-     - 98%
-   * - ``core/adapters``
-     - 276
-     - 33
-     - 88%
-   * - ``core/domain``
-     - 78
-     - 8
-     - 90%
-   * - ``core/analysis``
-     - 334
-     - 39
-     - 88%
-   * - ``web/plotting``
-     - 222
-     - 7
-     - 97%
-   * - ``utils``
-     - 539
-     - 506
-     - 6%
-   * - **Total**
-     - **2240**
-     - **645**
-     - **71%**
+.. include:: _qa_coverage_table.rst
 
-Reading these honestly, not just reporting them:
+Honest notes on the current figures (re-checked 2026-10-25):
 
-- ``core/domain`` at 90%, not 100%, is mostly a measurement artifact -- ``interfaces.py``'s
-  ``Protocol`` method bodies are all ``...`` stubs; coverage tooling can't meaningfully "cover" an
-  ellipsis. Not a real gap.
-- ``core/analysis`` jumped from 66% (pre-Stage-10) to 88% -- ``cluster_discovery.py`` and
-  ``model_evaluation.py`` were the two 0%-covered modules previously flagged here; both now have
-  real test coverage (``test_cluster_discovery.py``, exercised indirectly through
-  ``test_model_evo_api.py``). Remaining gaps are mostly deep error-handling branches in
-  ``neuro_metrics.py``/``nlp_science.py``, not whole untested modules.
-- ``core/adapters`` at 88% (down from the old ``core/adapters`` figure only because this rollup now
-  includes ``rag/retriever.py`` at 0% -- a module the RAG pipeline never actually calls today,
-  confirmed by the legacy code path; not a regression, a scope correction).
-- ``api/routers/experiments.py`` remains the least-covered active router (uncovered: the
-  RAG-enabled lazy-knowledge-base path, a few error-response arms) -- unchanged finding from the
-  previous version of this page, still worth a follow-up unit test, still not urgent.
-- ``cli/run_experiment.py`` at 82% -- uncovered lines are ``build_runner()``'s real-adapter wiring
-  (deliberately not unit-tested; ``run()``'s own tests inject fake-wired runners instead, per
-  CLAUDE.md's "test the seam, not the wiring" precedent) and the ``if __name__ == "__main__"``
-  guard, which pytest never executes by design.
-- ``utils`` stays at 6%, essentially unchanged -- still dominated by files outside this migration's
-  scope entirely (``fake_data_generator/``, ``plotly/plotly_parser.py``, ``project_audit/``,
-  ``rag_embedding_view.py``, ``sphinx_helper.py``, and now also ``list_tests.py`` itself, which
-  generates this very page's test roster but has no tests of its own -- a real, minor gap, see
-  *Suggested future QA additions*).
+- ``core/domain``: ``Protocol`` stubs (``...`` bodies) are uncoverable by design -- not a real gap.
+- ``utils``: low coverage reflects files entirely outside the migration scope
+  (``fake_data_generator/``, ``project_audit/``, ``rag_embedding_view.py``, etc.).
+- ``cli/run_experiment.py``: uncovered lines are the real-adapter wiring block and ``__main__``
+  guard -- deliberately not unit-tested (tests inject fake-wired runners instead).
+- ``core/adapters/rag/retriever.py``: 0% -- the RAG pipeline never calls it today; a real but
+  pre-existing gap, not a regression.
 
 Full per-file breakdown: ``results/coverage_html/index.html`` (generated fresh by every
 ``tox -e py312`` run, or ``pytest --cov=core --cov=api --cov=cli --cov=web --cov=utils
@@ -539,16 +437,16 @@ rows -- the seven ported tabs plus R37's Playwright E2E layer -- have since land
      - ✅ Full for the scope actually built -- Ollama model pull/delete management and the raw session-state dump were deliberately not ported (see :doc:`roadmap`'s Stage 13 entry for why)
    * - R35
      - ``tab_faq`` -- ``/faq``
-     - ``test_faq_api.py`` (4)
-     - ✅ Full -- both languages, plus an unknown-language inline-error path
+     - ``test_faq_api.py`` (6)
+     - ✅ Full -- both languages, unknown-language inline-error path, math-block rendering (``dollarmath_plugin``)
    * - R36
      - ``cli/`` batch runner
      - ``test_cli_run_experiment.py`` (6)
      - ✅ Full -- includes a real end-to-end run against live Ollama, cross-checked byte-for-byte field-identical to the web path's output
    * - R37
      - Playwright E2E (CLAUDE.md SS7 requirement)
-     - ``test_experiments_e2e.py`` (13), ``test_db_export_e2e.py`` (2), ``test_tabs_chart_resize_e2e.py`` (1)
-     - ✅ Full for three real browser-only bug classes this project has actually hit: ``/experiments``' client-side JS (sweep/RAG/self-critic/prompt-mode conditional fields, dynamic per-parameter bounds, native required-field validation, live preview-panel htmx round-trip); an htmx out-of-band swap into a bare ``<td>`` silently failing to replace its content (invisible to ``TestClient`` -- the raw HTML text is identical either way); a Plotly chart measured at zero width inside a ``display:none`` tab panel (also invisible to ``TestClient`` -- only real browser layout geometry shows the collapsed width). Other pages stay covered by ``TestClient`` alone. Must run as their own process, never mixed into the same ``pytest`` invocation as the rest of the suite -- see *Known issues*
+     - ``test_experiments_e2e.py`` (13), ``test_db_export_e2e.py`` (3), ``test_tabs_chart_resize_e2e.py`` (1)
+     - ✅ Full for three real browser-only bug classes: ``/experiments`` client-side JS (sweep/RAG/self-critic/prompt-mode conditional fields, dynamic per-parameter bounds, required-field validation, live htmx preview); htmx out-of-band swap into a bare ``<td>`` (invisible to ``TestClient``); Plotly chart at zero width inside ``display:none`` tab. Must run as their own process -- see *Known issues*
 
 Full test roster
 ---------------------
@@ -559,17 +457,7 @@ project's own test-inventory script -- run it yourself with
 section reflects the real suite, not a hand-transcribed snapshot that can drift. Read top to
 bottom to know exactly what's tested without opening Allure or running anything yourself.
 
-Every test below has a real docstring -- 0 of 201 read "Description is missing" (the 2 tests added
-after this refresh's own headline fix -- see below -- were written with docstrings from the start,
-same as everything else in this suite). That's down from 84/196, 43%, at the start of this refresh:
-a genuine bug in ``list_tests.py`` itself (found and fixed during this refresh -- see its own module
-docstring) re-imported every test *file* once per *test function* inside it (an
-``O(tests-in-file))`` blowup, not ``O(files)``), and running the script directly (rather than as an
-imported module) let its own containing directory shadow the real third-party ``plotly`` package
-with this project's own ``utils/plotly/`` helper subpackage -- so every test touching Plotly charts
-intermittently failed to import with a spurious ``No module named 'plotly.express'``, silently
-masking its real docstring behind "missing." Fixing both surfaced the true count: 23 tests with a
-genuinely missing docstring, all now written.
+Every test below has a real docstring.
 
 .. include:: _qa_test_roster.rst
 
@@ -1040,3 +928,18 @@ maturity. Each item below is a placeholder for a real design discussion, not a s
 - Judge-verdict drift monitoring across model/prompt updates -- the self-critic-vs-cross-model
   pass-rate delta CLAUDE.md SS4 already calls for is the single-run version of this; a team-scale
   version would track it over time, not just log it once.
+
+Generated QA pages
+------------------
+
+The pages below are generated from ``tests/qa/catalogue.toml``, ``tests/qa/known_gaps.txt``,
+and a real pytest collection pass -- no numbers are typed by hand.
+
+.. toctree::
+   :maxdepth: 1
+
+   qa/feature_catalogue
+   qa/test_cases
+   qa/test_results
+   qa/traceability
+   qa/coverage_by_feature

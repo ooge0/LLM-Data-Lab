@@ -1,3 +1,5 @@
+:orphan:
+
 QA pages by code
 ==================
 

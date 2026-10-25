@@ -195,9 +195,12 @@ See :mod:`core.analysis.response_classification`, :mod:`core.analysis.hallucinat
 Persistence (``Repository``)
 --------------------------------
 
-**Reachable now:** ``JSONLStore`` yes, via ``/experiments`` above (every
+**Reachable now:** ``JSONLStore`` yes, via ``/experiments`` (every
 generated response lands in ``results/lab_experiment_results/``).
-``SQLiteRepo`` no -- backend only, tested, not yet wired to an endpoint.
+``SQLiteRepo`` yes, via ``/db_export`` (**Export to DB** in the nav) --
+copies any run's JSONL into ``results/nn_lab.db`` on demand;
+see :mod:`api.routers.db_export` and :func:`core.services.db_export.export_run_to_db`.
+SQLite is an opt-in copy, not the primary store -- ``JSONLStore`` remains the default.
 
 Two interchangeable implementations of :class:`~core.domain.interfaces
 .Repository`:

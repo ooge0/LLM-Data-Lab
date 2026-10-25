@@ -49,3 +49,26 @@ def test_faq_page_includes_language_switch_links(client):
     assert response.status_code == 200
     assert "English" in response.text
     assert "Українська" in response.text
+
+
+def test_faq_math_elements_are_rendered_as_html_math_spans(client):
+    """
+    Regression for the reported bug: ``$...$`` formulas in faq_eng.md were
+    rendered as plain paragraph text because ``MarkdownIt()`` had no math
+    plugin.  With ``dollarmath_plugin`` enabled, each ``$...$`` formula is
+    converted server-side to ``<span class="math inline">`` so the client-side
+    KaTeX pass has a DOM target, not raw ``$`` text to hunt for.
+    The FAQ files use single-dollar delimiters for both standalone (block-
+    styled via CSS) and inline formulas.
+    """
+    response = client.get("/faq")
+    assert response.status_code == 200
+    # dollarmath_plugin wraps $...$ as <span class="math inline">
+    assert 'class="math inline"' in response.text
+
+
+def test_faq_ukrainian_math_elements_render_as_html_math_spans(client):
+    """Same math-rendering guarantee for the Ukrainian variant of the FAQ."""
+    response = client.get("/faq", params={"lang": "Українська"})
+    assert response.status_code == 200
+    assert 'class="math inline"' in response.text

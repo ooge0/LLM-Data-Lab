@@ -60,9 +60,7 @@ This section describes the generation and model interaction mechanisms:
 
 * **Sweep-experiments** performed for parameters: Temperature, Top P, Frequency penalty, Presence penalty.
   Formally:
-  $$
-  Sweep(Parameter) = {p_{min}, p_{min} + \Delta, \dots, p_{max}}
-  $$
+$Sweep(Parameter) = {p_{min}, p_{min} + \Delta, \dots, p_{max}}$
 
 * **Prompt strategies:** - *Expert psychologist* — strategy with an emphasis on psycholinguistic features.
 
@@ -71,9 +69,7 @@ This section describes the generation and model interaction mechanisms:
 
 * **RAG (retrieval augmented generation):** support for modes: *Psychotype only* and *Full context*.
   The Top-K parameter determines the number of relevant documents to load:
-  $$
-  Context = {d_1, d_2, \dots, d_K}
-  $$
+$Context = {d_1, d_2, \dots, d_K}$
 
 * **Bias split function:** allows for separating the influence of systemic and user biases in generation.
 
@@ -92,9 +88,9 @@ This section describes model performance and latency metrics:
 * **Speed and latency metrics** measure the efficiency of text generation and validation.
 
 * **Velocity (generation speed):** formula for calculating the average time per word:
-  $$
+  $
   Velocity = \frac{Time\ (ms)}{Word\ Count}
-  $$
+  $
 
 * **Total generation + validation time** includes the total time spent creating the text and its verification.
 
@@ -116,12 +112,10 @@ This section describes tools for analyzing the style and quality of generations:
 
 * **Scatter plot: semantic overlap vs expansion** used to visualize the relationship between semantic overlap and text expansion.
   Formally:
-  $$
-  Overlap = \frac{|Tokens_{gen} \cap Tokens_{ref}|}{|Tokens_{ref}|}
-  $$
-  $$
-  Expansion = \frac{|Tokens_{gen}|}{|Tokens_{ref}|}
-  $$
+
+Overlap = \frac{|Tokens_{gen} \cap Tokens_{ref}|}{|Tokens_{ref}|}
+
+Expansion = \frac{|Tokens_{gen}|}{|Tokens_{ref}|}
 
 * **Scatter plot interpretation:** - top left corner → creative expansion (low overlap, high expansion)
 
@@ -130,14 +124,12 @@ This section describes tools for analyzing the style and quality of generations:
 
 * **Visualization of hyperparameter influence on style and quality** study of the dependency between Temperature, Top P, Penalties, and text characteristics.
   For example:
-  $$
-  Style\ Shift = f(Temperature, TopP, Penalties)
-  $$
+
+Style\ Shift = f(Temperature, TopP, Penalties)
 
 * **Verification success heatmap** shows the percentage of successful generations for different parameter combinations:
-  $$
-  Success\ Rate = \frac{Valid\ Generations}{Total\ Generations} \cdot 100%
-  $$
+  
+Success\ Rate = \frac{Valid\ Generations}{Total\ Generations} \cdot 100%
 
 ---
 
@@ -159,9 +151,7 @@ Part-of-speech distribution:
 
 #### Cognitive complexity: ARI + TTR (readability vs diversity)
 
-$$
 Cognitive\ Load = \frac{Complex\ words}{Total\ number\ of\ words}
-$$
 
 * ARI (readability index)
 * corrected TTR (lexical diversity)
@@ -170,13 +160,9 @@ $$
 
 #### Emotional profile: (subjectivity vs sentiment)
 
-$$
 Subjectivity = \frac{Subjective\ words}{Total\ number\ of\ words}
-$$
 
-$$
 Sentiment = \frac{Positive - Negative}{Total}
-$$
 
 * Subjectivity (TextBlob)
 * Sentiment (VADER)
@@ -192,9 +178,7 @@ Measures the fluctuation of emotional tone between sentences.
 
 #### Repetition score
 
-$$
-Repetition = \frac{Repeated\ tokens}{Total\ number\ of\ tokens}
-$$
+$Repetition = \frac{Repeated\ tokens}{Total\ number\ of\ tokens}$
 
 Evaluates the frequency of repeating words and structures.
 
@@ -203,9 +187,7 @@ Evaluates the frequency of repeating words and structures.
 
 #### Sentence structure
 
-$$
 Rigidity = \frac{Imperatives + Repetitions}{Total\ Sentences}
-$$
 
 Average sentence length for each psychotype.
 
@@ -214,15 +196,11 @@ Average sentence length for each psychotype.
 
 #### Self-focus index
 
-$$
 SelfFocus = \frac{Self\ Pronouns}{Total\ Pronouns}
-$$
 
 #### Processing speed
 
-$$
 \text{Velocity} = \frac{\text{Time (ms)}}{\text{Word Count}}
-$$
 
 #### Latency
 
@@ -280,34 +258,26 @@ Total generation and response validation time.
 
   * **CPI (silhouette):**
 
-$$
 s(i) = \frac{b(i) - a(i)}{\max{a(i), b(i)}}
-$$
 
-where $$a(i)$$ is the average distance to points in its cluster, $$b(i)$$ is the minimum average distance to another cluster.
+where $a(i)$ is the average distance to points in its cluster, $b(i)$ is the minimum average distance to another cluster.
 
 * **RMSEA (DBI – Davies–Bouldin index):**
 
-$$
-DBI = \frac{1}{k} \sum_{i=1}^{k} \max_{j \neq i} \frac{\sigma_i + \sigma_j}{d(c_i, c_j)}
-$$
+$DBI = \frac{1}{k} \sum_{i=1}^{k} \max_{j \neq i} \frac{\sigma_i + \sigma_j}{d(c_i, c_j)}$
 
-where $$\sigma_i$$ is the average deviation in cluster $$i$$, $$d(c_i, c_j)$$ is the distance between centroids.
+where $\sigma_i$ is the average deviation in cluster $i$, $d(c_i, c_j)$ is the distance between centroids.
 
 * **ARI (adjusted Rand index):**
-  $$
-  ARI = \frac{RI - E[RI]}{\max(RI) - E[RI]}
-  $$
+$ARI = \frac{RI - E[RI]}{\max(RI) - E[RI]}$
 
-where $$RI$$ is the Rand index, measuring the consistency of clustering with baseline labels.
+where $RI$ is the Rand index, measuring the consistency of clustering with baseline labels.
 
 * **Behavioral anomaly analysis** identification of outliers (anomalous generations) that do not match expected psychotypes.
 
   * Outlier percentage:
 
-$$
-Outlier\ Rate = \frac{N_{outliers}}{N_{total}} \cdot 100%
-$$
+$Outlier\ Rate = \frac{N_{outliers}}{N_{total}} \cdot 100%$
 
 * Examples of texts from clusters and noise points.
 
@@ -330,31 +300,21 @@ This section contains information on the comprehensive evaluation of models:
 
 * **Test size (train/test split)** determines the proportion of data for training and testing:
   
-  $$
-  Train\ Size + Test\ Size = 1
-  $$
+$Train\ Size + Test\ Size = 1$
 
 * **Evaluation metrics:** - accuracy:
 
-  $$
-  Accuracy = \frac{TP + TN}{TP + TN + FP + FN}
-  $$
+$Accuracy = \frac{TP + TN}{TP + TN + FP + FN}$
 
   * precision:
   
-    $$
-    Precision = \frac{TP}{TP + FP}
-    $$
+$Precision = \frac{TP}{TP + FP}$
   * recall:
   
-    $$
-    Recall = \frac{TP}{TP + FN}
-    $$
+$Recall = \frac{TP}{TP + FN}$
   * F1-score:
   
-    $$
-    F1 = 2 \cdot \frac{Precision \cdot Recall}{Precision + Recall}
-    $$
+$F1 = 2 \cdot \frac{Precision \cdot Recall}{Precision + Recall}$
 
 * **Run evaluation via the Run Evaluation button** executes training, then displays results in the form of tables and graphs.
 
@@ -372,14 +332,10 @@ This section contains information on the comprehensive evaluation of models:
   * students / teachers (distribution by roles in Student–Teacher modes)
 
 * **Validation success rate** percentage of successful validation passes for each model:
-  $$
-  Pass\ Rate = \frac{Valid\ Samples}{Total\ Samples} \cdot 100%
-  $$
+$Pass\ Rate = \frac{Valid\ Samples}{Total\ Samples} \cdot 100%$
 
 * **Performance metrics (inference speed)** measures generation speed:
-  $$
-  Velocity = \frac{Time\ (ms)}{Word\ Count}
-  $$
+$Velocity = \frac{Time\ (ms)}{Word\ Count}$
 
 * **Quality metrics heatmap** visualization of quality based on:
 

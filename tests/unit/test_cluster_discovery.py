@@ -298,3 +298,21 @@ def test_cluster_discovery_component_dependencies_none_before_fit():
     pc1, pc2 = discovery.get_component_dependencies()
 
     assert pc1 is None and pc2 is None
+
+
+@pytest.mark.req("REQ-CORP-CL-03")
+def test_cluster_discovery_is_a_no_op_when_all_numeric_columns_are_nan():
+    """
+    Regression test for a real production crash: a run where some metric columns were entirely
+    NaN caused fillna(mean()) to leave NaN in place (column mean is NaN when every value is NaN),
+    which KMeans then rejected with ValueError. Must return df unmodified, not raise.
+    """
+    df = _synthetic_responses(n=10)
+    df["all_nan_metric"] = float("nan")  # new all-NaN numeric column
+
+    discovery = ClusterDiscovery(n_clusters=2)
+    result = discovery.process_data(df.copy())
+
+    # The all-NaN column must not cause a crash; clustering still runs on the valid columns.
+    assert "cluster_id" in result.columns
+    assert "x" in result.columns

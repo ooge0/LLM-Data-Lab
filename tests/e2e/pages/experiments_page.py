@@ -36,9 +36,12 @@ class ExperimentsPage(BasePage):
         """An HTML attribute of the control with this id (for example its ``min``/``max`` bounds)."""
         return self.page.get_attribute(self._field(field_id), name)
 
-    def archetypes_select_is_valid(self) -> bool:
-        """Browser-side constraint validity of the required ``archetypes`` select."""
-        return self.page.eval_on_selector("select[name='archetypes']", "el => el.checkValidity()")
+    def archetypes_none_checked(self) -> bool:
+        """True when no archetype checkbox is checked (the form would be blocked by JS validation on submit)."""
+        return self.page.eval_on_selector_all(
+            "input[name='archetypes']",
+            "els => els.every(el => !el.checked)",
+        )
 
     def preview_text(self) -> str:
         """Text of the live setup-summary panel."""
@@ -71,8 +74,9 @@ class ExperimentsPage(BasePage):
         self.page.select_option("#prompt_mode", label=label)
 
     def select_archetypes(self, values: list[str]) -> None:
-        """Select archetypes in the form's multi-select, then blur so the ``change`` event fires."""
-        self.page.select_option("#experiment-form select[name='archetypes']", values)
+        """Check the given archetypes by value in the checkbox list, then blur so the ``change`` event fires."""
+        for value in values:
+            self.page.check(f"input[name='archetypes'][value='{value}']")
         self.page.locator("body").click()
 
     def wait_for_preview(self, timeout: int = 5000) -> None:

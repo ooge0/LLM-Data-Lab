@@ -1,4 +1,4 @@
-``tests/e2e/test_db_export_e2e.py`` (2 tests)
+``tests/e2e/test_db_export_e2e.py`` (3 tests)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Playwright E2E test for ``/db_export``'s "Export status" column --
@@ -30,6 +30,8 @@ replaced the cell rather than appending to it.
      - Regression test for the exact bug reported: after clicking "Send to DB", the "Export status" cell must show only the fresh timestamp -- not "Not synced" and the timestamp both visible at once, which is what a mis-parsed out-of-band <td> swap produces.
    * - ``test_reexport_updates_the_sync_status_cell_to_the_new_timestamp_not_the_old_one[chromium]``
      - Regression test for the author's follow-up report: re-exporting an already-exported run (the "Re-export (overwrite)" button, a *different* element than the original "Send to DB" button, with its own hx-post/hx-target) must update the "Export status" cell to the new timestamp, not leave the old one in place or stack both.
+   * - ``test_bulk_export_button_is_disabled_until_a_row_is_checked[chromium]``
+     - Regression test: the 'Send selected to DB' button must be disabled on page load (no rows pre-checked) so clicking it before selecting anything is a no-op at the browser level. JS must enable it when the first checkbox is checked and disable it again when unchecked.
 
 ``tests/e2e/test_experiments_e2e.py`` (13 tests)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -71,8 +73,8 @@ pulled.
      - RAG mode/Top-K start disabled and only become editable once 'Enable RAG' is checked.
    * - ``test_non_tuned_prompt_mode_disables_and_unchecks_exclude_archetype[chromium]``
      - 'Exclude archetype from prompt' only makes sense in Tuned mode -- switching away disables it and clears any existing check, rather than silently submitting a no-op checked value.
-   * - ``test_submitting_with_no_archetypes_selected_is_blocked_by_the_browser[chromium]``
-     - Regression test: student_models/archetypes are required selects; a browser must refuse to submit the form while archetypes has nothing selected (native HTML5 constraint validation), rather than silently POSTing a config that resolves to a real-but-empty 0-task run.
+   * - ``test_submitting_with_no_archetypes_selected_is_blocked_by_js[chromium]``
+     - Regression test: archetypes are now a checkbox list (not a required <select>); JS validation must block the form submit when no archetype is checked, rather than silently POSTing a config that resolves to a real-but-empty 0-task run. Confirm none are checked on page load (the form default) so the guard has something to block.
    * - ``test_preview_panel_updates_live_when_a_field_changes[chromium]``
      - Changing a real form field triggers a real htmx round-trip to /experiments/preview against the live server, and the setup summary panel reflects the new selection -- not just the bare task count.
    * - ``test_sweep_min_max_bounds_are_real_per_parameter_not_a_fixed_fake_range[chromium-Top P-0-1]``
@@ -163,7 +165,7 @@ point is verifying it exercises the *real* app, the same way a browser would).
    * - ``test_api_status_page_skips_run_id_routes_gracefully_when_no_runs_exist``
      - With zero runs in the live JSONLStore directory, run_id-needing backend routes must report a clear skip, not a 500 or a fabricated run_id.
 
-``tests/integration/test_benchmark_api.py`` (4 tests)
+``tests/integration/test_benchmark_api.py`` (5 tests)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Functional API tests for the Stage 12 read-side endpoints
@@ -181,6 +183,8 @@ Charts/aggregation are built for real against fixture data, not mocked out.
      - GET /benchmark with zero persisted runs renders the empty-state message, not an error.
    * - ``test_benchmark_report_renders_overview_and_leaderboard_for_a_populated_run``
      - GET /benchmark/report?run_id=... for a fully-populated run renders overview, charts, and a leaderboard with a champion.
+   * - ``test_leaderboard_states_that_its_weights_are_hand_picked_and_scores_are_run_relative``
+     - The leaderboard carries a visible caveat: the 0.4/0.3/0.3 weights are hand-picked and unvalidated, and speed_score is relative to the fastest model in this run, so scores are comparable only within one run.
    * - ``test_benchmark_report_for_unknown_run_returns_404_with_message``
      - GET /benchmark/report?run_id=... for a run with no persisted responses returns 404, matching the other read-side routers' convention.
    * - ``test_benchmark_report_degrades_gracefully_on_a_sparse_pre_stage5_run``
@@ -212,7 +216,7 @@ unit tests. These tests confirm routing/wiring, not re-verify the algorithms.
    * - ``test_clusters_page_renders_all_three_subtabs_for_a_populated_run``
      - GET /clusters with enough real data renders K-Means, HDBSCAN, and Behavioral topology charts -- the one full end-to-end run through the whole pipeline.
 
-``tests/integration/test_db_export_api.py`` (12 tests)
+``tests/integration/test_db_export_api.py`` (13 tests)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Functional API tests for :mod:`api.routers.db_export` -- through the real
@@ -235,6 +239,8 @@ monkeypatching the default rather than mocking SQLite out entirely.
      - Description is missing
    * - ``test_db_export_page_has_bulk_select_checkboxes_wired_to_each_rows_own_button``
      - Bulk export deliberately has no separate backend endpoint -- the 'Send selected to DB' button just triggers each checked row's own existing button (htmx.trigger), so per-row conflict resolution stays identical to a manual single click. Confirms the wiring is present: a select-all checkbox, one checkbox per row carrying its row index, and each row's action button having the matching id the bulk-trigger JS looks up.
+   * - ``test_bulk_export_button_renders_disabled_by_default``
+     - Send-selected button must carry the HTML `disabled` attribute on page load (no rows pre-checked) so clicking it before selecting anything is blocked at the HTML level, not silently ignored. Dynamic enable/disable via JS is covered by the E2E suite.
    * - ``test_export_run_copies_responses_and_reports_success``
      - Description is missing
    * - ``test_export_run_for_unknown_run_shows_a_clear_error_not_a_500``
@@ -336,7 +342,7 @@ real Ollama call or disk write happens.
    * - ``test_stream_without_a_started_run_sends_error_and_closes``
      - GET /experiments/stream with no active run (queue is None) sends an error event and closes immediately, rather than hanging.
 
-``tests/integration/test_faq_api.py`` (4 tests)
+``tests/integration/test_faq_api.py`` (6 tests)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Functional API tests for the Stage 14 ``/faq`` endpoint
@@ -358,6 +364,10 @@ run data involved in this tab at all).
      - GET /faq?lang=Klingon (not a real option) shows an inline 'not found' message, not a crash.
    * - ``test_faq_page_includes_language_switch_links``
      - The rendered page includes links for both known languages, matching the legacy segmented control's options.
+   * - ``test_faq_math_blocks_are_rendered_as_html_math_elements``
+     - Regression for the reported bug: ``$$...$$`` blocks in faq_eng.md were rendered as plain paragraph text because ``MarkdownIt()`` had no math plugin. With ``dollarmath_plugin`` enabled, each ``$$...$$`` block is converted server-side to ``<div class="math block">`` so the client-side KaTeX pass has a DOM target, not raw ``$$`` text to hunt for.
+   * - ``test_faq_ukrainian_math_blocks_render_as_html_math_elements``
+     - Same math-rendering guarantee for the Ukrainian variant of the FAQ.
 
 ``tests/integration/test_hypothesis_testing_api.py`` (8 tests)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -391,7 +401,7 @@ involved at all, this page never touches it (see the module's own docstring).
    * - ``test_uncertainty_for_an_unknown_run_shows_a_clear_error_not_a_500``
      - Description is missing
 
-``tests/integration/test_knowledge_graph_api.py`` (17 tests)
+``tests/integration/test_knowledge_graph_api.py`` (19 tests)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Functional API tests for :mod:`api.routers.knowledge_graph` -- through the
@@ -413,6 +423,10 @@ driving this exact router against a live install -- see
      - Description is missing
    * - ``test_sync_calls_the_graph_repo_with_the_real_run_id_and_responses``
      - Description is missing
+   * - ``test_sync_reads_run_id_from_the_form_body_like_the_htmx_button_sends_it``
+     - The page's htmx button posts ``run_id`` as a form-encoded body (``hx-post`` + ``hx-include``), not as a query string. This test used ``params=`` until 2026-10-02, which hid a real 422 in the browser: the endpoint declared ``run_id`` as a query parameter. A bare query-string request must no longer be what makes it pass.
+   * - ``test_sync_without_a_run_id_shows_a_clear_error_not_a_422``
+     - A form with no ``run_id`` (e.g. no runs exist yet) gets an inline message, and nothing is synced.
    * - ``test_sync_for_a_run_with_no_responses_shows_a_clear_error_not_a_500``
      - Description is missing
    * - ``test_sync_when_neo4j_is_unreachable_shows_a_clear_error_not_a_500``
@@ -675,6 +689,100 @@ server, NLTK data directory, or spaCy model being present.
    * - ``test_empty_query_handling``
      - Ensure the system doesn't crash on empty or nonsensical input.
 
+``tests/unit/test_architecture_rules.py`` (37 tests)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Architecture rules from CLAUDE.md SS2, enforced as tests instead of left as
+prose.
+
+The rule: ``core`` (domain, services, adapters, analysis) never imports a web
+framework or a visualization library; presentation lives in ``web/`` and
+``api/``. Until 2026-10-02 the rule was stated in CLAUDE.md and
+``core/domain/interfaces.py`` but violated by an unused ``get_plotly_fig()``
+in ``core/analysis/cluster_discovery.py``; nothing noticed because nothing
+checked.
+
+.. list-table::
+   :widths: 45 55
+   :header-rows: 1
+
+   * - Test
+     - Description
+   * - ``test_imported_top_level_modules_finds_plain_and_from_imports``
+     - The scanner sees ``import a.b``, ``from c.d import e`` and ignores relative imports.
+   * - ``test_core_module_imports_no_web_or_visualization_library[core/__init__.py]``
+     - No file under ``core/`` imports a web framework or visualization library (CLAUDE.md SS2).
+   * - ``test_core_module_imports_no_web_or_visualization_library[core/adapters/__init__.py]``
+     - No file under ``core/`` imports a web framework or visualization library (CLAUDE.md SS2).
+   * - ``test_core_module_imports_no_web_or_visualization_library[core/adapters/jsonl_store.py]``
+     - No file under ``core/`` imports a web framework or visualization library (CLAUDE.md SS2).
+   * - ``test_core_module_imports_no_web_or_visualization_library[core/adapters/neo4j_repo.py]``
+     - No file under ``core/`` imports a web framework or visualization library (CLAUDE.md SS2).
+   * - ``test_core_module_imports_no_web_or_visualization_library[core/adapters/ollama_client.py]``
+     - No file under ``core/`` imports a web framework or visualization library (CLAUDE.md SS2).
+   * - ``test_core_module_imports_no_web_or_visualization_library[core/adapters/prompt_strategy.py]``
+     - No file under ``core/`` imports a web framework or visualization library (CLAUDE.md SS2).
+   * - ``test_core_module_imports_no_web_or_visualization_library[core/adapters/rag/__init__.py]``
+     - No file under ``core/`` imports a web framework or visualization library (CLAUDE.md SS2).
+   * - ``test_core_module_imports_no_web_or_visualization_library[core/adapters/rag/chunking.py]``
+     - No file under ``core/`` imports a web framework or visualization library (CLAUDE.md SS2).
+   * - ``test_core_module_imports_no_web_or_visualization_library[core/adapters/rag/ingestion.py]``
+     - No file under ``core/`` imports a web framework or visualization library (CLAUDE.md SS2).
+   * - ``test_core_module_imports_no_web_or_visualization_library[core/adapters/rag/knowledge_base.py]``
+     - No file under ``core/`` imports a web framework or visualization library (CLAUDE.md SS2).
+   * - ``test_core_module_imports_no_web_or_visualization_library[core/adapters/rag/retriever.py]``
+     - No file under ``core/`` imports a web framework or visualization library (CLAUDE.md SS2).
+   * - ``test_core_module_imports_no_web_or_visualization_library[core/adapters/rag/vector_store.py]``
+     - No file under ``core/`` imports a web framework or visualization library (CLAUDE.md SS2).
+   * - ``test_core_module_imports_no_web_or_visualization_library[core/adapters/sqlite_repo.py]``
+     - No file under ``core/`` imports a web framework or visualization library (CLAUDE.md SS2).
+   * - ``test_core_module_imports_no_web_or_visualization_library[core/adapters/structured_judge.py]``
+     - No file under ``core/`` imports a web framework or visualization library (CLAUDE.md SS2).
+   * - ``test_core_module_imports_no_web_or_visualization_library[core/analysis/__init__.py]``
+     - No file under ``core/`` imports a web framework or visualization library (CLAUDE.md SS2).
+   * - ``test_core_module_imports_no_web_or_visualization_library[core/analysis/calculate_advanced_linguistic_metrics.py]``
+     - No file under ``core/`` imports a web framework or visualization library (CLAUDE.md SS2).
+   * - ``test_core_module_imports_no_web_or_visualization_library[core/analysis/cluster_discovery.py]``
+     - No file under ``core/`` imports a web framework or visualization library (CLAUDE.md SS2).
+   * - ``test_core_module_imports_no_web_or_visualization_library[core/analysis/data_contract.py]``
+     - No file under ``core/`` imports a web framework or visualization library (CLAUDE.md SS2).
+   * - ``test_core_module_imports_no_web_or_visualization_library[core/analysis/hallucination_check.py]``
+     - No file under ``core/`` imports a web framework or visualization library (CLAUDE.md SS2).
+   * - ``test_core_module_imports_no_web_or_visualization_library[core/analysis/model_evaluation.py]``
+     - No file under ``core/`` imports a web framework or visualization library (CLAUDE.md SS2).
+   * - ``test_core_module_imports_no_web_or_visualization_library[core/analysis/neuro_metrics.py]``
+     - No file under ``core/`` imports a web framework or visualization library (CLAUDE.md SS2).
+   * - ``test_core_module_imports_no_web_or_visualization_library[core/analysis/nlp_science.py]``
+     - No file under ``core/`` imports a web framework or visualization library (CLAUDE.md SS2).
+   * - ``test_core_module_imports_no_web_or_visualization_library[core/analysis/response_classification.py]``
+     - No file under ``core/`` imports a web framework or visualization library (CLAUDE.md SS2).
+   * - ``test_core_module_imports_no_web_or_visualization_library[core/analysis/syntactic_complexity.py]``
+     - No file under ``core/`` imports a web framework or visualization library (CLAUDE.md SS2).
+   * - ``test_core_module_imports_no_web_or_visualization_library[core/domain/__init__.py]``
+     - No file under ``core/`` imports a web framework or visualization library (CLAUDE.md SS2).
+   * - ``test_core_module_imports_no_web_or_visualization_library[core/domain/entities.py]``
+     - No file under ``core/`` imports a web framework or visualization library (CLAUDE.md SS2).
+   * - ``test_core_module_imports_no_web_or_visualization_library[core/domain/interfaces.py]``
+     - No file under ``core/`` imports a web framework or visualization library (CLAUDE.md SS2).
+   * - ``test_core_module_imports_no_web_or_visualization_library[core/services/__init__.py]``
+     - No file under ``core/`` imports a web framework or visualization library (CLAUDE.md SS2).
+   * - ``test_core_module_imports_no_web_or_visualization_library[core/services/_demo_runner.py]``
+     - No file under ``core/`` imports a web framework or visualization library (CLAUDE.md SS2).
+   * - ``test_core_module_imports_no_web_or_visualization_library[core/services/_sse.py]``
+     - No file under ``core/`` imports a web framework or visualization library (CLAUDE.md SS2).
+   * - ``test_core_module_imports_no_web_or_visualization_library[core/services/cluster_discovery.py]``
+     - No file under ``core/`` imports a web framework or visualization library (CLAUDE.md SS2).
+   * - ``test_core_module_imports_no_web_or_visualization_library[core/services/db_export.py]``
+     - No file under ``core/`` imports a web framework or visualization library (CLAUDE.md SS2).
+   * - ``test_core_module_imports_no_web_or_visualization_library[core/services/experiment_runner.py]``
+     - No file under ``core/`` imports a web framework or visualization library (CLAUDE.md SS2).
+   * - ``test_core_module_imports_no_web_or_visualization_library[core/services/hypothesis_testing.py]``
+     - No file under ``core/`` imports a web framework or visualization library (CLAUDE.md SS2).
+   * - ``test_core_module_imports_no_web_or_visualization_library[core/services/metrics_engine.py]``
+     - No file under ``core/`` imports a web framework or visualization library (CLAUDE.md SS2).
+   * - ``test_core_module_imports_no_web_or_visualization_library[core/services/status_checks.py]``
+     - No file under ``core/`` imports a web framework or visualization library (CLAUDE.md SS2).
+
 ``tests/unit/test_benchmark_charts.py`` (3 tests)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -748,6 +856,42 @@ several metrics persisted on every response.
    * - ``test_other_fields_unaffected_by_the_semantic_overlap_fix``
      - levenshtein_dist/expansion_ratio/word_count/unique_ratio are untouched by this fix -- pinned on a fixed input to confirm the surrounding metrics didn't shift.
 
+``tests/unit/test_check_traceability.py`` (10 tests)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Unit tests for :mod:`utils.check_traceability` -- the QA traceability gate
+itself. Uses small, throwaway catalogue/known_gaps files and a fake pytest
+plugin result instead of the real `tests/qa/catalogue.toml` (over a hundred
+requirements), so each rule is exercised in isolation on a input small enough
+to reason about by eye.
+
+.. list-table::
+   :widths: 45 55
+   :header-rows: 1
+
+   * - Test
+     - Description
+   * - ``test_load_catalogue_returns_every_requirement_id``
+     - load_catalogue returns the full parsed data plus the flat set of every requirement id.
+   * - ``test_load_known_gaps_parses_well_formed_lines``
+     - Each 'REQ-ID \| reason \| condition' line becomes one dict entry; comments and blanks are skipped.
+   * - ``test_load_known_gaps_on_a_missing_file_returns_empty_dict``
+     - A project with no known_gaps.txt yet (or a typo'd path) is treated as zero gaps, not an error.
+   * - ``test_load_known_gaps_rejects_a_malformed_line``
+     - A line that isn't comment/blank and doesn't match 'ID \| reason \| condition' is a real authoring error.
+   * - ``test_check_passes_when_every_requirement_is_covered_or_a_documented_gap``
+     - The gate passes with zero problems when REQ-COVERED has a real test and REQ-GAP is listed.
+   * - ``test_check_flags_a_requirement_with_no_test_and_no_known_gap``
+     - REQ-GAP without a known_gaps.txt entry and without a covering test is a real, unflagged hole.
+   * - ``test_check_flags_a_closed_gap_still_listed_in_known_gaps``
+     - REQ-GAP now has a real covering test but is still in known_gaps.txt -- the stale line must be caught.
+   * - ``test_check_flags_a_test_marker_naming_an_unknown_requirement_id``
+     - A req marker spelling or inventing an id that is not in the catalogue is caught, not silently ignored.
+   * - ``test_check_flags_a_stale_known_gaps_entry_naming_a_deleted_requirement``
+     - A known_gaps.txt line for a requirement id no longer in the catalogue is a stale entry, caught explicitly.
+   * - ``test_collect_requirement_coverage_excludes_xfail_tests_from_coverage``
+     - An xfail test's req marker is recorded in all_marked_ids (so a typo'd id is still caught) but never counted as real coverage -- it documents a known-wrong or not-yet-implemented behavior, not a pass.
+
 ``tests/unit/test_cli_manage.py`` (11 tests)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -819,7 +963,7 @@ return the same fake-wired runner (avoiding a real Ollama call for a test).
    * - ``test_main_end_to_end_with_a_real_config_file_and_a_monkeypatched_runner``
      - main() parses --config, loads the real file, and drives a (monkeypatched, fake-adapter) runner to completion.
 
-``tests/unit/test_cluster_discovery.py`` (17 tests)
+``tests/unit/test_cluster_discovery.py`` (18 tests)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Unit tests for :mod:`core.services.cluster_discovery` -- Stage 10.
@@ -875,6 +1019,8 @@ behavior, outlier-subset correctness.
      - get_component_dependencies returns PC1/PC2 loadings after process_data has fit the PCA, keyed by feature name.
    * - ``test_cluster_discovery_component_dependencies_none_before_fit``
      - Before process_data ever runs, get_component_dependencies returns (None, None) rather than raising.
+   * - ``test_cluster_discovery_is_a_no_op_when_all_numeric_columns_are_nan``
+     - Regression test for a real production crash: a run where some metric columns were entirely NaN caused fillna(mean()) to leave NaN in place (column mean is NaN when every value is NaN), which KMeans then rejected with ValueError. Must return df unmodified, not raise.
 
 ``tests/unit/test_config_loader_short.py`` (4 tests)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -995,7 +1141,7 @@ trivially satisfied by anything.
    * - ``test_run_record_round_trips_through_fake_repository``
      - save_run(RunRecord) -> run_id, matching the Repository interface's documented contract.
 
-``tests/unit/test_experiment_runner.py`` (30 tests)
+``tests/unit/test_experiment_runner.py`` (35 tests)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Unit tests for :mod:`core.services.experiment_runner` -- ``extract_best_text``
@@ -1069,6 +1215,46 @@ shapes and the full persisted entry shape.
      - A response that echoes its own bias instruction back (real failure pattern, CLAUDE.md SS0's 7/125 finding) is caught by Layer 1 and never reaches the judge -- but Layer 1 runs *after* metrics computation (it reuses semantic_overlap), so metric fields are still present, unlike a Layer 0 rejection.
    * - ``test_genuine_substantive_response_reaches_the_real_judge``
      - A real, substantive, non-echo response passes both Layer 0 and Layer 1 and reaches the actual judge -- the cascade doesn't reject legitimate content.
+   * - ``test_layer0_rejection_is_marked_layer0_and_keeps_the_raw_text_in_output``
+     - Layer 0 judges the RAW text strictly while extract_best_text is tolerant (it falls back to the raw text), so a prose answer with no JSON envelope is rejected as MALFORMED_JSON -- but its text is still persisted in ``output``. That is the only place extract_best_text's tolerance matters now.
+   * - ``test_layer1_echo_is_marked_layer1_and_with_rag_never_calls_the_nli_check``
+     - An echo-rejected response skips the NLI cross-encoder even when RAG is on: its result could never change the outcome, so the compute is wasted.
+   * - ``test_non_echo_response_with_rag_still_runs_the_nli_check_once``
+     - The NLI skip is only for echo rows: a genuine response with RAG enabled still gets its (logging-only) Layer 2 check.
+   * - ``test_a_genuine_judge_no_is_marked_as_decided_by_the_judge``
+     - A real 'no' from a working judge is v_decided_by='judge', not a parse failure and not a deterministic layer.
+   * - ``test_judge_parse_failure_is_marked_distinctly_from_a_real_judge_no``
+     - A judge verdict flagged parse_failed gets v_decided_by='judge_parse_failure', so aggregates need not read rationale text to separate it from a genuine 'no'.
+
+``tests/unit/test_generate_qa_docs.py`` (7 tests)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Unit tests for :mod:`utils.generate_qa_docs`'s four page builders. Each takes
+a small, hand-built catalogue dict (the same shape ``tomllib`` produces from
+``catalogue.toml``, not parsed from a real file) plus synthetic
+coverage/known-gaps data, so every case is exercised without touching the real
+catalogue or running pytest collection.
+
+.. list-table::
+   :widths: 45 55
+   :header-rows: 1
+
+   * - Test
+     - Description
+   * - ``test_build_feature_catalogue_rst_lists_every_requirement_under_its_feature_and_epic``
+     - Every requirement appears once, grouped under its feature's name under its epic's heading.
+   * - ``test_build_test_cases_rst_numbers_real_tests_and_adds_a_known_gaps_section``
+     - A real (non-xfail) test gets a TC id and 'Automated' status; the gap gets a 'Not implemented' placeholder row.
+   * - ``test_build_test_cases_rst_marks_an_xfail_test_as_automated_xfail``
+     - An xfail test still gets a TC row (it exists), but its status says so distinctly.
+   * - ``test_build_traceability_rst_reports_covered_and_gap_rows_with_the_right_summary_count``
+     - REQ-COVERED shows Covered/Automated with its TC id; REQ-GAP shows Gap/Not implemented; summary says 1 of 2.
+   * - ``test_build_traceability_rst_flags_an_uncovered_requirement_not_in_known_gaps_as_undocumented``
+     - A requirement with no test and no known_gaps.txt entry is a real, unflagged hole -- labelled distinctly.
+   * - ``test_build_coverage_by_feature_rst_reports_fraction_and_percent_per_feature``
+     - FEAT-A (its one requirement covered) shows 1/1, 100%; FEAT-B (its one requirement a gap) shows 0/1, 0%.
+   * - ``test_build_coverage_by_feature_rst_on_a_feature_with_no_requirements_reports_zero_not_a_crash``
+     - A feature that (hypothetically) has no requirements yet reports 0/0, 0% rather than dividing by zero.
 
 ``tests/unit/test_generate_tag_cloud.py`` (7 tests)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1088,19 +1274,42 @@ utility script -- the same discipline already applied to
    * - Test
      - Description
    * - ``test_extract_glossary_terms_pulls_only_term_lines_not_definitions``
-     - Description is missing
+     - A glossary file has a title, category headings, and then one or more .. glossary:: blocks. Each block has one or more terms, each followed by one or more definition lines. Only the term lines should be returned, not the definitions.
    * - ``test_extract_glossary_terms_handles_multiple_glossary_blocks``
      - A page can have more than one .. glossary:: block (this project's real glossary.rst does, one per category) -- all of them must be picked up, not just the first.
    * - ``test_extract_glossary_terms_on_empty_file_returns_empty_list``
-     - Description is missing
+     - An empty glossary file should not raise an exception, it should just return an empty list.
    * - ``test_extract_module_names_excludes_init_and_pycache``
-     - Description is missing
+     - A package's __init__.py and any .pyc files in __pycache__ should not be included in the module name list.
    * - ``test_extract_module_names_replaces_underscores_with_spaces``
-     - Description is missing
+     - Module names with underscores should be returned with spaces instead, for better readability in the tag cloud.
    * - ``test_real_frequency_counts_whole_word_case_insensitive_occurrences``
-     - Description is missing
+     - The real-frequency-counting logic should count whole-word occurrences of the term, case-insensitively, across all .rst files in the given directory.
    * - ``test_real_frequency_never_returns_zero_even_for_an_unmentioned_term``
-     - Description is missing
+     - Even if a term is not mentioned in any .rst file, the real-frequency-counting logic should return 1, not 0, to ensure it appears in the tag cloud.
+
+``tests/unit/test_generate_test_results_rst.py`` (4 tests)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Unit tests for :mod:`utils.generate_test_results_rst` -- the junit.xml parser
+(``parse_junit``) and the page builder (``build_test_results_rst``). No real
+pytest run is needed: a small, hand-written junit.xml fixture stands in for a
+real one.
+
+.. list-table::
+   :widths: 45 55
+   :header-rows: 1
+
+   * - Test
+     - Description
+   * - ``test_parse_junit_raises_a_clear_message_when_the_file_is_missing``
+     - A missing junit.xml is a clear instruction to run the suite first, not a traceback.
+   * - ``test_parse_junit_reads_totals_and_per_case_status``
+     - Totals and each case's status (passed/failed/error/skipped) are read correctly from real junit XML shape.
+   * - ``test_build_test_results_rst_includes_the_summary_and_a_section_per_type``
+     - The rendered page has a summary table and one section per test type present in the junit data.
+   * - ``test_build_test_results_rst_is_valid_rst``
+     - The generated page parses as real RST (list-table structure is well-formed).
 
 ``tests/unit/test_hallucination_check.py`` (6 tests)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1403,12 +1612,24 @@ network call.
    * - ``test_generate_leaves_ollama_fields_none_when_the_response_omits_them``
      - A response missing the performance fields (e.g. a stub/older server) leaves them None rather than crashing.
 
-``tests/unit/test_openai_compat.py`` (5 tests)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+``tests/unit/test_pagerank_symmetry.py`` (6 tests)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Unit tests for :func:`core.adapters._openai_compat.chat_complete` -- the
-shared call logic behind both ``LLMClient`` adapters, tested in isolation
-against a fake client (no real network).
+PageRank symmetry on the Archetype/Bias co-occurrence graph -- what is
+actually proven.
+
+docs/source/wiki/07-knowledge-graph-results.rst records a live Neo4j GDS run
+in which, on a graph with 5 Archetype and 6 Bias nodes and 30 edges, every
+Archetype scored 1.0496 and every Bias scored 0.8876. The explanation given
+there is graph-theoretic: 30 edges across 5 x 6 nodes is a *complete
+bipartite* graph, so PageRank is symmetric within each side by necessity.
+
+These tests pin that argument with an independent implementation (networkx) so
+it does not rest on one live run: it holds when every archetype co-occurs with
+every bias at least once (completeness); it does NOT depend on the counts
+being balanced for the unweighted graph; and it breaks as soon as a pair is
+missing or, in the weighted graph the app now uses, the counts differ. No
+Neo4j is needed.
 
 .. list-table::
    :widths: 45 55
@@ -1416,16 +1637,18 @@ against a fake client (no real network).
 
    * - Test
      - Description
-   * - ``test_chat_complete_sends_system_and_user_messages``
-     - The system and user prompts are sent as separate role-tagged messages, matching the legacy call shape.
-   * - ``test_chat_complete_passes_sampling_params_through``
-     - Sampling parameters are forwarded to the underlying call unchanged.
-   * - ``test_chat_complete_json_mode_sets_response_format``
-     - json_mode=True requests {'type': 'json_object'}, matching the legacy 'Return JSON' prompts.
-   * - ``test_chat_complete_no_json_mode_sends_none_response_format``
-     - json_mode=False (default) sends response_format=None, matching the legacy generation call.
-   * - ``test_chat_complete_returns_generation_result_with_raw_text``
-     - The returned GenerationResult carries the raw (unparsed) response content and the model name.
+   * - ``test_complete_bipartite_unweighted_scores_are_uniform_within_each_side``
+     - In the complete bipartite graph K(5,6) every Archetype scores the same, and so does every Bias.
+   * - ``test_unweighted_uniformity_does_not_depend_on_balanced_counts``
+     - Completeness alone forces uniformity: the unweighted graph ignores how often each pair co-occurred.
+   * - ``test_smaller_side_scores_higher_and_ratio_matches_the_recorded_live_gds_run``
+     - The 5-node Archetype side outscores the 6-node Bias side by the same ratio the live GDS run recorded.
+   * - ``test_missing_pair_breaks_the_symmetry``
+     - Remove one co-occurrence and the graph is no longer complete: scores now differ within a side.
+   * - ``test_weighted_scores_differ_within_a_side_when_counts_are_unequal``
+     - The weighted graph (what the app uses now) is only informative if co-occurrence counts vary.
+   * - ``test_weighted_scores_are_uniform_again_when_all_counts_are_equal``
+     - Perfectly balanced counts bring the uniformity back: balance matters for the weighted graph only.
 
 ``tests/unit/test_prompt_strategy.py`` (5 tests)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1451,6 +1674,49 @@ known inputs so a future change surfaces as a failing test).
      - RAW mode ignores the 'common' phrases entirely, matching streamlit_app.py lines 918-922.
    * - ``test_unknown_mode_raises_value_error``
      - A mode outside the three known PromptMode members raises, rather than silently falling through.
+
+``tests/unit/test_qa_report_lib.py`` (12 tests)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Unit tests for :mod:`utils.qa_report_lib` -- the pure helpers behind the
+generated QA pages (``utils/generate_qa_docs.py``,
+``utils/generate_test_results_rst.py``). No pytest files are written or run
+through a subprocess here: ``type_from_node_id``, ``assign_tc_ids``,
+``status_label``, ``first_docstring_line`` and ``render_list_table`` are
+exercised directly on fixed inputs, and the collection plugin is exercised
+against fake items the same way ``tests/unit/test_check_traceability.py``
+exercises its own collector.
+
+.. list-table::
+   :widths: 45 55
+   :header-rows: 1
+
+   * - Test
+     - Description
+   * - ``test_type_from_node_id_maps_every_known_directory``
+     - Each of the four real test directories maps to its documented display name.
+   * - ``test_type_from_node_id_rejects_an_unknown_directory``
+     - A node id outside the four known test directories is a real error, not silently skipped here (the caller skips it).
+   * - ``test_assign_tc_ids_numbers_sequentially_per_type_starting_at_one``
+     - Each type gets its own TC-<TYPE>-NNN sequence, zero-padded to three digits, starting at 001.
+   * - ``test_assign_tc_ids_on_a_type_with_no_tests_assigns_nothing``
+     - An empty list for a type contributes zero entries, not a crash or an off-by-one id.
+   * - ``test_status_label_three_fixed_outcomes``
+     - Not covered -> Not implemented; covered and real -> Automated; covered but xfail -> Automated (xfail).
+   * - ``test_first_docstring_line_strips_and_takes_the_first_non_blank_line``
+     - A multi-line docstring with leading blank lines/whitespace still yields a clean first line.
+   * - ``test_first_docstring_line_on_none_or_empty_returns_the_fixed_placeholder``
+     - A test with no docstring at all gets an honest placeholder, not a crash or a blank cell.
+   * - ``test_render_list_table_produces_valid_rst_structure``
+     - The rendered text is a real `.. list-table::` directive with one '* -' row start per data row.
+   * - ``test_render_list_table_rejects_a_row_with_the_wrong_number_of_cells``
+     - A malformed row (wrong cell count) is a real authoring error in the generator, caught immediately.
+   * - ``test_build_coverage_groups_node_ids_by_req_id_and_excludes_xfail``
+     - A non-xfail test's req ids all gain its node id; an xfail test's req ids gain nothing.
+   * - ``test_qa_test_collector_records_type_req_ids_xfail_and_docstring``
+     - The collection plugin builds one record per item with every field generate_qa_docs needs.
+   * - ``test_qa_test_collector_skips_items_outside_the_known_test_directories``
+     - An item whose node id isn't under tests/<known-dir>/ is silently excluded, not a crash.
 
 ``tests/unit/test_rag_knowledge_base.py`` (4 tests)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1603,8 +1869,8 @@ directory, or spaCy model is present.
    * - ``test_check_spacy_reports_not_installed_without_downloading``
      - Missing model is named in detail, not silently downloaded -- matches check_nltk's honest-not-silent convention.
 
-``tests/unit/test_structured_judge.py`` (8 tests)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+``tests/unit/test_structured_judge.py`` (10 tests)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Unit tests for :class:`core.adapters.structured_judge.StructuredJudge` --
 replaces ``tests/unit/test_naive_judge.py`` (deleted alongside
@@ -1637,6 +1903,10 @@ request shape still asks the model for structured JSON.
      - The judge model is a per-call parameter, not fixed at construction -- supports self-critic (judge=student) and teacher-student (judge=teacher_model) routing from the same StructuredJudge instance.
    * - ``test_request_asks_for_structured_json_mode``
      - The request sets json_mode=True and includes the archetype/bias/response text -- confirms the request shape, independent of how the response gets parsed.
+   * - ``test_judge_uses_capped_tokens_and_low_temperature``
+     - Regression test for a real production crash: qwen:latest entered an infinite token-repeat loop when the judge call had no max_tokens limit, causing Ollama to abort with HTTP 500. The fix pins max_tokens=256 (hard stop) and temperature=0.1 (deterministic JSON) on every judge call, independent of any experiment sweep temperature.
+   * - ``test_parse_failures_set_the_parse_failed_flag_and_real_judgments_do_not``
+     - Both malformed-response fallbacks carry parse_failed=True so callers can tell them from a real 'no' without reading rationale text; a parsed verdict (true or false) never does.
 
 ``tests/unit/test_syntactic_complexity.py`` (5 tests)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

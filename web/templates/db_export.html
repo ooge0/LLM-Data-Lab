@@ -37,7 +37,7 @@
 
   {% if runs %}
   <p>
-    <button type="button" id="export-selected-btn">Send selected to DB</button>
+    <button type="button" id="export-selected-btn" disabled>Send selected to DB</button>
     <span class="hint">
       Bulk export just triggers each checked row's own action -- every row still resolves
       independently (a fresh run exports cleanly, one already in the database shows the same
@@ -94,13 +94,22 @@
   </table>
   <script>
   (function () {
+    var exportSelected = document.getElementById("export-selected-btn");
+    function updateBulkBtn() {
+      if (exportSelected) {
+        exportSelected.disabled = document.querySelectorAll(".run-select:checked").length === 0;
+      }
+    }
     var selectAll = document.getElementById("select-all-runs");
     if (selectAll) {
       selectAll.addEventListener("change", function () {
         document.querySelectorAll(".run-select").forEach(function (cb) { cb.checked = selectAll.checked; });
+        updateBulkBtn();
       });
     }
-    var exportSelected = document.getElementById("export-selected-btn");
+    document.querySelectorAll(".run-select").forEach(function (cb) {
+      cb.addEventListener("change", updateBulkBtn);
+    });
     if (exportSelected) {
       exportSelected.addEventListener("click", function () {
         document.querySelectorAll(".run-select:checked").forEach(function (cb) {
