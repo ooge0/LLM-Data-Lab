@@ -19,6 +19,8 @@ scikit-learn>=1.4.0
 # Ubuntu-only: preshed 3.0.14 raises OverflowError on any 64-bit spaCy hash >= 2**63 (PreshMap),
 # which breaks spacy.load('en_core_web_sm') and every test that loads it. 3.0.13 verified working.
 preshed>=3.0.10,<3.0.14
+# E2E (tests/e2e, CLAUDE.md SS7). Was only in requirements-dev.in, so a Linux lock never had it.
+pytest-playwright
 scipy-stubs>=1.17.1.5
 hdbscan>=0.8.33
 umap-learn>=0.5.12
