@@ -43,6 +43,8 @@ from api.routers import (
     hypothesis_testing,
     knowledge_graph,
     model_evo,
+    model_management,
+    model_probe,
     monitor,
     nlp,
     runs,
@@ -84,6 +86,8 @@ def create_app() -> FastAPI:
     app.include_router(benchmark.router)
     app.include_router(faq.router)
     app.include_router(monitor.router)
+    app.include_router(model_management.router)
+    app.include_router(model_probe.router)
     app.include_router(status.router)
     app.include_router(db_export.router)
     app.include_router(api_status.router)

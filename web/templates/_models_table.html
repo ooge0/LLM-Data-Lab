@@ -1,0 +1,35 @@
+{# Fragment: installed Ollama models table. Returned by GET /models/list (hx-get).
+   Swapped into #models-table-section via outerHTML. #}
+<div id="models-table-section">
+{% if models %}
+<table class="run-data-table">
+  <thead>
+    <tr>
+      <th>Model</th>
+      <th>Size (GB)</th>
+      <th>Family</th>
+      <th>Action</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for m in models %}
+    <tr id="model-row-{{ loop.index }}">
+      <td><code>{{ m.name }}</code></td>
+      <td>{{ m.size_gb if m.size_gb is not none else '—' }}</td>
+      <td>{{ m.family or '—' }}</td>
+      <td>
+        <button class="btn-danger btn-sm"
+                hx-delete="/models/delete?model={{ m.name | urlencode }}"
+                hx-confirm="Delete {{ m.name }}? This cannot be undone."
+                hx-target="#models-table-section"
+                hx-swap="outerHTML"
+                hx-indicator="#models-loading">Delete</button>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<p class="text-muted">No models installed or Ollama is not reachable.</p>
+{% endif %}
+</div>

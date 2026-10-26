@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <script>
+  (function(){
+    try {
+      var theme = localStorage.getItem("nn_lab_theme") === "light" ? "light" : "dark";
+      if (theme === "light") { document.documentElement.setAttribute("data-theme", "light"); }
+      document.cookie = "nn_lab_theme=" + theme + "; path=/; max-age=31536000; samesite=lax";
+      if (localStorage.getItem("nn_lab_sidebar_collapsed") === "1") {
+        document.documentElement.classList.add("sidebar-collapsed");
+      }
+    } catch (e) {}
+  })();
+  </script>
+  <title>nn_lab -- Model Probe</title>
+  <link rel="stylesheet" href="/static/style.css">
+  <script src="/static/vendor/htmx/htmx.min.js"></script>
+  <style>
+    .probe-form { display: grid; gap: var(--space-3); max-width: 720px; }
+    .probe-form label { display: flex; flex-direction: column; gap: var(--space-1); font-size: var(--text-sm); }
+    .probe-form select, .probe-form textarea, .probe-form input[type="number"], .probe-form input[type="range"] { width: 100%; }
+    .probe-form textarea { font-family: var(--font-mono, monospace); font-size: var(--text-sm); resize: vertical; }
+    .probe-row { display: flex; gap: var(--space-4); flex-wrap: wrap; }
+    .probe-row label { flex: 1; min-width: 160px; }
+    #probe-result { margin-top: var(--space-5); }
+    .probe-result-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: var(--space-4); }
+    .probe-raw { white-space: pre-wrap; word-break: break-word; font-size: var(--text-sm);
+                 background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius);
+                 padding: var(--space-3); max-height: 20rem; overflow-y: auto; }
+    .badge { display: inline-block; padding: 1px 8px; border-radius: 3px; font-size: var(--text-xs); font-weight: 600; }
+    .badge-ok   { background: rgba(39,174,96,0.15); color: #27ae60; }
+    .badge-warn { background: rgba(230,126,34,0.15); color: #e67e22; }
+    .badge-error { background: rgba(192,57,43,0.15); color: #c0392b; }
+    .text-muted { color: var(--text-muted); font-size: var(--text-sm); }
+    .preset-btns { display: flex; gap: var(--space-2); flex-wrap: wrap; margin-top: var(--space-1); }
+    .preset-btns button { font-size: var(--text-xs); padding: 2px var(--space-2); }
+  </style>
+</head>
+<body>
+<div class="app-shell">
+  {% include "_nav.html" %}
+  <main>
+  <h1>Model Probe</h1>
+  <p>Send a raw prompt to any locally available model and inspect the response and its Layer 0 / Layer 1
+     classification.  Use this to confirm a new failure mode before adding it to
+     <code>tests/unit/test_model_fuzz_catalog.py</code>.</p>
+
+  <form class="probe-form"
+        hx-post="/model_probe/run"
+        hx-target="#probe-result"
+        hx-swap="outerHTML"
+        hx-indicator="#probe-spinner">
+
+    <label>
+      Model
+      <select name="model">
+        {% if models %}
+          {% for m in models %}
+          <option value="{{ m }}">{{ m }}</option>
+          {% endfor %}
+        {% else %}
+          <option value="">No models found (is Ollama running?)</option>
+        {% endif %}
+      </select>
+    </label>
+
+    <label>
+      System prompt
+      <div class="preset-btns">
+        <button type="button" onclick="setSystemPrompt('json')">JSON mode (default)</button>
+        <button type="button" onclick="setSystemPrompt('judge')">Judge system prompt</button>
+        <button type="button" onclick="setSystemPrompt('plain')">Plain (no JSON)</button>
+      </div>
+      <textarea name="system_prompt" id="system-prompt-area" rows="3">{{ default_system_prompt }}</textarea>
+    </label>
+
+    <label>
+      User prompt
+      <textarea name="user_prompt" rows="4" placeholder="e.g. Describe the color blue in one sentence."></textarea>
+    </label>
+
+    <label>
+      Bias text (optional -- for Layer 1 echo score)
+      <input type="text" name="bias_text"
+             placeholder="e.g. personalization, formal, toxic">
+      <span class="text-muted">The archetype/bias label sent to the model. Leave blank to skip Layer 1.</span>
+    </label>
+
+    <div class="probe-row">
+      <label>
+        Temperature
+        <input type="range" name="temperature" id="temp-slider"
+               min="0.1" max="1.5" step="0.05" value="0.7"
+               oninput="document.getElementById('temp-val').textContent=this.value">
+        <span id="temp-val">0.7</span>
+      </label>
+      <label>
+        Max tokens
+        <input type="number" name="max_tokens" value="256" min="16" max="2048" step="16">
+      </label>
+    </div>
+
+    <div>
+      <button type="submit" class="btn-primary">Run</button>
+      <span id="probe-spinner" class="htmx-indicator text-muted"> running...</span>
+    </div>
+
+  </form>
+
+  <div id="probe-result"></div>
+
+  </main>
+</div>
+<script>
+var _jsonSystemPrompt  = {{ default_system_prompt | tojson }};
+var _judgeSystemPrompt = {{ judge_system_prompt   | tojson }};
+var _plainSystemPrompt = "You are a helpful assistant.";
+
+function setSystemPrompt(kind) {
+  var el = document.getElementById("system-prompt-area");
+  if (kind === "json")   { el.value = _jsonSystemPrompt;  }
+  if (kind === "judge")  { el.value = _judgeSystemPrompt; }
+  if (kind === "plain")  { el.value = _plainSystemPrompt; }
+}
+</script>
+</body>
+</html>

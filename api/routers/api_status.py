@@ -49,6 +49,8 @@ _FRONTEND_PAGES = [
     ("System Monitor", "/monitor"),
     ("Export to DB", "/db_export"),
     ("FAQ", "/faq"),
+    ("Model Management", "/models"),
+    ("Model Probe", "/model_probe"),
     ("Swagger (API docs)", "/docs"),
     ("ReDoc (API docs)", "/redoc"),
 ]
@@ -66,6 +68,7 @@ _BACKEND_READONLY_ROUTES = [
     ("Model evaluation targets", "/model_evo/targets", True),
     ("Benchmark report", "/benchmark/report", True),
     ("Monitor schema", "/monitor/schema", True),
+    ("Model list fragment", "/models/list", False),
 ]
 
 # (label, method, path, reason) -- deliberately not fired; see module docstring.
@@ -77,6 +80,9 @@ _BACKEND_SIDE_EFFECTING_ROUTES = [
     ("Experiment progress stream", "GET", "/experiments/stream", "Server-Sent Events, never terminates"),
     ("Demo progress stream", "GET", "/demo/stream", "Server-Sent Events, never terminates"),
     ("Judging-mode comparison", "GET", "/runs/judging_comparison", "needs two distinct run_ids, not one"),
+    ("Model pull stream", "GET", "/models/pull/stream", "downloads a model from Ollama registry, Server-Sent Events"),
+    ("Model delete", "DELETE", "/models/delete", "permanently deletes a local Ollama model"),
+    ("Model probe run", "POST", "/model_probe/run", "calls Ollama; needs model name and prompt in form body"),
 ]
 
 

@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <script>
+  (function(){
+    try {
+      var theme = localStorage.getItem("nn_lab_theme") === "light" ? "light" : "dark";
+      if (theme === "light") { document.documentElement.setAttribute("data-theme", "light"); }
+      document.cookie = "nn_lab_theme=" + theme + "; path=/; max-age=31536000; samesite=lax";
+      if (localStorage.getItem("nn_lab_sidebar_collapsed") === "1") {
+        document.documentElement.classList.add("sidebar-collapsed");
+      }
+    } catch (e) {}
+  })();
+  </script>
+  <title>nn_lab -- Model Management</title>
+  <link rel="stylesheet" href="/static/style.css">
+  <script src="/static/vendor/htmx/htmx.min.js"></script>
+  <style>
+    .pull-form { display: flex; gap: var(--space-3); align-items: flex-end; flex-wrap: wrap; margin-bottom: var(--space-5); }
+    .pull-form label { display: flex; flex-direction: column; gap: var(--space-1); font-size: var(--text-sm); }
+    .pull-form input[type="text"] { min-width: 260px; }
+    #pull-log { min-height: 4rem; max-height: 16rem; overflow-y: auto; white-space: pre-wrap;
+                font-size: var(--text-sm); background: var(--surface); border: 1px solid var(--border);
+                border-radius: var(--radius); padding: var(--space-3); margin-top: var(--space-3); }
+    #pull-log:empty { display: none; }
+    /* #models-loading uses the global .htmx-indicator / .htmx-request pattern from style.css */
+    .btn-danger { background: var(--surface); border: 1px solid var(--error, #c0392b); color: var(--error, #c0392b); }
+    .btn-danger:hover { background: var(--error, #c0392b); color: #fff; }
+    .btn-sm { padding: 2px var(--space-2); font-size: var(--text-sm); }
+  </style>
+</head>
+<body>
+<div class="app-shell">
+  {% include "_nav.html" %}
+  <main>
+  <h1>Model Management</h1>
+  <p>Pull new Ollama models by name and manage what is installed locally.
+     Delete is permanent and irreversible.</p>
+
+  <h2>Pull a model</h2>
+  <div class="pull-form">
+    <label>
+      Model name
+      <input type="text" id="pull-model-input" placeholder="e.g. llama3.2:3b"
+             autocomplete="off" spellcheck="false">
+    </label>
+    <button type="button" id="pull-btn" class="btn-primary" onclick="startPull()">Pull</button>
+  </div>
+  <pre id="pull-log" aria-live="polite"></pre>
+
+  <h2>Installed models <span id="models-loading" class="htmx-indicator text-muted">refreshing...</span></h2>
+  <div hx-get="/models/list" hx-trigger="load" hx-swap="outerHTML" hx-indicator="#models-loading">
+    <div id="models-table-section"><p>Loading...</p></div>
+  </div>
+
+  </main>
+</div>
+<script>
+function startPull() {
+  var name = document.getElementById("pull-model-input").value.trim();
+  if (!name) { return; }
+  var log = document.getElementById("pull-log");
+  var btn = document.getElementById("pull-btn");
+  log.textContent = "Pulling " + name + "...\n";
+  btn.disabled = true;
+
+  var es = new EventSource("/models/pull/stream?model=" + encodeURIComponent(name));
+
+  es.addEventListener("message", function(e) {
+    try {
+      var d = JSON.parse(e.data);
+      if (d.error) {
+        log.textContent += "Error: " + d.error + "\n";
+      } else {
+        var line = d.status || "";
+        if (d.completed != null && d.total != null && d.total > 0) {
+          var pct = Math.round((d.completed / d.total) * 100);
+          line += " (" + pct + "%)";
+        }
+        if (line) { log.textContent += line + "\n"; }
+        log.scrollTop = log.scrollHeight;
+      }
+    } catch (_) {}
+  });
+
+  es.addEventListener("done", function() {
+    es.close();
+    btn.disabled = false;
+    log.textContent += "Done.\n";
+    // refresh the installed models table
+    htmx.ajax("GET", "/models/list", {target: "#models-table-section", swap: "outerHTML"});
+  });
+
+  es.onerror = function() {
+    es.close();
+    btn.disabled = false;
+    log.textContent += "[connection closed]\n";
+  };
+}
+</script>
+</body>
+</html>

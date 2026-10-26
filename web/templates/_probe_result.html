@@ -1,0 +1,34 @@
+{# Fragment: model probe result. Returned by POST /model_probe/run (hx-post).
+   Swapped into #probe-result via outerHTML. #}
+<div id="probe-result">
+{% if error %}
+<p class="error">{{ error }}</p>
+{% elif api_error %}
+<div class="probe-result-card">
+  <p><strong>Model:</strong> <code>{{ model }}</code></p>
+  <p><span class="badge badge-error">API_ERROR</span> {{ api_error }}</p>
+  <p class="text-muted">{{ elapsed_ms }} ms</p>
+</div>
+{% else %}
+<div class="probe-result-card">
+  <p>
+    <strong>Model:</strong> <code>{{ model }}</code>
+    &nbsp;&mdash;&nbsp;
+    <strong>Layer 0:</strong>
+    <span class="badge badge-{{ 'ok' if classification == 'VALID' else 'warn' if classification in ('TRUNCATED', 'EMPTY') else 'error' }}">{{ classification }}</span>
+    &nbsp;&mdash;&nbsp;
+    <span class="text-muted">{{ elapsed_ms }} ms</span>
+  </p>
+  {% if layer1_echo_score is not none %}
+  <p>
+    <strong>Layer 1 echo:</strong>
+    similarity {{ layer1_echo_score }}
+    &mdash;
+    {% if layer1_echo_detected %}<span class="badge badge-warn">ECHO DETECTED</span>{% else %}<span class="badge badge-ok">clean</span>{% endif %}
+  </p>
+  {% endif %}
+  <p><strong>Raw response:</strong></p>
+  <pre class="probe-raw">{{ raw_text | e }}</pre>
+</div>
+{% endif %}
+</div>

@@ -13,27 +13,29 @@
 
   <div class="nav-group">
     <div class="nav-group-label">[req]</div>
-    <a href="/experiments">Generation</a>
-    <a href="/runs">Performance</a>
-    <a href="/model_evo">Model Evaluation</a>
+    <a href="/experiments"{% if request.url.path.startswith('/experiments') %} class="active" aria-current="page"{% endif %}>Generation</a>
+    <a href="/runs"{% if request.url.path.startswith('/runs') %} class="active" aria-current="page"{% endif %}>Performance</a>
+    <a href="/model_evo"{% if request.url.path.startswith('/model_evo') %} class="active" aria-current="page"{% endif %}>Model Evaluation</a>
   </div>
 
   <div class="nav-group">
     <div class="nav-group-label">[corpus]</div>
-    <a href="/analytics">Analytics</a>
-    <a href="/nlp">NLP Science</a>
-    <a href="/clusters">Clustering</a>
-    <a href="/benchmark">Benchmark</a>
-    <a href="/knowledge_graph">Knowledge Graph</a>
-    <a href="/hypothesis_testing">Hypothesis Testing</a>
+    <a href="/analytics"{% if request.url.path.startswith('/analytics') %} class="active" aria-current="page"{% endif %}>Analytics</a>
+    <a href="/nlp"{% if request.url.path.startswith('/nlp') %} class="active" aria-current="page"{% endif %}>NLP Science</a>
+    <a href="/clusters"{% if request.url.path.startswith('/clusters') %} class="active" aria-current="page"{% endif %}>Clustering</a>
+    <a href="/benchmark"{% if request.url.path.startswith('/benchmark') %} class="active" aria-current="page"{% endif %}>Benchmark</a>
+    <a href="/knowledge_graph"{% if request.url.path.startswith('/knowledge_graph') %} class="active" aria-current="page"{% endif %}>Knowledge Graph</a>
+    <a href="/hypothesis_testing"{% if request.url.path.startswith('/hypothesis_testing') %} class="active" aria-current="page"{% endif %}>Hypothesis Testing</a>
   </div>
 
   <div class="nav-group">
     <div class="nav-group-label">[sys]</div>
-    <a href="/monitor">System Monitor</a>
-    <a href="/db_export">Export to DB</a>
-    <a href="/api_status">API Status</a>
-    <a href="/faq">FAQ</a>
+    <a href="/monitor"{% if request.url.path.startswith('/monitor') %} class="active" aria-current="page"{% endif %}>System Monitor</a>
+    <a href="/db_export"{% if request.url.path.startswith('/db_export') %} class="active" aria-current="page"{% endif %}>Export to DB</a>
+    <a href="/api_status"{% if request.url.path.startswith('/api_status') %} class="active" aria-current="page"{% endif %}>API Status</a>
+    <a href="/faq"{% if request.url.path.startswith('/faq') %} class="active" aria-current="page"{% endif %}>FAQ</a>
+    <a href="/models"{% if request.url.path.startswith('/models') %} class="active" aria-current="page"{% endif %}>Model Management</a>
+    <a href="/model_probe"{% if request.url.path.startswith('/model_probe') %} class="active" aria-current="page"{% endif %}>Model Probe</a>
   </div>
 
   {# Moved here from being /experiments-only, 2026-08-24, so "is Ollama/NLTK/spaCy actually up" is
