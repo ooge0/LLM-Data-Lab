@@ -8,6 +8,7 @@ old substring-matching bug), and confirms the request shape still asks the model
 JSON.
 """
 
+import ollama
 import pytest
 from core.adapters.structured_judge import StructuredJudge
 from tests.unit.test_experiment_runner import FakeLLMClient
@@ -18,6 +19,26 @@ class _FakeLLMClientRaises:
 
     def generate(self, *args, **kwargs):
         raise RuntimeError("Ollama 500: token repeat limit reached")
+
+
+class _FakeLLMClientResponseError:
+    """Fake LLMClient whose generate() raises ollama.ResponseError(status_code=500).
+
+    Replicates the exact exception type Ollama's Python package raises when the server
+    returns HTTP 500 -- the "token repeat limit reached" crash seen in production with
+    qwen:latest in JSON mode (BUG-002, 2026-10-26).  Using the real exception class (not
+    a generic RuntimeError) confirms the catch in StructuredJudge.evaluate() is broad
+    enough to cover it, since ollama.ResponseError is not a subclass of RuntimeError.
+    """
+
+    def __init__(self, model_name: str = "qwen:latest") -> None:
+        self.model_name = model_name
+
+    def generate(self, *args, **kwargs):
+        raise ollama.ResponseError(
+            f"model '{self.model_name}' stopped generating: token repeat limit reached",
+            status_code=500,
+        )
 
 
 @pytest.mark.req("REQ-CASC-L3-01")
@@ -163,6 +184,34 @@ def test_evaluate_returns_fallback_when_generate_raises():
     assert verdict.confidence == 0.0
     assert verdict.parse_failed is True
     assert verdict.rationale is not None and "token repeat limit" in verdict.rationale
+
+
+@pytest.mark.req("REQ-CASC-L3-02")
+def test_evaluate_returns_fallback_on_ollama_response_error_http_500():
+    """
+    Regression test for BUG-002 using the real exception type: ollama.ResponseError with
+    status_code=500.  This is the exact exception the ollama Python package raises when the
+    Ollama server returns HTTP 500 -- e.g. qwen:latest in JSON mode hitting its internal
+    ngram-repeat detector ("token repeat limit reached").
+
+    ollama.ResponseError is NOT a subclass of RuntimeError, so this test exercises a
+    different branch of the inheritance tree than test_evaluate_returns_fallback_when_generate_raises
+    and confirms the catch in StructuredJudge.evaluate() uses bare ``except Exception`` (which
+    covers both), not a narrower ``except RuntimeError`` that would miss it.
+
+    The model name is passed through to verify the rationale string contains useful debug info.
+    """
+    judge = StructuredJudge(_FakeLLMClientResponseError(model_name="qwen:latest"))
+    verdict = judge.evaluate("text about conflict", "Hostile", "toxic", "qwen:latest")
+
+    assert verdict.verdict is False
+    assert verdict.confidence == 0.0
+    assert verdict.parse_failed is True
+    assert verdict.rationale is not None
+    # rationale must mention the abort so the run log is self-explaining
+    assert "judge call aborted" in verdict.rationale
+    # the ollama.ResponseError message must be preserved
+    assert "token repeat limit" in verdict.rationale
 
 
 @pytest.mark.req("REQ-CASC-L3-02")

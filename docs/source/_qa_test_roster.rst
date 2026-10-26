@@ -364,9 +364,9 @@ run data involved in this tab at all).
      - GET /faq?lang=Klingon (not a real option) shows an inline 'not found' message, not a crash.
    * - ``test_faq_page_includes_language_switch_links``
      - The rendered page includes links for both known languages, matching the legacy segmented control's options.
-   * - ``test_faq_math_blocks_are_rendered_as_html_math_elements``
-     - Regression for the reported bug: ``$$...$$`` blocks in faq_eng.md were rendered as plain paragraph text because ``MarkdownIt()`` had no math plugin. With ``dollarmath_plugin`` enabled, each ``$$...$$`` block is converted server-side to ``<div class="math block">`` so the client-side KaTeX pass has a DOM target, not raw ``$$`` text to hunt for.
-   * - ``test_faq_ukrainian_math_blocks_render_as_html_math_elements``
+   * - ``test_faq_math_elements_are_rendered_as_html_math_spans``
+     - Regression for the reported bug: ``$...$`` formulas in faq_eng.md were rendered as plain paragraph text because ``MarkdownIt()`` had no math plugin. With ``dollarmath_plugin`` enabled, each ``$...$`` formula is converted server-side to ``<span class="math inline">`` so the client-side KaTeX pass has a DOM target, not raw ``$`` text to hunt for. The FAQ files use single-dollar delimiters for both standalone (block- styled via CSS) and inline formulas.
+   * - ``test_faq_ukrainian_math_elements_render_as_html_math_spans``
      - Same math-rendering guarantee for the Ukrainian variant of the FAQ.
 
 ``tests/integration/test_hypothesis_testing_api.py`` (8 tests)
@@ -1742,7 +1742,7 @@ engine).
    * - ``test_without_an_injected_engine_a_real_ragengine_is_constructed``
      - RAGKnowledgeBase() with no engine builds a real (unloaded) RAGEngine, not None.
 
-``tests/unit/test_response_classification.py`` (10 tests)
+``tests/unit/test_response_classification.py`` (13 tests)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Unit tests for :mod:`core.analysis.response_classification` -- Layer 0
@@ -1773,6 +1773,12 @@ examples that calibration used.
      - Unbalanced braces/quotes -- the classic shape of a response that hit a token limit mid-generation, not one that was garbled from the start.
    * - ``test_classify_response_genuinely_garbled_non_json_is_malformed``
      - Complete, well-formed-looking prose that just isn't JSON at all -- ends on a normal sentence boundary, braces balanced (zero of each), so it doesn't look cut off.
+   * - ``test_classify_response_template_echo_placeholder_is_format_error``
+     - The exact failure mode confirmed in run-1792697949526: tinyllama returned {"text": "<rewritten output>"} for 38% of its rows. The entire text value is an XML-tag-like placeholder, not a real generated response.
+   * - ``test_classify_response_single_tag_placeholder_is_format_error``
+     - Description is missing
+   * - ``test_classify_response_text_containing_but_not_only_angle_brackets_is_valid``
+     - A real response that happens to contain XML-like markup is not a placeholder -- fullmatch requires the entire text to be one tag, not just contain one.
    * - ``test_is_echo_response_true_for_real_confirmed_echo_scores``
      - Real echo failures observed in this project's own generated data scored 0.59 and 0.98 -- both must be flagged.
    * - ``test_is_echo_response_false_for_real_genuine_response_scores``
@@ -1869,7 +1875,7 @@ directory, or spaCy model is present.
    * - ``test_check_spacy_reports_not_installed_without_downloading``
      - Missing model is named in detail, not silently downloaded -- matches check_nltk's honest-not-silent convention.
 
-``tests/unit/test_structured_judge.py`` (10 tests)
+``tests/unit/test_structured_judge.py`` (12 tests)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Unit tests for :class:`core.adapters.structured_judge.StructuredJudge` --
@@ -1905,6 +1911,10 @@ request shape still asks the model for structured JSON.
      - The request sets json_mode=True and includes the archetype/bias/response text -- confirms the request shape, independent of how the response gets parsed.
    * - ``test_judge_uses_capped_tokens_and_low_temperature``
      - Regression test for a real production crash: qwen:latest entered an infinite token-repeat loop when the judge call had no max_tokens limit, causing Ollama to abort with HTTP 500. The fix pins max_tokens=256 (hard stop) and temperature=0.1 (deterministic JSON) on every judge call, independent of any experiment sweep temperature.
+   * - ``test_evaluate_returns_fallback_when_generate_raises``
+     - Regression test for BUG-002 (2026-10-26): Ollama HTTP 500 "token repeat limit reached" propagated through StructuredJudge.evaluate() and aborted the entire experiment run. Fix: generate() is wrapped in try/except -- any exception returns the same distinguishable fallback shape (verdict=False, confidence=0.0, parse_failed=True) as a JSON parse failure, so the run continues and callers can tell it from a real "no" verdict.
+   * - ``test_evaluate_returns_fallback_on_ollama_response_error_http_500``
+     - Regression test for BUG-002 using the real exception type: ollama.ResponseError with status_code=500. This is the exact exception the ollama Python package raises when the Ollama server returns HTTP 500 -- e.g. qwen:latest in JSON mode hitting its internal ngram-repeat detector ("token repeat limit reached"). ollama.ResponseError is NOT a subclass of RuntimeError, so this test exercises a different branch of the inheritance tree than test_evaluate_returns_fallback_when_generate_raises and confirms the catch in StructuredJudge.evaluate() uses bare ``except Exception`` (which covers both), not a narrower ``except RuntimeError`` that would miss it. The model name is passed through to verify the rationale string contains useful debug info.
    * - ``test_parse_failures_set_the_parse_failed_flag_and_real_judgments_do_not``
      - Both malformed-response fallbacks carry parse_failed=True so callers can tell them from a real 'no' without reading rationale text; a parsed verdict (true or false) never does.
 
