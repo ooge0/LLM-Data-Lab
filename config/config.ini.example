@@ -12,9 +12,14 @@
 ; Linux:    cp config/config.ini.example config/config.ini
 
 [neo4j]
+# Full path to neo4j.bat / neo4j executable. Set this when neo4j is not on PATH.
+# Example (Windows): neo4j_exe = C:\tools\neo4j\2026.05.0\bin\neo4j.bat
+# Example (Ubuntu):  neo4j_exe = /opt/neo4j/bin/neo4j
+# Leave empty (or omit) to fall back to PATH lookup.
 user=neo4j
-password=changeme
+password=neo4j123
 uri=bolt://localhost:7687
+neo4j_exe = C:\tools\neo4j\2026.05.0\bin\neo4j.bat
 
 [rag]
 rag_kb_source_path = knowledge/rag

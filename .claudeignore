@@ -50,6 +50,7 @@ htmlcov/
 .coverage.*
 allure-results/
 allure-report/
+config/config.ini
 
 # --- Python bytecode / cache ---
 **/__pycache__/

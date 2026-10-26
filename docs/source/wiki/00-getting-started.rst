@@ -138,6 +138,17 @@ Full install/config/troubleshooting steps (community-edition install, ``config/c
 README.MD's **Services -> Neo4j setup** section -- not duplicated here since it's a self-contained,
 opt-in procedure with its own troubleshooting branch, not part of the day-to-day loop.
 
+Known Windows-specific pitfalls (2026.x / 5.x, confirmed from real setup 2026-10-27):
+
+- ``JAVA_HOME`` and ``NEO4J_HOME`` must point to the **root**, not ``\\bin``. Both variables are
+  appended with ``\\bin`` internally by ``neo4j.bat`` -- including ``\\bin`` in the variable produces
+  a double ``\\bin\\bin`` path and ``ClassNotFoundException: org.neo4j.server.startup.Neo4jCommand``.
+- The service-install command **changed** in 5.x / 2026.x:
+  ``neo4j.bat windows-service install`` (the old ``neo4j install-service`` no longer works).
+- Set ``neo4j_exe`` in ``config/config.ini``'s ``[neo4j]`` section to the full path of ``neo4j.bat``
+  so the app's Start/Stop buttons work even when uvicorn was started before the PATH change took
+  effect (see README's Neo4j setup step 3 for the exact config key).
+
 **A real, previously-encountered gotcha worth knowing before it costs you time:** a stray
 ``uvicorn`` process left running from an earlier session can hold an OS-level lock on
 ``torch/_C.*.pyd`` (Windows) and silently break a later ``pip install --upgrade`` of ``torch`` with

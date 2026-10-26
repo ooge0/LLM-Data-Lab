@@ -322,24 +322,68 @@ reachable.
 
 **1. Install Neo4j Community Edition**
 
-Windows 11:
+**Windows 11** — tested on Neo4j Community 2026.05.0 (ZIP install):
+
+> **Critical env-var rule:** `JAVA_HOME` and `NEO4J_HOME` must point to the **root directory,
+> not `\bin`**. Both `neo4j.bat` and Java append `\bin` internally — setting them to include
+> `\bin` produces a double `\bin\bin` path and fails with
+> `ClassNotFoundException: org.neo4j.server.startup.Neo4jCommand`.
+
 ```text
-1. Download the Neo4j Community ZIP package.
-2. Extract it, e.g. to D:\setup\neo4j\2026.05.0\
-3. cd D:\setup\neo4j\2026.05.0\bin
-4. .\neo4j console
-5. Wait for: Bolt enabled on localhost:7687 / HTTP enabled on localhost:7474
-6. Open http://localhost:7474, log in with neo4j/neo4j, set a new password.
+Prerequisites:
+  JAVA_HOME  = C:\Program Files\Java\jdk-21        <- JDK 21 root (NOT \...\bin)
+  NEO4J_HOME = D:\setup\neo4j\2026.05.0            <- Neo4j extract root (NOT \...\bin)
+  PATH       += %JAVA_HOME%\bin
+
+Steps:
+1. Install JDK 21 (Oracle or Eclipse Temurin).
+2. Set system env vars (Settings -> System -> Advanced -> Environment Variables):
+     JAVA_HOME   = C:\Program Files\Java\jdk-21   (adjust to your install path)
+     NEO4J_HOME  = D:\setup\neo4j\2026.05.0       (adjust to your extract path)
+     PATH        += %JAVA_HOME%\bin
+3. Open a NEW PowerShell and verify:
+     java -version    # must print: openjdk version "21.x"
+4. Download Neo4j Community 2026.05.0 ZIP from https://neo4j.com/download-center/#community
+   and extract to %NEO4J_HOME%.
+5. Install the Windows service (Admin PowerShell; syntax changed in 5.x/2026.x):
+     %NEO4J_HOME%\bin\neo4j.bat windows-service install
+   The old syntax `neo4j install-service` no longer works in 2026.x.
+6. Start / stop the service:
+     %NEO4J_HOME%\bin\neo4j.bat start
+     %NEO4J_HOME%\bin\neo4j.bat stop
+   Or use the Start / Stop buttons on the /knowledge_graph page once step 3 of "Configure"
+   below is done (neo4j_exe in config.ini).
+7. Console mode (no service required — useful for troubleshooting or if service install fails):
+   Open a dedicated terminal and keep it open while using /knowledge_graph:
+     %NEO4J_HOME%\bin\neo4j.bat console
+8. First-time only: open http://localhost:7474, log in with neo4j/neo4j, set a new password.
 ```
 
-Ubuntu/Linux:
+**Ubuntu/Linux** — tested on Neo4j Community 2026.x (tarball):
+
+> Same env-var rule: `JAVA_HOME` and `NEO4J_HOME` must NOT include `/bin`.
+
 ```bash
-sudo apt update && sudo apt install openjdk-21-jre -y
-tar -xzf neo4j-community-*.tar.gz
-cd neo4j-community-*/bin
-./neo4j console
+# 1. Install JDK 21
+sudo apt update && sudo apt install openjdk-21-jdk -y
+
+# 2. Set env vars in ~/.bashrc (adjust paths to match your install):
+export JAVA_HOME=/usr/lib/jvm/java-21-openjdk-amd64
+export NEO4J_HOME=/opt/neo4j/2026.05.0
+export PATH=$PATH:$JAVA_HOME/bin:$NEO4J_HOME/bin
+source ~/.bashrc
+
+# 3. Extract the tarball:
+tar -xzf neo4j-community-2026.05.0-unix.tar.gz -C /opt/neo4j/
+
+# 4. Install and start as a systemd service (Linux still uses install-service, not windows-service):
+sudo $NEO4J_HOME/bin/neo4j install-service
+sudo systemctl enable neo4j && sudo systemctl start neo4j
+
+# 5. Console mode (no service required):
+$NEO4J_HOME/bin/neo4j console
 ```
-Then open http://localhost:7474, log in with `neo4j`/`neo4j`, and set a new password.
+First-time only: open http://localhost:7474, log in with `neo4j`/`neo4j`, and set a new password.
 
 **2. Install and enable the Graph Data Science (GDS) plugin** — required for the PageRank tabs
 (`gds.graph.project`/`gds.pageRank.stream`); **a real, previously-shipped bug in this exact setup
@@ -362,9 +406,16 @@ enough, Neo4j's own procedure sandboxing blocks it unless explicitly unrestricte
 created in **Installation & Setup**, step 6 above; not committed to source control):
 ```ini
 [neo4j]
-uri = bolt://localhost:7687
-user = neo4j
+uri      = bolt://localhost:7687
+user     = neo4j
 password = your_password_here
+# Full path to the neo4j executable. Set this when neo4j is not on PATH
+# (common when uvicorn was started before the PATH change was applied, or on Windows
+# where the service is installed but neo4j.bat is not on the session PATH).
+# Windows: neo4j_exe = D:\setup\neo4j\2026.05.0\bin\neo4j.bat
+# Linux:   neo4j_exe = /opt/neo4j/2026.05.0/bin/neo4j
+# Leave empty to fall back to PATH lookup.
+neo4j_exe =
 ```
 
 **4. Verify connectivity, including GDS** — a bare connectivity check (or `CALL apoc.help('pageRank')`)

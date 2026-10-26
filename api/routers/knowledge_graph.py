@@ -66,10 +66,15 @@ def _neo4j_cli_command(subcommand: str) -> tuple[bool, str]:
     """
     Run ``neo4j <subcommand>`` (e.g. ``start`` / ``stop``) as a subprocess.
 
-    Returns (success: bool, message: str).  Assumes ``neo4j`` / ``neo4j.bat`` is in PATH
-    (standard for Neo4j Community Edition on Windows and Ubuntu).
+    Returns (success: bool, message: str).  Uses ``[neo4j] neo4j_exe`` from config.ini when
+    set (full path to neo4j.bat / neo4j); falls back to PATH lookup otherwise.
     """
-    cmd = ["neo4j.bat" if sys.platform == "win32" else "neo4j", subcommand]
+    cfg = configparser.ConfigParser()
+    cfg.read(_CONFIG_PATH)
+    neo4j_exe = cfg.get("neo4j", "neo4j_exe", fallback="").strip()
+    if not neo4j_exe:
+        neo4j_exe = "neo4j.bat" if sys.platform == "win32" else "neo4j"
+    cmd = [neo4j_exe, subcommand]
     try:
         result = subprocess.run(cmd, capture_output=True, text=True, timeout=45)
         output = (result.stdout or "") + (result.stderr or "")

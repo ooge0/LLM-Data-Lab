@@ -16,6 +16,7 @@ docs/.tools/
 /.pytest_cache
 /logs/
 /results/
+/config/config.ini
 __pycache__/
 *.pyc
 /config.ini
