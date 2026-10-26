@@ -486,6 +486,40 @@ synthetic fixture data, not mocked out.
    * - ``test_model_evo_evaluate_for_unknown_run_returns_404``
      - POST /model_evo/evaluate for a run with no persisted responses returns 404.
 
+``tests/integration/test_model_smoke.py`` (2 tests)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Model smoke tests -- require Ollama running locally.
+
+Skipped automatically when Ollama is unreachable, so the suite stays green in
+CI and offline environments.
+
+Each configured model is called with a minimal, unambiguous prompt and the raw
+response is run through Layer 0
+(:func:`core.analysis.response_classification.classify_response`). A VALID
+classification means the model can produce structurally correct output;
+anything else surfaces as a test failure with the raw response attached.
+
+These tests intentionally do NOT assert on the *content* of the response --
+that is the experiment pipeline's job. They assert only on structure: did the
+model return parseable JSON with a non-empty 'text' field that is not a
+placeholder.
+
+Adding a model: add its name to ``_MODELS_UNDER_TEST``. The test will skip
+automatically if that model is not pulled in the local Ollama instance (the
+skip message will say which model was not found).
+
+.. list-table::
+   :widths: 45 55
+   :header-rows: 1
+
+   * - Test
+     - Description
+   * - ``test_model_produces_valid_json_for_minimal_prompt[qwen:latest]``
+     - Each model must return a structurally VALID response for the simplest possible prompt. A failure here means the model cannot be trusted in an experiment run without first diagnosing why it cannot produce the requested JSON shape. The raw response is included in the assertion message so the failure is self-explaining in pytest output.
+   * - ``test_model_produces_valid_json_for_minimal_prompt[tinyllama:latest]``
+     - Each model must return a structurally VALID response for the simplest possible prompt. A failure here means the model cannot be trusted in an experiment run without first diagnosing why it cannot produce the requested JSON shape. The raw response is included in the assertion message so the failure is self-explaining in pytest output.
+
 ``tests/integration/test_monitor_api.py`` (6 tests)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -1430,6 +1464,57 @@ drift).
      - A run where every response was Layer-0-rejected (word_count never computed) has real responses on disk but nothing to average -- delta must be None, not a ZeroDivisionError.
    * - ``test_compare_judging_modes_without_run_metadata_reports_unknown_labels_not_a_crash``
      - list_runs() returning nothing for a run_id (e.g. metadata not yet indexed) degrades to self_critic=None/teacher_model=None rather than raising.
+
+``tests/unit/test_model_fuzz_catalog.py`` (12 tests)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+LLM model failure catalog -- unit-level, no Ollama required.
+
+Append-only catalog of confirmed (and near-confirmed) model failure patterns.
+Each test documents provenance: which model, which run or date, what failure
+rate was observed. When a new failure mode is confirmed from a real run, it
+goes here.
+
+Tests use :func:`core.analysis.response_classification.classify_response`
+directly, i.e. they test Layer 0's classification of the raw string the model
+returned -- not the full cascade. These are the cheapest, most stable tests in
+the suite: no model calls, no fixtures, no embeddings.
+
+Tests marked ``xfail(strict=True)`` document *known gaps* in the current Layer
+0 implementation -- failure patterns that are not yet caught. They will loudly
+fail as xfail the moment the gap is filled, forcing removal of the xfail
+marker.
+
+.. list-table::
+   :widths: 45 55
+   :header-rows: 1
+
+   * - Test
+     - Description
+   * - ``test_fuzz_tinyllama_rewritten_output_placeholder``
+     - tinyllama:latest, run-1792697949526, 2026-10-25. 38% of rows (24/63) returned exactly this string -- the most common confirmed FORMAT_ERROR pattern in this project's real data.
+   * - ``test_fuzz_tinyllama_output_tag_variant``
+     - tinyllama:latest, run-1792697949526, 2026-10-25. Shorter variant of the same template-echo pattern: a single bare <output> tag.
+   * - ``test_fuzz_angle_bracket_placeholder_with_spaces``
+     - Generic placeholder variant: any single XML-tag-like string with internal spaces. Not confirmed from a specific run but structurally identical to the tinyllama pattern and caught by the same fullmatch regex.
+   * - ``test_fuzz_empty_text_field``
+     - Any model, any run. A zero-token-budget or early-stop condition -- model returns valid JSON but the text value is blank.
+   * - ``test_fuzz_whitespace_only_text_field``
+     - Same as empty, but the model filled the field with whitespace -- common when models produce minimal output that collapses to nothing after strip().
+   * - ``test_fuzz_truncated_mid_sentence``
+     - Any model, confirmed in 3/500 rows of a large run. Unbalanced braces indicate the response was cut off before JSON was closed -- a token-limit hit during generation, not a format misunderstanding.
+   * - ``test_fuzz_truncated_unbalanced_quotes``
+     - Unbalanced quotes are another signature of mid-generation truncation.
+   * - ``test_fuzz_plain_prose_no_json_wrapper``
+     - Any model, seen in runs where temperature is high or the system prompt is short. The model generated good prose but didn't wrap it in the requested JSON envelope.
+   * - ``test_fuzz_wrong_json_key``
+     - Any model. Valid JSON but the key is not 'text' -- model followed a different schema than the one requested in the system prompt.
+   * - ``test_fuzz_json_array_not_object``
+     - Some models return a JSON array when asked for an object. Syntactically valid JSON, but not the expected {"text": ...} shape.
+   * - ``test_fuzz_insert_text_here_not_yet_caught``
+     - Generic LLM behavior: model echoes a fill-in-the-blank placeholder from training data. Seen in GPT-family outputs; not yet confirmed in this project's local Ollama runs. Not caught by the current <[^>]+> regex -- returns VALID today.
+   * - ``test_fuzz_jinja_style_placeholder_not_yet_caught``
+     - Jinja/mustache template echo: model returns double-brace placeholder instead of content. A plausible failure mode for models fine-tuned on template-heavy corpora. Not caught by the current <[^>]+> regex -- returns VALID today.
 
 ``tests/unit/test_neo4j_repo.py`` (28 tests)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
