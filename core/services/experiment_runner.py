@@ -469,6 +469,7 @@ class ExperimentRunner:
             )
         except Exception as exc:
             logger.exception(f"ExperimentRunner: run failed: {exc}")
+            self._save_partial_run(locals().get("run"), locals().get("step", 0))
             self._try_bridge(loop, queue, RunProgressEvent(stage="error", error=str(exc), done=True))
         finally:
             with self._lock:
@@ -664,6 +665,22 @@ class ExperimentRunner:
             queue,
             RunProgressEvent(stage="generating", run_id=run.run_id, step=step, total_tasks=total_tasks),
         )
+
+    def _save_partial_run(self, run: "Optional[RunRecord]", step: int) -> None:
+        """Copy completed JSONL rows to a *_partial_failed* file so a crashed run's data survives."""
+        if run is None or step == 0:
+            return
+        try:
+            import shutil
+
+            src = self._repository.path_for(run.run_id)
+            if not src.exists() or src.stat().st_size == 0:
+                return
+            dst = src.parent / f"lab_export_{run.run_id}_partial_failed_at_step_{step}.jsonl"
+            shutil.copy2(src, dst)
+            logger.info(f"Partial run data ({step} completed steps) saved to {dst.name}")
+        except Exception:
+            logger.exception("Could not save partial run copy -- original JSONL still intact")
 
     def _base_entry_fields(
         self,

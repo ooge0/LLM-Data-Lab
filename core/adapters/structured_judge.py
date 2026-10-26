@@ -60,9 +60,21 @@ class StructuredJudge:
     def evaluate(self, response_text: str, archetype: str, bias: str, model: str) -> JudgeVerdict:
         """See :meth:`core.domain.interfaces.Judge.evaluate`."""
         user_prompt = f"Type: {archetype}\nBias: {bias}\nText: {response_text}"
-        result = self._llm_client.generate(
-            model, _SYSTEM_PROMPT, user_prompt, json_mode=True, max_tokens=256, temperature=0.1
-        )
+        try:
+            result = self._llm_client.generate(
+                model, _SYSTEM_PROMPT, user_prompt, json_mode=True, max_tokens=256, temperature=0.1
+            )
+        except Exception as exc:
+            # Ollama HTTP 500 (token repeat limit, model abort, connection failure) must not
+            # propagate to ExperimentRunner and abort the whole run -- one judge call failing
+            # is recoverable. Returns the same distinguishable-fallback shape as a JSON parse
+            # failure so callers can tell it from a real "no" via parse_failed=True.
+            return JudgeVerdict(
+                verdict=False,
+                confidence=0.0,
+                rationale=f"judge call aborted: {exc}",
+                parse_failed=True,
+            )
         return self._parse_verdict(result.text)
 
     @staticmethod

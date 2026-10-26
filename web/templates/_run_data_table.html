@@ -1,0 +1,10 @@
+<div id="data-table-section">
+  {% if table_html %}
+  <p class="table-meta">{{ row_count }} rows &mdash; key columns shown first; scroll right for all fields</p>
+  <div class="run-data-wrap">
+    {{ table_html | safe }}
+  </div>
+  {% elif selected_run_id %}
+  <p>No data found for run <code>{{ selected_run_id }}</code>.</p>
+  {% endif %}
+</div>

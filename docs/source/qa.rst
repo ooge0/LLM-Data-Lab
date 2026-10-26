@@ -557,6 +557,23 @@ project's planning document, not committed to this repo):
   (3 new tests) and :doc:`wiki/04-llm-analytics`'s "A metric that contradicted itself" section for
   the full cause-and-effect story.
 
+**BUG-002 — Ollama HTTP 500 "token repeat limit reached" aborts experiment run** (2026-10-26)
+
+Root cause: ``StructuredJudge.evaluate()`` called ``OllamaClient.generate()`` with no
+``max_tokens`` limit and ``temperature=0.7`` (the client default). When qwen:latest runs in
+JSON mode and triggers Ollama's internal ngram-repeat detector, Ollama returns HTTP 500. The
+exception propagated through ``ExperimentRunner._run_one()`` → ``_run()`` and aborted the
+entire run, discarding all responses not yet written to disk.
+
+Fix applied: (1) ``StructuredJudge.evaluate()`` now passes ``max_tokens=256, temperature=0.1``
+and wraps the ``generate()`` call in ``try/except Exception`` -- a judge failure returns
+``JudgeVerdict(verdict=False, confidence=0.0, parse_failed=True)`` with the exception message
+in ``rationale``, instead of propagating. The run continues. (2) ``ExperimentRunner._run()``'s
+outer ``except`` now calls ``_save_partial_run()``, which copies the partial JSONL to
+``lab_export_<run_id>_partial_failed_at_step_N.jsonl`` so a truly unrecoverable crash is still
+auditable. See ``tests/unit/test_structured_judge.py::test_evaluate_returns_fallback_when_generate_raises``
+and ``tests/unit/test_structured_judge.py::test_judge_uses_capped_tokens_and_low_temperature``.
+
 Historical bug/iteration overview
 ------------------------------------
 

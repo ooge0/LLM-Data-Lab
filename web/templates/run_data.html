@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <script>
+  (function(){
+    try {
+      var theme = localStorage.getItem("nn_lab_theme") === "light" ? "light" : "dark";
+      if (theme === "light") { document.documentElement.setAttribute("data-theme", "light"); }
+      document.cookie = "nn_lab_theme=" + theme + "; path=/; max-age=31536000; samesite=lax";
+      if (localStorage.getItem("nn_lab_sidebar_collapsed") === "1") {
+        document.documentElement.classList.add("sidebar-collapsed");
+      }
+    } catch (e) {}
+  })();
+  </script>
+  <title>nn_lab -- Run data table</title>
+  <link rel="stylesheet" href="/static/style.css">
+  <script src="/static/vendor/htmx/htmx.min.js"></script>
+  <style>
+    .run-data-wrap {
+      overflow-x: auto;
+      overflow-y: auto;
+      max-height: 72vh;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      margin-top: 1rem;
+    }
+    .run-data-table {
+      border-collapse: collapse;
+      white-space: nowrap;
+      font-size: 0.82rem;
+      width: max-content;
+    }
+    .run-data-table th {
+      position: sticky;
+      top: 0;
+      background: var(--bg-2, #1e1e2e);
+      z-index: 1;
+      padding: 6px 10px;
+      text-align: left;
+      border-bottom: 2px solid var(--accent, #7c3aed);
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .run-data-table td {
+      padding: 4px 10px;
+      border-bottom: 1px solid var(--border);
+      max-width: 280px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      vertical-align: top;
+    }
+    .run-data-table tr:hover td { background: var(--bg-hover, rgba(124,58,237,.08)); }
+    .run-data-table td[data-val="True"],
+    .run-data-table td[data-val="true"]  { color: var(--ok, #22c55e); }
+    .run-data-table td[data-val="False"],
+    .run-data-table td[data-val="false"] { color: var(--err, #ef4444); }
+    .table-meta { font-size: 0.85rem; color: var(--text-muted); margin-top: 0.4rem; }
+  </style>
+</head>
+<body>
+<div class="app-shell">
+  {% include "_nav.html" %}
+  <main>
+  <h1>Run data table</h1>
+
+  {% if runs %}
+  <label>
+    Run
+    <select name="run_id"
+            hx-get="/runs/data/table"
+            hx-trigger="change"
+            hx-target="#data-table-section"
+            hx-swap="outerHTML"
+            hx-include="[name='run_id']"
+            hx-indicator="#run-picker-spinner">
+      {% for run in runs %}
+      <option value="{{ run.run_id }}" {% if run.run_id == selected_run_id %}selected{% endif %}>
+        {{ run.run_id }} ({{ run.started_at }}, {{ run.total_tasks }} tasks)
+      </option>
+      {% endfor %}
+    </select>
+    <span id="run-picker-spinner" class="htmx-indicator spinner" aria-hidden="true"></span>
+  </label>
+
+  {% include "_run_data_table.html" %}
+
+  {% else %}
+  <p>No experiment runs found yet. Run one first via <a href="/experiments">/experiments</a>.</p>
+  {% endif %}
+  </main>
+</div>
+</body>
+</html>

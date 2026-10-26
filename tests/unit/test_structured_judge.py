@@ -13,6 +13,13 @@ from core.adapters.structured_judge import StructuredJudge
 from tests.unit.test_experiment_runner import FakeLLMClient
 
 
+class _FakeLLMClientRaises:
+    """Fake LLMClient whose generate() always raises -- simulates Ollama HTTP 500."""
+
+    def generate(self, *args, **kwargs):
+        raise RuntimeError("Ollama 500: token repeat limit reached")
+
+
 @pytest.mark.req("REQ-CASC-L3-01")
 def test_clear_pass_is_parsed_from_real_json():
     """A well-formed judge response is genuinely parsed, not substring-matched -- verdict/confidence/rationale all come from the real JSON fields."""
@@ -138,6 +145,24 @@ def test_judge_uses_capped_tokens_and_low_temperature():
     params = llm.calls[0]["params"]
     assert params.get("max_tokens") == 256
     assert params.get("temperature") == pytest.approx(0.1)
+
+
+@pytest.mark.req("REQ-CASC-L3-02")
+def test_evaluate_returns_fallback_when_generate_raises():
+    """
+    Regression test for BUG-002 (2026-10-26): Ollama HTTP 500 "token repeat limit reached"
+    propagated through StructuredJudge.evaluate() and aborted the entire experiment run.
+    Fix: generate() is wrapped in try/except -- any exception returns the same distinguishable
+    fallback shape (verdict=False, confidence=0.0, parse_failed=True) as a JSON parse failure,
+    so the run continues and callers can tell it from a real "no" verdict.
+    """
+    judge = StructuredJudge(_FakeLLMClientRaises())
+    verdict = judge.evaluate("some text", "Defensive", "formal", "qwen:latest")
+
+    assert verdict.verdict is False
+    assert verdict.confidence == 0.0
+    assert verdict.parse_failed is True
+    assert verdict.rationale is not None and "token repeat limit" in verdict.rationale
 
 
 @pytest.mark.req("REQ-CASC-L3-02")

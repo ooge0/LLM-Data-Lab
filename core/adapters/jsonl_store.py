@@ -89,6 +89,10 @@ class JSONLStore:
                         responses.append(json.loads(line))
         return responses
 
+    def path_for(self, run_id: str) -> Path:
+        """Return the filesystem path for a run's JSONL file (may not exist yet if the run has no saved responses)."""
+        return self._file_for(run_id)
+
     def list_runs(self) -> "list[RunRecord]":
         """See :meth:`core.domain.interfaces.Repository.list_runs`. Reads every ``*.meta.json`` sidecar file."""
         runs = []

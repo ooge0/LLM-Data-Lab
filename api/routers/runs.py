@@ -65,6 +65,62 @@ async def run_summary(request: Request, run_id: str) -> HTMLResponse:
     return templates.TemplateResponse(request, "_perf_summary.html", {"selected_run_id": run_id, "summary": summary})
 
 
+def _build_table_html(rows: list) -> str:
+    """Render a list of response dicts as an HTML table string for the run-data view."""
+    if not rows:
+        return ""
+    import pandas as pd
+
+    df = pd.DataFrame(rows)
+    preferred = [
+        "step", "student", "archetype", "bias", "val",
+        "layer0_classification", "layer1_echo_detected",
+        "v_ok", "v_decided_by", "v_confidence",
+        "word_count", "semantic_overlap", "coherence", "sentiment",
+        "corrected_ttr", "readability_ari", "output",
+    ]
+    cols = [c for c in preferred if c in df.columns]
+    extras = [c for c in df.columns if c not in cols]
+    df = df[cols + extras]
+    for col in ("output", "system_prompt", "v_rationale", "rag_context"):
+        if col in df.columns:
+            df[col] = df[col].astype(str).str[:120] + "…"
+    return df.to_html(classes="run-data-table", index=False, na_rep="—", escape=True, border=0)
+
+
+@router.get("/data", response_class=HTMLResponse)
+async def run_data_table(request: Request, run_id: str = "") -> HTMLResponse:
+    """
+    Render experiment responses for one run as a scrollable data table (full page).
+
+    Pandas is used purely for column selection and HTML rendering -- the same approach
+    the legacy Streamlit tab used (``st.dataframe`` backed by a pandas DataFrame).
+    """
+    runs = _repository.list_runs()
+    if not run_id and runs:
+        run_id = runs[0].run_id
+    rows = _repository.load_responses(run_id) if run_id else []
+    return templates.TemplateResponse(
+        request,
+        "run_data.html",
+        {"runs": runs, "selected_run_id": run_id, "table_html": _build_table_html(rows), "row_count": len(rows)},
+    )
+
+
+@router.get("/data/table", response_class=HTMLResponse)
+async def run_data_fragment(request: Request, run_id: str = "") -> HTMLResponse:
+    """Fragment endpoint for the run-data table; used by the HTMX select-change swap in ``run_data.html``."""
+    runs = _repository.list_runs()
+    if not run_id and runs:
+        run_id = runs[0].run_id
+    rows = _repository.load_responses(run_id) if run_id else []
+    return templates.TemplateResponse(
+        request,
+        "_run_data_table.html",
+        {"selected_run_id": run_id, "table_html": _build_table_html(rows), "row_count": len(rows)},
+    )
+
+
 @router.get("/judging_comparison", response_class=HTMLResponse)
 async def judging_comparison(request: Request, run_id_a: str, run_id_b: str) -> HTMLResponse:
     """
