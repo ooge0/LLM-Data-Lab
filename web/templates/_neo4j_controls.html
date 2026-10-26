@@ -1,0 +1,28 @@
+{# Fragment: Neo4j connection status + Start/Stop controls.
+   Returned by GET /knowledge_graph/neo4j/status (hx-get on page load),
+   POST /knowledge_graph/neo4j/start, and POST /knowledge_graph/neo4j/stop.
+   Swapped into #neo4j-controls via outerHTML. #}
+<div id="neo4j-controls" style="display:flex; align-items:center; gap:var(--space-3); flex-wrap:wrap; margin-bottom:var(--space-4);">
+  {% if neo4j_ok %}
+  <span class="badge badge-ok">Neo4j connected</span>
+  <button class="btn-secondary btn-sm"
+          hx-post="/knowledge_graph/neo4j/stop"
+          hx-target="#neo4j-controls"
+          hx-swap="outerHTML"
+          hx-indicator="#neo4j-spinner">Stop Neo4j</button>
+  {% else %}
+  <span class="badge badge-error">Neo4j offline</span>
+  <button class="btn-primary btn-sm"
+          hx-post="/knowledge_graph/neo4j/start"
+          hx-target="#neo4j-controls"
+          hx-swap="outerHTML"
+          hx-indicator="#neo4j-spinner">Start Neo4j</button>
+  {% endif %}
+  <button class="btn-secondary btn-sm"
+          hx-get="/knowledge_graph/neo4j/status"
+          hx-target="#neo4j-controls"
+          hx-swap="outerHTML"
+          hx-indicator="#neo4j-spinner">Refresh</button>
+  <span id="neo4j-spinner" class="htmx-indicator text-muted">checking...</span>
+  {% if error %}<span class="error" style="font-size:var(--text-sm)">{{ error }}</span>{% endif %}
+</div>

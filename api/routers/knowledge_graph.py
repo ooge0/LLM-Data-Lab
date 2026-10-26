@@ -22,6 +22,11 @@ reachable -- this app's other pages don't depend on Neo4j at all, and this one s
 whole request down just because the graph database happens to be offline.
 """
 
+import configparser
+import subprocess
+import sys
+from pathlib import Path
+
 from fastapi import APIRouter, Request
 from fastapi.concurrency import run_in_threadpool
 from fastapi.responses import HTMLResponse
@@ -30,7 +35,7 @@ from loguru import logger
 
 from api._paths import TEMPLATES_DIR
 from core.adapters.jsonl_store import JSONLStore
-from core.adapters.neo4j_repo import Neo4jGraphRepo
+from core.adapters.neo4j_repo import Neo4jGraphRepo, _CONFIG_PATH
 from web.plotting.knowledge_graph_charts import build_archetype_bias_network_html
 
 router = APIRouter(prefix="/knowledge_graph", tags=["knowledge_graph"])
@@ -38,6 +43,88 @@ templates = Jinja2Templates(directory=str(TEMPLATES_DIR))
 
 _repository = JSONLStore()
 _graph_repo = Neo4jGraphRepo()
+
+
+# ---------------------------------------------------------------------------
+# Neo4j connectivity check + Start/Stop controls
+# ---------------------------------------------------------------------------
+
+def _check_neo4j() -> bool:
+    """Return True if a bolt connection to Neo4j succeeds."""
+    try:
+        from py2neo import Graph
+
+        cfg = configparser.ConfigParser()
+        cfg.read(_CONFIG_PATH)
+        Graph(cfg["neo4j"]["uri"], auth=(cfg["neo4j"]["user"], cfg["neo4j"]["password"])).run("RETURN 1")
+        return True
+    except Exception:
+        return False
+
+
+def _neo4j_cli_command(subcommand: str) -> tuple[bool, str]:
+    """
+    Run ``neo4j <subcommand>`` (e.g. ``start`` / ``stop``) as a subprocess.
+
+    Returns (success: bool, message: str).  Assumes ``neo4j`` / ``neo4j.bat`` is in PATH
+    (standard for Neo4j Community Edition on Windows and Ubuntu).
+    """
+    cmd = ["neo4j.bat" if sys.platform == "win32" else "neo4j", subcommand]
+    try:
+        result = subprocess.run(cmd, capture_output=True, text=True, timeout=45)
+        output = (result.stdout or "") + (result.stderr or "")
+        if result.returncode == 0:
+            return True, output.strip() or f"neo4j {subcommand} completed."
+        return False, output.strip() or f"neo4j {subcommand} exited with code {result.returncode}."
+    except FileNotFoundError:
+        return False, (
+            f"'neo4j' not found in PATH.  "
+            f"Make sure Neo4j's bin/ directory is on your PATH, then retry."
+        )
+    except subprocess.TimeoutExpired:
+        return False, f"neo4j {subcommand} timed out after 45 s."
+    except Exception as exc:
+        return False, str(exc)
+
+
+@router.get("/neo4j/status", response_class=HTMLResponse)
+def neo4j_status(request: Request) -> HTMLResponse:
+    """Lightweight connectivity check; returns the Neo4j controls fragment."""
+    return templates.TemplateResponse(
+        request, "_neo4j_controls.html", {"neo4j_ok": _check_neo4j()}
+    )
+
+
+@router.post("/neo4j/start", response_class=HTMLResponse)
+async def neo4j_start(request: Request) -> HTMLResponse:
+    """Start Neo4j via the CLI, then return the updated controls fragment."""
+
+    def _start() -> HTMLResponse:
+        ok, msg = _neo4j_cli_command("start")
+        logger.info(f"neo4j start: ok={ok} msg={msg!r}")
+        neo4j_ok = _check_neo4j() if ok else False
+        error = None if neo4j_ok else msg
+        return templates.TemplateResponse(
+            request, "_neo4j_controls.html", {"neo4j_ok": neo4j_ok, "error": error}
+        )
+
+    return await run_in_threadpool(_start)
+
+
+@router.post("/neo4j/stop", response_class=HTMLResponse)
+async def neo4j_stop(request: Request) -> HTMLResponse:
+    """Stop Neo4j via the CLI, then return the updated controls fragment."""
+
+    def _stop() -> HTMLResponse:
+        ok, msg = _neo4j_cli_command("stop")
+        logger.info(f"neo4j stop: ok={ok} msg={msg!r}")
+        neo4j_ok = _check_neo4j() if not ok else False
+        error = None if ok else msg
+        return templates.TemplateResponse(
+            request, "_neo4j_controls.html", {"neo4j_ok": neo4j_ok, "error": error}
+        )
+
+    return await run_in_threadpool(_stop)
 
 
 @router.get("", response_class=HTMLResponse)

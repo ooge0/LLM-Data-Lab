@@ -25,6 +25,11 @@
   {% include "_nav.html" %}
   <main>
   <h1>Knowledge Graph -- Failure-Mode Analysis</h1>
+
+  <div hx-get="/knowledge_graph/neo4j/status" hx-trigger="load" hx-swap="outerHTML">
+    <div id="neo4j-controls"><span class="text-muted" style="font-size:var(--text-sm)">Checking Neo4j...</span></div>
+  </div>
+
   <p>
     Models the per-response cascade (Layer0/Layer1/Layer2/Judge, CLAUDE.md SS3a/SS4) as an explicit
     lineage graph in Neo4j, so root-cause analysis is a graph traversal instead of a groupby you had
