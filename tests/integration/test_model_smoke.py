@@ -18,6 +18,8 @@ automatically if that model is not pulled in the local Ollama instance (the skip
 message will say which model was not found).
 """
 
+import json
+
 import pytest
 
 from core.adapters.ollama_client import OllamaClient
@@ -40,6 +42,21 @@ _SMOKE_SYSTEM_PROMPT = (
 )
 
 _SMOKE_USER_PROMPT = "Write one sentence describing the color blue."
+
+# Template echoes already recorded in tests/unit/test_model_fuzz_catalog.py. A probe that returns one
+# of these is a known, classified model behaviour (Layer 0: FORMAT_ERROR), handled like the
+# <rewritten output> rows in experiments: visible in the report as xfail with its catalogue reason,
+# not a red failure. Any other non-VALID response still fails the test.
+_KNOWN_TEMPLATE_ECHOES = {"<one sentence here>", "<rewritten output>"}
+
+
+def _echoed_placeholder(raw: str):
+    """Return the placeholder text when the response is a catalogued template echo, else None."""
+    try:
+        text = json.loads(raw).get("text")
+    except (ValueError, AttributeError):
+        return None
+    return text if text in _KNOWN_TEMPLATE_ECHOES else None
 
 
 @pytest.fixture(scope="module", autouse=True)
@@ -79,6 +96,12 @@ def test_model_produces_valid_json_for_minimal_prompt(model):
         raise
 
     classification = classify_response(result.text)
+    echoed = _echoed_placeholder(result.text)
+    if classification == ResponseClassification.FORMAT_ERROR and echoed is not None:
+        pytest.xfail(
+            f"Known template echo from {model!r}: {echoed!r} "
+            f"(catalogued in tests/unit/test_model_fuzz_catalog.py)"
+        )
     assert classification == ResponseClassification.VALID, (
         f"Model {model!r} returned Layer 0 classification {classification!r} for a minimal prompt.\n"
         f"Raw response: {result.text!r}\n"

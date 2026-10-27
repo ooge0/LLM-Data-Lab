@@ -44,6 +44,19 @@ def test_fuzz_tinyllama_output_tag_variant():
 
 
 @pytest.mark.req("REQ-CASC-L0-04")
+def test_fuzz_qwen_one_sentence_here_placeholder():
+    """qwen:latest, tests/integration/test_model_smoke.py, 2026-10-27.
+    qwen returned the example shape from the smoke probe's own system prompt verbatim,
+    {"text": "<one sentence here>"}, in 8 of 9 probe runs on this date (temperature 0.1,
+    so the rate is intermittent, not fixed). The probe's example invites the echo, so this
+    is partly prompt-induced, not only a model property. Layer 0 classifies it FORMAT_ERROR
+    by the same placeholder rule.
+    The smoke test reports it as a known pattern (xfail with this reason), not a red failure.
+    """
+    assert classify_response(json.dumps({"text": "<one sentence here>"})) == ResponseClassification.FORMAT_ERROR
+
+
+@pytest.mark.req("REQ-CASC-L0-04")
 def test_fuzz_angle_bracket_placeholder_with_spaces():
     """Generic placeholder variant: any single XML-tag-like string with internal spaces.
     Not confirmed from a specific run but structurally identical to the tinyllama pattern
