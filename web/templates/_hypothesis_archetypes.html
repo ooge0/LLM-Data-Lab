@@ -34,13 +34,14 @@
       </select>
     </label>
   </div>
-
+ <p></p>
   <button type="button" hx-post="/hypothesis_testing/compare" hx-include="#hypothesis-inputs"
           hx-target="#hypothesis-comparison-result" hx-swap="innerHTML"
           hx-indicator="#compare-spinner" hx-disabled-elt="this">
     Run hypothesis test
     <span id="compare-spinner" class="htmx-indicator spinner" aria-hidden="true"></span>
   </button>
+  <p></p>
   <div id="hypothesis-comparison-result"></div>
 
   <button type="button" hx-post="/hypothesis_testing/uncertainty" hx-include="#hypothesis-inputs"

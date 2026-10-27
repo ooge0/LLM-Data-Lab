@@ -58,6 +58,7 @@
 - **Sweep‑експерименти**  
   Виконуються для параметрів: Temperature, Top P, Frequency Penalty, Presence Penalty.  
   Формально:  
+
 $Sweep(Parameter) = \{p_{min}, p_{min} + \Delta, \dots, p_{max}\}$
 
 - **Prompt Strategies:**  
@@ -68,7 +69,8 @@ $Sweep(Parameter) = \{p_{min}, p_{min} + \Delta, \dots, p_{max}\}$
 - **RAG (Retrieval Augmented Generation):**  
   Підтримка режимів: *Psychotype Only* та *Full Context*.  
   Параметр Top‑K визначає кількість релевантних документів для підвантаження:  
-$Context = \{d_1, d_2, \dots, d_K\}$
+
+Context = \{d_1, d_2, \dots, d_K\}
 
 - **Функція розділення зміщення (bias split):**  
   Дозволяє відокремлювати вплив системних та користувацьких упереджень у генерації.
@@ -91,7 +93,8 @@ $Context = \{d_1, d_2, \dots, d_K\}$
 
 - **Velocity (швидкість генерації):**  
   Формула для розрахунку середнього часу на слово:  
-$Velocity = \frac{Час\ (мс)}{Кількість\ слів}$
+
+Velocity = \frac{Час\ (мс)}{Кількість\ слів}
 
 - **Загальний час генерації + валідації**  
   Включає сумарний час, витрачений на створення тексту та його перевірку.
@@ -116,8 +119,10 @@ $Velocity = \frac{Час\ (мс)}{Кількість\ слів}$
 - **Scatter Plot: Semantic Overlap vs Expansion**  
   Використовується для візуалізації співвідношення між семантичним перекриттям та розширенням тексту.  
   Формально:  
-$Overlap = \frac{|Tokens_{gen} \cap Tokens_{ref}|}{|Tokens_{ref}|}$
-$Expansion = \frac{|Tokens_{gen}|}{|Tokens_{ref}|}$
+
+Overlap = \frac{|Tokens_{gen} \cap Tokens_{ref}|}{|Tokens_{ref}|}
+
+Expansion = \frac{|Tokens_{gen}|}{|Tokens_{ref}|}
 
 - **Інтерпретація Scatter Plot:**  
   - Верхній лівий кут → креативне розширення (низьке перекриття, високе розширення)  
@@ -127,11 +132,14 @@ $Expansion = \frac{|Tokens_{gen}|}{|Tokens_{ref}|}$
 - **Візуалізація впливу гіперпараметрів на стиль і якість**  
   Дослідження залежності між Temperature, Top P, Penalties та характеристиками тексту.  
   Наприклад:  
-$Style\ Shift = f(Temperature, TopP, Penalties)$
+
+Style\ Shift = f(Temperature, TopP, Penalties)
 
 - **Heatmap успішності верифікації**  
   Показує відсоток успішних генерацій для різних комбінацій параметрів:  
-$Success\ Rate = \frac{Valid\ Generations}{Total\ Generations} \cdot 100\%$
+
+Success\ Rate = \frac{Valid\ Generations}{Total\ Generations} 
+\cdot 100\%
 
 ---
 
@@ -240,7 +248,7 @@ $\text{Velocity} = \frac{\text{Час (мс)}}{\text{Кількість слів
 - **Індекси якості кластеризації:**  
   - **CPI (Silhouette):**  
 
-$s(i) = \frac{b(i) - a(i)}{\max\{a(i), b(i)\}}$
+s(i) = \frac{b(i) - a(i)}{\max\{a(i), b(i)\}}
 
   де $a(i)$ — середня відстань до точок свого кластера, $b(i)$ — мінімальна середня відстань до іншого кластера.  
 
@@ -321,7 +329,8 @@ $Pass\ Rate = \frac{Valid\ Samples}{Total\ Samples} \cdot 100\%$
 
 - **Performance Metrics (Inference speed)**  
   Вимірює швидкість генерації:  
-$Velocity = \frac{Time\ (ms)}{Word\ Count}$
+
+Velocity = \frac{Time\ (ms)}{Word\ Count}
 
 - **Quality Metrics Heatmap**  
   Візуалізація якості за ознаками:  
