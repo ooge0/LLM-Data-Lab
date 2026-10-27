@@ -109,7 +109,7 @@ def test_db_export_page_has_bulk_select_checkboxes_wired_to_each_rows_own_button
     assert "htmx.trigger" in response.text
 
 
-@pytest.mark.req("REQ-OPS-DB-01")
+@pytest.mark.req("REQ-DATA-EXP-03")
 def test_bulk_export_button_renders_disabled_by_default(client, fake_repo):
     """Send-selected button must carry the HTML `disabled` attribute on page load (no rows
     pre-checked) so clicking it before selecting anything is blocked at the HTML level,
