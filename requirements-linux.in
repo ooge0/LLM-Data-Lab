@@ -70,3 +70,6 @@ nvidia-nccl-cu12>=2.20.5; sys_platform == 'linux'
 preshed>=3.0.10,<3.0.14
 # E2E (tests/e2e, CLAUDE.md SS7)
 pytest-playwright
+# Reporting for the linux-full tox env (Allure results, coverage). Pinned via the lock, not floating.
+allure-pytest
+pytest-cov

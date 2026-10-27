@@ -1453,874 +1453,1035 @@ Unit
      - Automated
      - tests/unit/test_metrics_engine.py::test_compare_judging_modes_without_run_metadata_reports_unknown_labels_not_a_crash
    * - TC-UNIT-206
+     - REQ-CASC-L0-04
+     - tinyllama:latest, run-1792697949526, 2026-10-25.
+     - Unit
+     - High
+     - Automated
+     - tests/unit/test_model_fuzz_catalog.py::test_fuzz_tinyllama_rewritten_output_placeholder
+   * - TC-UNIT-207
+     - REQ-CASC-L0-04
+     - tinyllama:latest, run-1792697949526, 2026-10-25.
+     - Unit
+     - High
+     - Automated
+     - tests/unit/test_model_fuzz_catalog.py::test_fuzz_tinyllama_output_tag_variant
+   * - TC-UNIT-208
+     - REQ-CASC-L0-04
+     - Generic placeholder variant: any single XML-tag-like string with internal spaces.
+     - Unit
+     - High
+     - Automated
+     - tests/unit/test_model_fuzz_catalog.py::test_fuzz_angle_bracket_placeholder_with_spaces
+   * - TC-UNIT-209
+     - REQ-CASC-L0-01
+     - Any model, any run.  A zero-token-budget or early-stop condition -- model returns
+     - Unit
+     - High
+     - Automated
+     - tests/unit/test_model_fuzz_catalog.py::test_fuzz_empty_text_field
+   * - TC-UNIT-210
+     - REQ-CASC-L0-01
+     - Same as empty, but the model filled the field with whitespace -- common when models
+     - Unit
+     - High
+     - Automated
+     - tests/unit/test_model_fuzz_catalog.py::test_fuzz_whitespace_only_text_field
+   * - TC-UNIT-211
+     - REQ-CASC-L0-02
+     - Any model, confirmed in 3/500 rows of a large run.  Unbalanced braces indicate
+     - Unit
+     - High
+     - Automated
+     - tests/unit/test_model_fuzz_catalog.py::test_fuzz_truncated_mid_sentence
+   * - TC-UNIT-212
+     - REQ-CASC-L0-02
+     - Unbalanced quotes are another signature of mid-generation truncation.
+     - Unit
+     - High
+     - Automated
+     - tests/unit/test_model_fuzz_catalog.py::test_fuzz_truncated_unbalanced_quotes
+   * - TC-UNIT-213
+     - REQ-CASC-L0-02
+     - Any model, seen in runs where temperature is high or the system prompt is short.
+     - Unit
+     - High
+     - Automated
+     - tests/unit/test_model_fuzz_catalog.py::test_fuzz_plain_prose_no_json_wrapper
+   * - TC-UNIT-214
+     - REQ-CASC-L0-03
+     - Any model.  Valid JSON but the key is not 'text' -- model followed a different
+     - Unit
+     - High
+     - Automated
+     - tests/unit/test_model_fuzz_catalog.py::test_fuzz_wrong_json_key
+   * - TC-UNIT-215
+     - REQ-CASC-L0-03
+     - Some models return a JSON array when asked for an object.  Syntactically valid JSON,
+     - Unit
+     - High
+     - Automated
+     - tests/unit/test_model_fuzz_catalog.py::test_fuzz_json_array_not_object
+   * - TC-UNIT-216
+     - REQ-CASC-L0-04
+     - Generic LLM behavior: model echoes a fill-in-the-blank placeholder from training data.
+     - Unit
+     - High
+     - Automated (xfail)
+     - tests/unit/test_model_fuzz_catalog.py::test_fuzz_insert_text_here_not_yet_caught
+   * - TC-UNIT-217
+     - REQ-CASC-L0-04
+     - Jinja/mustache template echo: model returns double-brace placeholder instead of content.
+     - Unit
+     - High
+     - Automated (xfail)
+     - tests/unit/test_model_fuzz_catalog.py::test_fuzz_jinja_style_placeholder_not_yet_caught
+   * - TC-UNIT-218
      - REQ-KG-SYNC-01
      - (no docstring)
      - Unit
      - High
      - Automated
      - tests/unit/test_neo4j_repo.py::test_parse_rag_chunks_recovers_archetype_and_category_from_the_real_serialized_format
-   * - TC-UNIT-207
+   * - TC-UNIT-219
      - REQ-KG-SYNC-01
      - (no docstring)
      - Unit
      - High
      - Automated
      - tests/unit/test_neo4j_repo.py::test_parse_rag_chunks_handles_empty_and_none_input
-   * - TC-UNIT-208
+   * - TC-UNIT-220
      - REQ-KG-SYNC-01
      - (no docstring)
      - Unit
      - High
      - Automated
      - tests/unit/test_neo4j_repo.py::test_build_rows_layer0_rejected_response_reaches_nothing_past_layer0
-   * - TC-UNIT-209
+   * - TC-UNIT-221
      - REQ-KG-SYNC-01
      - Real, non-obvious pipeline behavior: Layer 2's hallucination check runs unconditionally on
      - Unit
      - High
      - Automated
      - tests/unit/test_neo4j_repo.py::test_build_rows_echo_rejected_response_can_still_reach_layer2_but_never_the_judge
-   * - TC-UNIT-210
+   * - TC-UNIT-222
      - REQ-KG-SYNC-01
      - (no docstring)
      - Unit
      - High
      - Automated
      - tests/unit/test_neo4j_repo.py::test_build_rows_a_response_that_reaches_a_real_judge_call_is_marked_correctly
-   * - TC-UNIT-211
+   * - TC-UNIT-223
      - REQ-KG-SYNC-01
      - (no docstring)
      - Unit
      - High
      - Automated
      - tests/unit/test_neo4j_repo.py::test_build_rows_parses_real_rag_chunks_only_when_rag_enabled
-   * - TC-UNIT-212
+   * - TC-UNIT-224
      - REQ-KG-ST-02
      - gds.knn.stream returns each real-world pair twice (once from each node's own top-K list),
      - Unit
      - Medium
      - Automated
      - tests/unit/test_neo4j_repo.py::test_summarize_similarity_pairs_dedupes_directed_rows_keeping_the_max_similarity
-   * - TC-UNIT-213
+   * - TC-UNIT-225
      - REQ-KG-ST-02
      - (no docstring)
      - Unit
      - Medium
      - Automated
      - tests/unit/test_neo4j_repo.py::test_summarize_similarity_pairs_excludes_self_pairs
-   * - TC-UNIT-214
-     - REQ-KG-ST-02
-     - (no docstring)
-     - Unit
-     - Medium
-     - Automated
-     - tests/unit/test_neo4j_repo.py::test_summarize_similarity_pairs_caps_at_five_sorted_descending
-   * - TC-UNIT-215
-     - REQ-KG-ST-02
-     - Real Stage 5 finding, not invented: a node can have a merely-ordinary similarity to one
-     - Unit
-     - Medium
-     - Automated
-     - tests/unit/test_neo4j_repo.py::test_summarize_similarity_pairs_flags_the_node_whose_best_match_is_weakest_as_anomalous
-   * - TC-UNIT-216
-     - REQ-KG-ST-02
-     - (no docstring)
-     - Unit
-     - Medium
-     - Automated
-     - tests/unit/test_neo4j_repo.py::test_summarize_similarity_pairs_handles_empty_input
-   * - TC-UNIT-217
-     - REQ-KG-SYNC-02
-     - (no docstring)
-     - Unit
-     - Medium
-     - Automated
-     - tests/unit/test_neo4j_repo.py::test_sync_sends_the_bootstrap_and_the_unwind_sync_and_returns_the_real_count
-   * - TC-UNIT-218
-     - REQ-KG-SYNC-02
-     - (no docstring)
-     - Unit
-     - Medium
-     - Automated
-     - tests/unit/test_neo4j_repo.py::test_sync_with_zero_responses_does_not_send_the_unwind_query_and_returns_zero
-   * - TC-UNIT-219
-     - REQ-KG-Q-01
-     - (no docstring)
-     - Unit
-     - Medium
-     - Automated
-     - tests/unit/test_neo4j_repo.py::test_echo_rejections_by_model_returns_the_real_query_shape
-   * - TC-UNIT-220
-     - REQ-KG-Q-01
-     - (no docstring)
-     - Unit
-     - Medium
-     - Automated
-     - tests/unit/test_neo4j_repo.py::test_terminal_stage_by_archetype_passes_the_archetype_param
-   * - TC-UNIT-221
-     - REQ-KG-Q-01
-     - (no docstring)
-     - Unit
-     - Medium
-     - Automated
-     - tests/unit/test_neo4j_repo.py::test_rag_chunks_linked_to_echo_returns_the_real_query_shape
-   * - TC-UNIT-222
-     - REQ-KG-ST-01
-     - (no docstring)
-     - Unit
-     - Medium
-     - Automated
-     - tests/unit/test_neo4j_repo.py::test_behavioral_communities_returns_modularity_count_and_rows
-   * - TC-UNIT-223
-     - REQ-KG-ST-01
-     - (no docstring)
-     - Unit
-     - Medium
-     - Automated
-     - tests/unit/test_neo4j_repo.py::test_behavioral_communities_materializes_cooccurrence_then_projects_before_running_leiden
-   * - TC-UNIT-224
-     - REQ-KG-ST-01
-     - Real GDS behavior: a stale in-memory graph catalog entry from a previous call would make a
-     - Unit
-     - Medium
-     - Automated
-     - tests/unit/test_neo4j_repo.py::test_behavioral_communities_drops_the_projected_graph_both_before_and_after
-   * - TC-UNIT-225
-     - REQ-KG-ST-01
-     - (no docstring)
-     - Unit
-     - Medium
-     - Automated
-     - tests/unit/test_neo4j_repo.py::test_behavioral_communities_still_drops_the_graph_when_leiden_itself_raises
    * - TC-UNIT-226
      - REQ-KG-ST-02
      - (no docstring)
      - Unit
      - Medium
      - Automated
-     - tests/unit/test_neo4j_repo.py::test_structural_similarity_returns_the_summarized_shape
+     - tests/unit/test_neo4j_repo.py::test_summarize_similarity_pairs_caps_at_five_sorted_descending
    * - TC-UNIT-227
      - REQ-KG-ST-02
-     - (no docstring)
+     - Real Stage 5 finding, not invented: a node can have a merely-ordinary similarity to one
      - Unit
      - Medium
      - Automated
-     - tests/unit/test_neo4j_repo.py::test_structural_similarity_mutates_embeddings_before_running_knn
+     - tests/unit/test_neo4j_repo.py::test_summarize_similarity_pairs_flags_the_node_whose_best_match_is_weakest_as_anomalous
    * - TC-UNIT-228
      - REQ-KG-ST-02
      - (no docstring)
      - Unit
      - Medium
      - Automated
-     - tests/unit/test_neo4j_repo.py::test_structural_similarity_still_drops_the_graph_when_knn_itself_raises
+     - tests/unit/test_neo4j_repo.py::test_summarize_similarity_pairs_handles_empty_input
    * - TC-UNIT-229
+     - REQ-KG-SYNC-02
+     - (no docstring)
+     - Unit
+     - Medium
+     - Automated
+     - tests/unit/test_neo4j_repo.py::test_sync_sends_the_bootstrap_and_the_unwind_sync_and_returns_the_real_count
+   * - TC-UNIT-230
+     - REQ-KG-SYNC-02
+     - (no docstring)
+     - Unit
+     - Medium
+     - Automated
+     - tests/unit/test_neo4j_repo.py::test_sync_with_zero_responses_does_not_send_the_unwind_query_and_returns_zero
+   * - TC-UNIT-231
+     - REQ-KG-Q-01
+     - (no docstring)
+     - Unit
+     - Medium
+     - Automated
+     - tests/unit/test_neo4j_repo.py::test_echo_rejections_by_model_returns_the_real_query_shape
+   * - TC-UNIT-232
+     - REQ-KG-Q-01
+     - (no docstring)
+     - Unit
+     - Medium
+     - Automated
+     - tests/unit/test_neo4j_repo.py::test_terminal_stage_by_archetype_passes_the_archetype_param
+   * - TC-UNIT-233
+     - REQ-KG-Q-01
+     - (no docstring)
+     - Unit
+     - Medium
+     - Automated
+     - tests/unit/test_neo4j_repo.py::test_rag_chunks_linked_to_echo_returns_the_real_query_shape
+   * - TC-UNIT-234
+     - REQ-KG-ST-01
+     - (no docstring)
+     - Unit
+     - Medium
+     - Automated
+     - tests/unit/test_neo4j_repo.py::test_behavioral_communities_returns_modularity_count_and_rows
+   * - TC-UNIT-235
+     - REQ-KG-ST-01
+     - (no docstring)
+     - Unit
+     - Medium
+     - Automated
+     - tests/unit/test_neo4j_repo.py::test_behavioral_communities_materializes_cooccurrence_then_projects_before_running_leiden
+   * - TC-UNIT-236
+     - REQ-KG-ST-01
+     - Real GDS behavior: a stale in-memory graph catalog entry from a previous call would make a
+     - Unit
+     - Medium
+     - Automated
+     - tests/unit/test_neo4j_repo.py::test_behavioral_communities_drops_the_projected_graph_both_before_and_after
+   * - TC-UNIT-237
+     - REQ-KG-ST-01
+     - (no docstring)
+     - Unit
+     - Medium
+     - Automated
+     - tests/unit/test_neo4j_repo.py::test_behavioral_communities_still_drops_the_graph_when_leiden_itself_raises
+   * - TC-UNIT-238
+     - REQ-KG-ST-02
+     - (no docstring)
+     - Unit
+     - Medium
+     - Automated
+     - tests/unit/test_neo4j_repo.py::test_structural_similarity_returns_the_summarized_shape
+   * - TC-UNIT-239
+     - REQ-KG-ST-02
+     - (no docstring)
+     - Unit
+     - Medium
+     - Automated
+     - tests/unit/test_neo4j_repo.py::test_structural_similarity_mutates_embeddings_before_running_knn
+   * - TC-UNIT-240
+     - REQ-KG-ST-02
+     - (no docstring)
+     - Unit
+     - Medium
+     - Automated
+     - tests/unit/test_neo4j_repo.py::test_structural_similarity_still_drops_the_graph_when_knn_itself_raises
+   * - TC-UNIT-241
      - REQ-KG-PR-01
      - (no docstring)
      - Unit
      - Medium
      - Automated
      - tests/unit/test_neo4j_repo.py::test_archetype_bias_pagerank_returns_the_real_query_shape
-   * - TC-UNIT-230
+   * - TC-UNIT-242
      - REQ-KG-PR-01
      - Real, self-caught bug: a weight-less ASSOCIATED_WITH edge makes gds.pageRank.stream's
      - Unit
      - Medium
      - Automated
      - tests/unit/test_neo4j_repo.py::test_archetype_bias_pagerank_deletes_weightless_edges_before_projecting
-   * - TC-UNIT-231
+   * - TC-UNIT-243
      - REQ-KG-PR-01
      - (no docstring)
      - Unit
      - Medium
      - Automated
      - tests/unit/test_neo4j_repo.py::test_archetype_bias_pagerank_drops_the_projected_graph_both_before_and_after
-   * - TC-UNIT-232
+   * - TC-UNIT-244
      - REQ-KG-PR-01
      - (no docstring)
      - Unit
      - Medium
      - Automated
      - tests/unit/test_neo4j_repo.py::test_archetype_bias_graph_data_returns_deduplicated_nodes_and_real_edges
-   * - TC-UNIT-233
+   * - TC-UNIT-245
      - REQ-KG-PR-01
      - (no docstring)
      - Unit
      - Medium
      - Automated
      - tests/unit/test_neo4j_repo.py::test_archetype_bias_graph_data_also_deletes_weightless_edges_first
-   * - TC-UNIT-234
+   * - TC-UNIT-246
      - REQ-MET-LING-03
      - One 4-word sentence, one subordinator ("because"), one punctuation character (the
      - Unit
      - High
      - Automated
      - tests/unit/test_neuro_metrics.py::test_cognitive_load_on_a_short_plain_sentence_pinned_by_hand
-   * - TC-UNIT-235
+   * - TC-UNIT-247
      - REQ-MET-LING-03
      - A single 80-word "sentence" exceeds the 40-word normalization cap, so
      - Unit
      - High
      - Automated
      - tests/unit/test_neuro_metrics.py::test_cognitive_load_sentence_length_saturates_at_the_cap
-   * - TC-UNIT-236
+   * - TC-UNIT-248
      - REQ-MET-LING-03
      - Regression test for the real normalization bug: before normalization, sentence length's raw
      - Unit
      - High
      - Automated
      - tests/unit/test_neuro_metrics.py::test_cognitive_load_all_three_components_contribute_not_just_sentence_length
-   * - TC-UNIT-237
+   * - TC-UNIT-249
      - REQ-MET-LING-03
      - No words or no sentences short-circuits to 0 rather than dividing by zero.
      - Unit
      - High
      - Automated
      - tests/unit/test_neuro_metrics.py::test_cognitive_load_returns_zero_for_empty_input
-   * - TC-UNIT-238
+   * - TC-UNIT-250
      - REQ-MET-LING-03
      - Even a pathological input (very long single sentence, extremely heavy punctuation, every
      - Unit
      - High
      - Automated
      - tests/unit/test_neuro_metrics.py::test_cognitive_load_never_exceeds_one
-   * - TC-UNIT-239
+   * - TC-UNIT-251
      - REQ-MET-LING-01
      - "a a a b b c" -> word frequencies {a:3, b:2, c:1}, ranks [1,2,3].
      - Unit
      - High
      - Automated
      - tests/unit/test_nlp_science.py::test_zipf_deviation_pinned_on_a_hand_computed_distribution
-   * - TC-UNIT-240
+   * - TC-UNIT-252
      - REQ-MET-LING-01
      - A string with no alphabetic tokens (only punctuation/numbers) returns 0.0 rather than dividing by zero.
      - Unit
      - High
      - Automated
      - tests/unit/test_nlp_science.py::test_zipf_deviation_on_text_with_no_alphabetic_words_is_zero
-   * - TC-UNIT-241
+   * - TC-UNIT-253
      - REQ-MET-LING-01
      - An empty string returns 0.0, matching the no-words guard.
      - Unit
      - High
      - Automated
      - tests/unit/test_nlp_science.py::test_zipf_deviation_on_empty_string_is_zero
-   * - TC-UNIT-242
+   * - TC-UNIT-254
      - REQ-MET-LING-01
      - zipf_deviation is an RMSE-based score, normalized -- always >= 0 for any real text.
      - Unit
      - High
      - Automated
      - tests/unit/test_nlp_science.py::test_zipf_deviation_is_non_negative
-   * - TC-UNIT-243
+   * - TC-UNIT-255
      - REQ-MET-LING-02
      - 8 words, 2 self-pronouns (i, we) and 2 social-pronouns (you, your) -- both ratios pinned equal by construction.
      - Unit
      - Medium
      - Automated
      - tests/unit/test_nlp_science.py::test_social_focus_contrasts_with_self_focus_on_a_symmetric_sentence
-   * - TC-UNIT-244
+   * - TC-UNIT-256
      - REQ-MET-LING-02
      - (no docstring)
      - Unit
      - Medium
      - Automated
      - tests/unit/test_nlp_science.py::test_social_focus_is_zero_when_no_social_pronouns_present
-   * - TC-UNIT-245
+   * - TC-UNIT-257
      - REQ-MET-LING-02
      - 9 words, 3 hedge words (might, possibly, could) -> 3/9.
      - Unit
      - Medium
      - Automated
      - tests/unit/test_nlp_science.py::test_hedge_ratio_pinned_on_a_fixed_sentence
-   * - TC-UNIT-246
+   * - TC-UNIT-258
      - REQ-MET-LING-02
      - 7 words, 2 booster words (definitely, absolutely) -> 2/7.
      - Unit
      - Medium
      - Automated
      - tests/unit/test_nlp_science.py::test_booster_ratio_pinned_on_a_fixed_sentence
-   * - TC-UNIT-247
+   * - TC-UNIT-259
      - REQ-MET-LING-02
      - (no docstring)
      - Unit
      - Medium
      - Automated
      - tests/unit/test_nlp_science.py::test_hedge_and_booster_ratio_are_zero_on_empty_text
-   * - TC-UNIT-248
+   * - TC-UNIT-260
      - REQ-GEN-OLL-01
      - _native_host derives Ollama's native-API host from the existing [OLLAMA] openai_base_url, not a separate config value.
      - Unit
      - High
      - Automated
      - tests/unit/test_ollama_client.py::test_native_host_strips_v1_suffix_from_the_openai_compat_base_url
-   * - TC-UNIT-249
+   * - TC-UNIT-261
      - REQ-GEN-OLL-01
      - A base URL that doesn't end in /v1 (unexpected, but shouldn't crash) passes through as-is.
      - Unit
      - High
      - Automated
      - tests/unit/test_ollama_client.py::test_native_host_leaves_a_url_without_v1_suffix_unchanged
-   * - TC-UNIT-250
+   * - TC-UNIT-262
      - REQ-GEN-OLL-01
      - The underlying ollama.Client is built from config.ini's [OLLAMA] section, native host (no /v1).
      - Unit
      - High
      - Automated
      - tests/unit/test_ollama_client.py::test_constructs_with_the_native_host_derived_from_configured_credentials
-   * - TC-UNIT-251
+   * - TC-UNIT-263
      - REQ-GEN-OLL-01
      - generate() forwards to the swapped-in client and returns its content as a GenerationResult.
      - Unit
      - High
      - Automated
      - tests/unit/test_ollama_client.py::test_generate_returns_text_and_model
-   * - TC-UNIT-252
+   * - TC-UNIT-264
      - REQ-GEN-OLL-01
      - The system and user prompts are sent as separate role-tagged messages, matching the legacy call shape.
      - Unit
      - High
      - Automated
      - tests/unit/test_ollama_client.py::test_generate_sends_system_and_user_as_separate_messages
-   * - TC-UNIT-253
+   * - TC-UNIT-265
      - REQ-GEN-OLL-01
      - json_mode=True requests format='json', the native-API equivalent of the compat endpoint's response_format.
      - Unit
      - High
      - Automated
      - tests/unit/test_ollama_client.py::test_generate_json_mode_requests_json_format
-   * - TC-UNIT-254
+   * - TC-UNIT-266
      - REQ-GEN-OLL-01
      - json_mode=False (default) sends format=None.
      - Unit
      - High
      - Automated
      - tests/unit/test_ollama_client.py::test_generate_no_json_mode_sends_none_format
-   * - TC-UNIT-255
+   * - TC-UNIT-267
      - REQ-GEN-OLL-02
      - prompt_tokens/completion_tokens come from Ollama's own prompt_eval_count/eval_count -- real counts, not a word-count proxy.
      - Unit
      - Medium
      - Automated
      - tests/unit/test_ollama_client.py::test_generate_maps_token_counts_from_the_native_response
-   * - TC-UNIT-256
+   * - TC-UNIT-268
      - REQ-GEN-OLL-02
      - The ollama_*_duration_ms fields are Ollama's own nanosecond fields divided by 1e6, not otherwise altered.
      - Unit
      - Medium
      - Automated
      - tests/unit/test_ollama_client.py::test_generate_converts_ollama_nanosecond_durations_to_milliseconds
-   * - TC-UNIT-257
+   * - TC-UNIT-269
      - REQ-GEN-OLL-02
      - A response missing the performance fields (e.g. a stub/older server) leaves them None rather than crashing.
      - Unit
      - Medium
      - Automated
      - tests/unit/test_ollama_client.py::test_generate_leaves_ollama_fields_none_when_the_response_omits_them
-   * - TC-UNIT-258
+   * - TC-UNIT-270
      - REQ-KG-PR-02
      - In the complete bipartite graph K(5,6) every Archetype scores the same, and so does every Bias.
      - Unit
      - Medium
      - Automated
      - tests/unit/test_pagerank_symmetry.py::test_complete_bipartite_unweighted_scores_are_uniform_within_each_side
-   * - TC-UNIT-259
+   * - TC-UNIT-271
      - REQ-KG-PR-02
      - Completeness alone forces uniformity: the unweighted graph ignores how often each pair co-occurred.
      - Unit
      - Medium
      - Automated
      - tests/unit/test_pagerank_symmetry.py::test_unweighted_uniformity_does_not_depend_on_balanced_counts
-   * - TC-UNIT-260
+   * - TC-UNIT-272
      - REQ-KG-PR-02
      - The 5-node Archetype side outscores the 6-node Bias side by the same ratio the live GDS run recorded.
      - Unit
      - Medium
      - Automated
      - tests/unit/test_pagerank_symmetry.py::test_smaller_side_scores_higher_and_ratio_matches_the_recorded_live_gds_run
-   * - TC-UNIT-261
+   * - TC-UNIT-273
      - REQ-KG-PR-02
      - Remove one co-occurrence and the graph is no longer complete: scores now differ within a side.
      - Unit
      - Medium
      - Automated
      - tests/unit/test_pagerank_symmetry.py::test_missing_pair_breaks_the_symmetry
-   * - TC-UNIT-262
+   * - TC-UNIT-274
      - REQ-KG-PR-02
      - The weighted graph (what the app uses now) is only informative if co-occurrence counts vary.
      - Unit
      - Medium
      - Automated
      - tests/unit/test_pagerank_symmetry.py::test_weighted_scores_differ_within_a_side_when_counts_are_unequal
-   * - TC-UNIT-263
+   * - TC-UNIT-275
      - REQ-KG-PR-02
      - Perfectly balanced counts bring the uniformity back: balance matters for the weighted graph only.
      - Unit
      - Medium
      - Automated
      - tests/unit/test_pagerank_symmetry.py::test_weighted_scores_are_uniform_again_when_all_counts_are_equal
-   * - TC-UNIT-264
+   * - TC-UNIT-276
      - REQ-GEN-PROMPT-01
      - TUNED mode names the archetype explicitly, matching streamlit_app.py lines 901-909.
      - Unit
      - Medium
      - Automated
      - tests/unit/test_prompt_strategy.py::test_tuned_mode_includes_archetype_name
-   * - TC-UNIT-265
+   * - TC-UNIT-277
      - REQ-GEN-PROMPT-01
      - TUNED mode with exclude_archetype_from_prompt=True omits the archetype name entirely.
      - Unit
      - Medium
      - Automated
      - tests/unit/test_prompt_strategy.py::test_tuned_mode_excludes_archetype_name_when_requested
-   * - TC-UNIT-266
+   * - TC-UNIT-278
      - REQ-GEN-PROMPT-01
      - BLIND mode never mentions the archetype name, matching streamlit_app.py lines 910-917.
      - Unit
      - Medium
      - Automated
      - tests/unit/test_prompt_strategy.py::test_blind_mode_hides_the_archetype_label
-   * - TC-UNIT-267
+   * - TC-UNIT-279
      - REQ-GEN-PROMPT-01
      - RAW mode ignores the 'common' phrases entirely, matching streamlit_app.py lines 918-922.
      - Unit
      - Medium
      - Automated
      - tests/unit/test_prompt_strategy.py::test_raw_mode_uses_only_the_archetypes_own_sys_prompt
-   * - TC-UNIT-268
+   * - TC-UNIT-280
      - REQ-GEN-PROMPT-01
      - A mode outside the three known PromptMode members raises, rather than silently falling through.
      - Unit
      - Medium
      - Automated
      - tests/unit/test_prompt_strategy.py::test_unknown_mode_raises_value_error
-   * - TC-UNIT-269
+   * - TC-UNIT-281
      - -
      - Each of the four real test directories maps to its documented display name.
      - Unit
      - 
      - Automated
      - tests/unit/test_qa_report_lib.py::test_type_from_node_id_maps_every_known_directory
-   * - TC-UNIT-270
+   * - TC-UNIT-282
      - -
      - A node id outside the four known test directories is a real error, not silently skipped here (the caller skips it).
      - Unit
      - 
      - Automated
      - tests/unit/test_qa_report_lib.py::test_type_from_node_id_rejects_an_unknown_directory
-   * - TC-UNIT-271
+   * - TC-UNIT-283
      - -
      - Each type gets its own TC-<TYPE>-NNN sequence, zero-padded to three digits, starting at 001.
      - Unit
      - 
      - Automated
      - tests/unit/test_qa_report_lib.py::test_assign_tc_ids_numbers_sequentially_per_type_starting_at_one
-   * - TC-UNIT-272
+   * - TC-UNIT-284
      - -
      - An empty list for a type contributes zero entries, not a crash or an off-by-one id.
      - Unit
      - 
      - Automated
      - tests/unit/test_qa_report_lib.py::test_assign_tc_ids_on_a_type_with_no_tests_assigns_nothing
-   * - TC-UNIT-273
+   * - TC-UNIT-285
      - -
      - Not covered -> Not implemented; covered and real -> Automated; covered but xfail -> Automated (xfail).
      - Unit
      - 
      - Automated
      - tests/unit/test_qa_report_lib.py::test_status_label_three_fixed_outcomes
-   * - TC-UNIT-274
+   * - TC-UNIT-286
      - -
      - A multi-line docstring with leading blank lines/whitespace still yields a clean first line.
      - Unit
      - 
      - Automated
      - tests/unit/test_qa_report_lib.py::test_first_docstring_line_strips_and_takes_the_first_non_blank_line
-   * - TC-UNIT-275
+   * - TC-UNIT-287
      - -
      - A test with no docstring at all gets an honest placeholder, not a crash or a blank cell.
      - Unit
      - 
      - Automated
      - tests/unit/test_qa_report_lib.py::test_first_docstring_line_on_none_or_empty_returns_the_fixed_placeholder
-   * - TC-UNIT-276
+   * - TC-UNIT-288
      - -
      - The rendered text is a real `.. list-table::` directive with one '* -' row start per data row.
      - Unit
      - 
      - Automated
      - tests/unit/test_qa_report_lib.py::test_render_list_table_produces_valid_rst_structure
-   * - TC-UNIT-277
+   * - TC-UNIT-289
      - -
      - A malformed row (wrong cell count) is a real authoring error in the generator, caught immediately.
      - Unit
      - 
      - Automated
      - tests/unit/test_qa_report_lib.py::test_render_list_table_rejects_a_row_with_the_wrong_number_of_cells
-   * - TC-UNIT-278
+   * - TC-UNIT-290
      - -
      - A non-xfail test's req ids all gain its node id; an xfail test's req ids gain nothing.
      - Unit
      - 
      - Automated
      - tests/unit/test_qa_report_lib.py::test_build_coverage_groups_node_ids_by_req_id_and_excludes_xfail
-   * - TC-UNIT-279
+   * - TC-UNIT-291
      - -
      - The collection plugin builds one record per item with every field generate_qa_docs needs.
      - Unit
      - 
      - Automated
      - tests/unit/test_qa_report_lib.py::test_qa_test_collector_records_type_req_ids_xfail_and_docstring
-   * - TC-UNIT-280
+   * - TC-UNIT-292
      - -
      - An item whose node id isn't under tests/<known-dir>/ is silently excluded, not a crash.
      - Unit
      - 
      - Automated
      - tests/unit/test_qa_report_lib.py::test_qa_test_collector_skips_items_outside_the_known_test_directories
-   * - TC-UNIT-281
+   * - TC-UNIT-293
      - REQ-GEN-RAG-03
      - RAGKnowledgeBase.retrieve(query=...) calls RAGEngine.retrieve(text=...) -- the interface's parameter rename.
      - Unit
      - Low
      - Automated
      - tests/unit/test_rag_knowledge_base.py::test_retrieve_renames_query_to_text_for_the_underlying_engine
-   * - TC-UNIT-282
+   * - TC-UNIT-294
      - REQ-GEN-RAG-03
      - retrieve() with only a query uses the documented defaults (top_k=5, archetype=None).
      - Unit
      - Low
      - Automated
      - tests/unit/test_rag_knowledge_base.py::test_retrieve_default_top_k_and_archetype
-   * - TC-UNIT-283
+   * - TC-UNIT-295
      - REQ-GEN-RAG-03
      - load_knowledge_base() forwards the folder path to RAGEngine.load_knowledge_base().
      - Unit
      - Low
      - Automated
      - tests/unit/test_rag_knowledge_base.py::test_load_knowledge_base_delegates_to_the_engine
-   * - TC-UNIT-284
+   * - TC-UNIT-296
      - REQ-GEN-RAG-03
      - RAGKnowledgeBase() with no engine builds a real (unloaded) RAGEngine, not None.
      - Unit
      - Low
      - Automated
      - tests/unit/test_rag_knowledge_base.py::test_without_an_injected_engine_a_real_ragengine_is_constructed
-   * - TC-UNIT-285
+   * - TC-UNIT-297
      - REQ-CASC-L0-03
      - (no docstring)
      - Unit
      - High
      - Automated
      - tests/unit/test_response_classification.py::test_classify_response_valid_json_with_text_key_is_valid
-   * - TC-UNIT-286
+   * - TC-UNIT-298
      - REQ-CASC-L0-01
      - (no docstring)
      - Unit
      - High
      - Automated
      - tests/unit/test_response_classification.py::test_classify_response_empty_string_is_empty
-   * - TC-UNIT-287
+   * - TC-UNIT-299
      - REQ-CASC-L0-01
      - The JSON structure is fine, but the actual text content is blank -- still nothing to judge.
      - Unit
      - High
      - Automated
      - tests/unit/test_response_classification.py::test_classify_response_valid_json_with_empty_text_value_is_empty
-   * - TC-UNIT-288
+   * - TC-UNIT-300
      - REQ-CASC-L0-03
      - (no docstring)
      - Unit
      - High
      - Automated
      - tests/unit/test_response_classification.py::test_classify_response_valid_json_missing_text_key_is_schema_error
-   * - TC-UNIT-289
+   * - TC-UNIT-301
      - REQ-CASC-L0-03
      - A JSON array or bare string is syntactically valid JSON but not the expected {"text": ...} shape.
      - Unit
      - High
      - Automated
      - tests/unit/test_response_classification.py::test_classify_response_valid_json_but_not_an_object_is_schema_error
-   * - TC-UNIT-290
+   * - TC-UNIT-302
      - REQ-CASC-L0-02
      - Unbalanced braces/quotes -- the classic shape of a response that hit a token limit mid-generation, not one that was garbled from the start.
      - Unit
      - High
      - Automated
      - tests/unit/test_response_classification.py::test_classify_response_cut_off_mid_json_is_truncated
-   * - TC-UNIT-291
+   * - TC-UNIT-303
      - REQ-CASC-L0-02
      - Complete, well-formed-looking prose that just isn't JSON at all -- ends on a normal sentence boundary, braces balanced (zero of each), so it doesn't look cut off.
      - Unit
      - High
      - Automated
      - tests/unit/test_response_classification.py::test_classify_response_genuinely_garbled_non_json_is_malformed
-   * - TC-UNIT-292
+   * - TC-UNIT-304
+     - REQ-CASC-L0-04
+     - The exact failure mode confirmed in run-1792697949526: tinyllama returned
+     - Unit
+     - High
+     - Automated
+     - tests/unit/test_response_classification.py::test_classify_response_template_echo_placeholder_is_format_error
+   * - TC-UNIT-305
+     - REQ-CASC-L0-04
+     - (no docstring)
+     - Unit
+     - High
+     - Automated
+     - tests/unit/test_response_classification.py::test_classify_response_single_tag_placeholder_is_format_error
+   * - TC-UNIT-306
+     - REQ-CASC-L0-03
+     - A real response that happens to contain XML-like markup is not a placeholder --
+     - Unit
+     - High
+     - Automated
+     - tests/unit/test_response_classification.py::test_classify_response_text_containing_but_not_only_angle_brackets_is_valid
+   * - TC-UNIT-307
      - REQ-CASC-L1-01
      - Real echo failures observed in this project's own generated data scored 0.59 and 0.98 -- both must be flagged.
      - Unit
      - High
      - Automated
      - tests/unit/test_response_classification.py::test_is_echo_response_true_for_real_confirmed_echo_scores
-   * - TC-UNIT-293
+   * - TC-UNIT-308
      - REQ-CASC-L1-01
      - Real genuine, substantive responses observed in this project's own generated data scored between 0.06 and 0.30 -- none of these should be flagged as echoes.
      - Unit
      - High
      - Automated
      - tests/unit/test_response_classification.py::test_is_echo_response_false_for_real_genuine_response_scores
-   * - TC-UNIT-294
+   * - TC-UNIT-309
      - REQ-CASC-L1-01
      - Exactly at the threshold is not flagged -- only strictly above it is, matching the real data's clean gap sitting well past 0.5 on the echo side.
      - Unit
      - High
      - Automated
      - tests/unit/test_response_classification.py::test_is_echo_response_boundary_at_exactly_the_threshold
-   * - TC-UNIT-295
+   * - TC-UNIT-310
      - REQ-OPS-DOC-01
      - (no docstring)
      - Unit
      - Low
      - Automated
      - tests/unit/test_serve_docs.py::test_main_raises_system_exit_with_a_helpful_message_when_build_dir_is_missing
-   * - TC-UNIT-296
+   * - TC-UNIT-311
      - REQ-OPS-DOC-01
      - (no docstring)
      - Unit
      - Low
      - Automated
      - tests/unit/test_serve_docs.py::test_default_docs_html_dir_points_at_the_real_sphinx_build_output_location
-   * - TC-UNIT-297
+   * - TC-UNIT-312
      - REQ-DATA-SQL-01
      - save_run() echoes the run's own ID back.
      - Unit
      - High
      - Automated
      - tests/unit/test_sqlite_repo.py::test_save_run_returns_the_run_id
-   * - TC-UNIT-298
+   * - TC-UNIT-313
      - REQ-DATA-SQL-01
      - A saved run's config round-trips through the ORM's JSON column intact.
      - Unit
      - High
      - Automated
      - tests/unit/test_sqlite_repo.py::test_save_run_persists_config_as_structured_data
-   * - TC-UNIT-299
+   * - TC-UNIT-314
      - REQ-DATA-SQL-01
      - Responses saved for a run come back identical via load_responses(run_id).
      - Unit
      - High
      - Automated
      - tests/unit/test_sqlite_repo.py::test_save_response_and_load_responses_round_trip
-   * - TC-UNIT-300
+   * - TC-UNIT-315
      - REQ-DATA-SQL-01
      - load_responses(run_id) does not leak another run's responses -- the normalization Stage 0's finding motivated.
      - Unit
      - High
      - Automated
      - tests/unit/test_sqlite_repo.py::test_load_responses_filters_by_run_id_across_multiple_runs
-   * - TC-UNIT-301
+   * - TC-UNIT-316
      - REQ-DATA-SQL-01
      - load_responses() with no run_id returns responses across every run.
      - Unit
      - High
      - Automated
      - tests/unit/test_sqlite_repo.py::test_load_responses_without_run_id_returns_all_runs
-   * - TC-UNIT-302
+   * - TC-UNIT-317
      - REQ-DATA-SQL-01
      - delete_responses(run_id) clears one run's rows, leaves other runs' rows untouched, and
      - Unit
      - High
      - Automated
      - tests/unit/test_sqlite_repo.py::test_delete_responses_removes_only_the_target_runs_rows_and_returns_the_count
-   * - TC-UNIT-303
+   * - TC-UNIT-318
      - REQ-DATA-SQL-01
      - Saving a run with an already-used run_id updates it in place (merge), not a duplicate row.
      - Unit
      - High
      - Automated
      - tests/unit/test_sqlite_repo.py::test_save_run_twice_with_same_id_upserts_rather_than_duplicating
-   * - TC-UNIT-304
+   * - TC-UNIT-319
      - REQ-DATA-SQL-01
      - list_runs() reflects every save_run() call, ordered by started_at descending, reconstructed as real RunRecord entities.
      - Unit
      - High
      - Automated
      - tests/unit/test_sqlite_repo.py::test_list_runs_returns_saved_run_metadata_most_recent_first
-   * - TC-UNIT-305
+   * - TC-UNIT-320
      - REQ-DATA-SQL-01
      - list_runs() on a fresh repository with no runs returns [] rather than erroring.
      - Unit
      - High
      - Automated
      - tests/unit/test_sqlite_repo.py::test_list_runs_on_empty_repo_returns_empty_list
-   * - TC-UNIT-306
+   * - TC-UNIT-321
      - REQ-DATA-SQL-02
      - save_run() records its own write time (not the run's started_at) -- get_sync_status()
      - Unit
      - Medium
      - Automated
      - tests/unit/test_sqlite_repo.py::test_save_run_stamps_last_synced_at_and_get_sync_status_reports_it
-   * - TC-UNIT-307
+   * - TC-UNIT-322
      - REQ-DATA-SQL-02
      - A run_id that was never save_run()'d is simply absent from the dict, not None or a KeyError.
      - Unit
      - Medium
      - Automated
      - tests/unit/test_sqlite_repo.py::test_get_sync_status_omits_runs_never_saved
-   * - TC-UNIT-308
+   * - TC-UNIT-323
      - REQ-DATA-SQL-02
      - Re-exporting an already-synced run refreshes its timestamp, matching the merge/upsert
      - Unit
      - Medium
      - Automated
      - tests/unit/test_sqlite_repo.py::test_save_run_twice_updates_last_synced_at_to_the_newer_write
-   * - TC-UNIT-309
+   * - TC-UNIT-324
      - REQ-DATA-SQL-02
      - A pre-2026-08-25 database's runs table lacks last_synced_at entirely -- confirmed by
      - Unit
      - Medium
      - Automated
      - tests/unit/test_sqlite_repo.py::test_opening_a_database_created_before_last_synced_at_existed_self_heals
-   * - TC-UNIT-310
+   * - TC-UNIT-325
      - REQ-OPS-ST-01
      - A reachable Ollama server reports ok=True and the real model count in detail.
      - Unit
      - Medium
      - Automated
      - tests/unit/test_status_checks.py::test_check_ollama_reports_ok_with_model_count_when_reachable
-   * - TC-UNIT-311
+   * - TC-UNIT-326
      - REQ-OPS-ST-01
      - A connection failure is caught and reported as ok=False with the real exception type/message, not raised.
      - Unit
      - Medium
      - Automated
      - tests/unit/test_status_checks.py::test_check_ollama_reports_failure_reason_when_unreachable
-   * - TC-UNIT-312
+   * - TC-UNIT-327
      - REQ-OPS-ST-01
      - All 5 required resources found -> ok=True.
      - Unit
      - Medium
      - Automated
      - tests/unit/test_status_checks.py::test_check_nltk_reports_ok_when_every_resource_is_found
-   * - TC-UNIT-313
+   * - TC-UNIT-328
      - REQ-OPS-ST-01
      - Missing resources are named in detail, not silently downloaded -- a
      - Unit
      - Medium
      - Automated
      - tests/unit/test_status_checks.py::test_check_nltk_reports_which_resources_are_missing_without_downloading
-   * - TC-UNIT-314
+   * - TC-UNIT-329
      - REQ-OPS-ST-01
      - (no docstring)
      - Unit
      - Medium
      - Automated
      - tests/unit/test_status_checks.py::test_check_spacy_reports_ok_when_model_is_installed
-   * - TC-UNIT-315
+   * - TC-UNIT-330
      - REQ-OPS-ST-01
      - Missing model is named in detail, not silently downloaded -- matches check_nltk's honest-not-silent convention.
      - Unit
      - Medium
      - Automated
      - tests/unit/test_status_checks.py::test_check_spacy_reports_not_installed_without_downloading
-   * - TC-UNIT-316
+   * - TC-UNIT-331
+     - REQ-OPS-ST-01
+     - (no docstring)
+     - Unit
+     - Medium
+     - Automated
+     - tests/unit/test_status_checks.py::test_check_neo4j_reports_running_when_bolt_query_answers
+   * - TC-UNIT-332
+     - REQ-OPS-ST-01
+     - (no docstring)
+     - Unit
+     - Medium
+     - Automated
+     - tests/unit/test_status_checks.py::test_check_neo4j_reports_not_running_when_connection_fails
+   * - TC-UNIT-333
+     - REQ-OPS-ST-01
+     - (no docstring)
+     - Unit
+     - Medium
+     - Automated
+     - tests/unit/test_status_checks.py::test_check_gds_reports_loaded_with_version
+   * - TC-UNIT-334
+     - REQ-OPS-ST-01
+     - The exact failure seen on Ubuntu: Procedure.ProcedureNotFound must read as 'not loaded', not a crash.
+     - Unit
+     - Medium
+     - Automated
+     - tests/unit/test_status_checks.py::test_check_gds_reports_not_loaded_when_procedure_is_missing
+   * - TC-UNIT-335
+     - REQ-OPS-ST-01
+     - (no docstring)
+     - Unit
+     - Medium
+     - Automated
+     - tests/unit/test_status_checks.py::test_check_apoc_reports_loaded_with_version
+   * - TC-UNIT-336
+     - REQ-OPS-ST-01
+     - (no docstring)
+     - Unit
+     - Medium
+     - Automated
+     - tests/unit/test_status_checks.py::test_check_apoc_reports_not_loaded_when_neo4j_is_down
+   * - TC-UNIT-337
      - REQ-CASC-L3-01
      - A well-formed judge response is genuinely parsed, not substring-matched -- verdict/confidence/rationale all come from the real JSON fields.
      - Unit
      - High
      - Automated
      - tests/unit/test_structured_judge.py::test_clear_pass_is_parsed_from_real_json
-   * - TC-UNIT-317
+   * - TC-UNIT-338
      - REQ-CASC-L3-01
      - A well-formed 'no' verdict is parsed the same way as a 'yes' -- verdict=False isn't a fallback state here, it's a real judgment.
      - Unit
      - High
      - Automated
      - tests/unit/test_structured_judge.py::test_clear_fail_is_parsed_from_real_json
-   * - TC-UNIT-318
+   * - TC-UNIT-339
      - REQ-CASC-L3-02
      - A garbled, non-JSON response resolves to verdict=False -- but unlike the old
      - Unit
      - High
      - Automated
      - tests/unit/test_structured_judge.py::test_malformed_json_response_falls_back_to_a_distinguishable_false
-   * - TC-UNIT-319
+   * - TC-UNIT-340
      - REQ-CASC-L3-02
      - Valid JSON that's missing the required 'verdict' key is still a malformed-response fallback, not a crash.
      - Unit
      - High
      - Automated
      - tests/unit/test_structured_judge.py::test_valid_json_missing_verdict_key_falls_back_cleanly
-   * - TC-UNIT-320
+   * - TC-UNIT-341
      - REQ-CASC-L3-03
      - A judge model returning an out-of-range confidence (e.g. 1.5, or a raw percentage like 92) is clamped to [0, 1] rather than persisted as a nonsensical value.
      - Unit
      - Medium
      - Automated
      - tests/unit/test_structured_judge.py::test_confidence_outside_zero_one_range_is_clamped
-   * - TC-UNIT-321
+   * - TC-UNIT-342
      - REQ-CASC-L3-03
      - A judge response with only 'verdict' (no confidence/rationale) leaves those fields None -- not silently defaulted to a fake 0.0/empty-string value that would look like real data.
      - Unit
      - Medium
      - Automated
      - tests/unit/test_structured_judge.py::test_missing_confidence_and_rationale_stay_none_not_defaulted
-   * - TC-UNIT-322
+   * - TC-UNIT-343
      - REQ-CASC-L3-04
      - The judge model is a per-call parameter, not fixed at construction -- supports self-critic (judge=student) and teacher-student (judge=teacher_model) routing from the same StructuredJudge instance.
      - Unit
      - Medium
      - Automated
      - tests/unit/test_structured_judge.py::test_judge_model_varies_per_call_for_self_critic_mode
-   * - TC-UNIT-323
+   * - TC-UNIT-344
      - REQ-CASC-L3-04
      - The request sets json_mode=True and includes the archetype/bias/response text -- confirms the request shape, independent of how the response gets parsed.
      - Unit
      - Medium
      - Automated
      - tests/unit/test_structured_judge.py::test_request_asks_for_structured_json_mode
-   * - TC-UNIT-324
+   * - TC-UNIT-345
      - REQ-CASC-L3-04
      - Regression test for a real production crash: qwen:latest entered an infinite token-repeat
      - Unit
      - Medium
      - Automated
      - tests/unit/test_structured_judge.py::test_judge_uses_capped_tokens_and_low_temperature
-   * - TC-UNIT-325
+   * - TC-UNIT-346
+     - REQ-CASC-L3-02
+     - Regression test for BUG-002 (2026-10-26): Ollama HTTP 500 "token repeat limit reached"
+     - Unit
+     - High
+     - Automated
+     - tests/unit/test_structured_judge.py::test_evaluate_returns_fallback_when_generate_raises
+   * - TC-UNIT-347
+     - REQ-CASC-L3-02
+     - Regression test for BUG-002 using the real exception type: ollama.ResponseError with
+     - Unit
+     - High
+     - Automated
+     - tests/unit/test_structured_judge.py::test_evaluate_returns_fallback_on_ollama_response_error_http_500
+   * - TC-UNIT-348
      - REQ-CASC-L3-02
      - Both malformed-response fallbacks carry parse_failed=True so callers can tell them from a real 'no' without reading rationale text; a parsed verdict (true or false) never does.
      - Unit
      - High
      - Automated
      - tests/unit/test_structured_judge.py::test_parse_failures_set_the_parse_failed_flag_and_real_judgments_do_not
-   * - TC-UNIT-326
+   * - TC-UNIT-349
      - REQ-MET-LING-04
      - (no docstring)
      - Unit
      - Medium
      - Automated
      - tests/unit/test_syntactic_complexity.py::test_empty_text_returns_zero
-   * - TC-UNIT-327
+   * - TC-UNIT-350
      - REQ-MET-LING-04
      - A degenerate one-token input has no dependency relations -- TextDescriptives returns NaN for
      - Unit
      - Medium
      - Automated
      - tests/unit/test_syntactic_complexity.py::test_single_short_token_returns_zero_not_nan
-   * - TC-UNIT-328
+   * - TC-UNIT-351
      - REQ-MET-LING-04
      - Hand-verified against real spaCy/TextDescriptives output on a fixed sentence -- if this ever
      - Unit
      - Medium
      - Automated
      - tests/unit/test_syntactic_complexity.py::test_pinned_value_on_a_fixed_sentence
-   * - TC-UNIT-329
+   * - TC-UNIT-352
      - REQ-MET-LING-04
      - Directional sanity check: a syntactically deeper sentence should score higher than a trivial
      - Unit
      - Medium
      - Automated
      - tests/unit/test_syntactic_complexity.py::test_longer_more_complex_sentence_scores_higher_than_a_short_simple_one
-   * - TC-UNIT-330
+   * - TC-UNIT-353
      - REQ-MET-LING-04
      - (no docstring)
      - Unit
@@ -2504,10 +2665,10 @@ Integration
      - Automated
      - tests/integration/test_db_export_api.py::test_db_export_page_has_bulk_select_checkboxes_wired_to_each_rows_own_button
    * - TC-INTEGRATION-024
-     - REQ-OPS-DB-01
+     - REQ-DATA-EXP-03
      - Send-selected button must carry the HTML `disabled` attribute on page load (no rows
      - Integration
-     - 
+     - Medium
      - Automated
      - tests/integration/test_db_export_api.py::test_bulk_export_button_renders_disabled_by_default
    * - TC-INTEGRATION-025
@@ -3036,153 +3197,167 @@ Integration
      - Automated
      - tests/integration/test_model_evo_api.py::test_model_evo_evaluate_for_unknown_run_returns_404
    * - TC-INTEGRATION-100
+     - REQ-GEN-OLL-01
+     - Each model must return a structurally VALID response for the simplest possible prompt.
+     - Integration
+     - High
+     - Automated
+     - tests/integration/test_model_smoke.py::test_model_produces_valid_json_for_minimal_prompt[qwen:latest]
+   * - TC-INTEGRATION-101
+     - REQ-GEN-OLL-01
+     - Each model must return a structurally VALID response for the simplest possible prompt.
+     - Integration
+     - High
+     - Automated
+     - tests/integration/test_model_smoke.py::test_model_produces_valid_json_for_minimal_prompt[tinyllama:latest]
+   * - TC-INTEGRATION-102
      - REQ-PAGE-MON-01
      - GET /monitor with zero persisted runs renders the empty-state message, not an error.
      - Integration
      - Low
      - Automated
      - tests/integration/test_monitor_api.py::test_monitor_page_with_no_runs_shows_empty_state
-   * - TC-INTEGRATION-101
+   * - TC-INTEGRATION-103
      - REQ-PAGE-MON-01
      - GET /monitor/schema?run_id=... reports the real row/column counts and dtype names for a fixture run.
      - Integration
      - Low
      - Automated
      - tests/integration/test_monitor_api.py::test_monitor_schema_reports_correct_dtypes_for_a_populated_run
-   * - TC-INTEGRATION-102
+   * - TC-INTEGRATION-104
      - REQ-PAGE-MON-01
      - GET /monitor/schema?run_id=... for a run with no persisted responses returns 404, matching the other read-side routers' convention.
      - Integration
      - Low
      - Automated
      - tests/integration/test_monitor_api.py::test_monitor_schema_for_unknown_run_returns_404_with_message
-   * - TC-INTEGRATION-103
+   * - TC-INTEGRATION-105
      - REQ-PAGE-MON-01
      - GET /monitor/schema?run_id=... includes a rendered preview table with real cell values, not just the dtypes.
      - Integration
      - Low
      - Automated
      - tests/integration/test_monitor_api.py::test_monitor_schema_includes_a_data_preview_table
-   * - TC-INTEGRATION-104
+   * - TC-INTEGRATION-106
      - REQ-PAGE-MON-01
      - Regression test for the "view JSONL as a table" gap: by default only
      - Integration
      - Low
      - Automated
      - tests/integration/test_monitor_api.py::test_monitor_schema_default_view_truncates_to_20_rows_with_a_show_all_link
-   * - TC-INTEGRATION-105
+   * - TC-INTEGRATION-107
      - REQ-PAGE-MON-01
      - GET /monitor/schema?run_id=...&full=true returns all 25 rows, not just the 20-row preview.
      - Integration
      - Low
      - Automated
      - tests/integration/test_monitor_api.py::test_monitor_schema_full_true_returns_every_row
-   * - TC-INTEGRATION-106
+   * - TC-INTEGRATION-108
      - REQ-PAGE-NLP-01
      - GET /nlp with zero persisted runs renders the empty-state message, not an error.
      - Integration
      - Medium
      - Automated
      - tests/integration/test_nlp_api.py::test_nlp_page_with_no_runs_shows_empty_state
-   * - TC-INTEGRATION-107
+   * - TC-INTEGRATION-109
      - REQ-PAGE-NLP-01
      - GET /nlp with a real run renders all three sub-tab headings and real chart HTML.
      - Integration
      - Medium
      - Automated
      - tests/integration/test_nlp_api.py::test_nlp_page_renders_all_three_subtabs_for_a_populated_run
-   * - TC-INTEGRATION-108
+   * - TC-INTEGRATION-110
      - REQ-PAGE-NLP-01
      - GET /nlp/charts?run_id=... for a run with responses returns real chart HTML, not the empty state.
      - Integration
      - Medium
      - Automated
      - tests/integration/test_nlp_api.py::test_nlp_charts_fragment_for_known_run_returns_populated_charts
-   * - TC-INTEGRATION-109
+   * - TC-INTEGRATION-111
      - REQ-PAGE-NLP-01
      - GET /nlp/charts?run_id=... for a run with no persisted responses returns 404, matching /analytics/charts's convention.
      - Integration
      - Medium
      - Automated
      - tests/integration/test_nlp_api.py::test_nlp_charts_fragment_for_unknown_run_returns_404_with_message
-   * - TC-INTEGRATION-110
+   * - TC-INTEGRATION-112
      - REQ-PAGE-NLP-01
      - Regression coverage at the API level for the LabDataBridge fix: a run
      - Integration
      - Medium
      - Automated
      - tests/integration/test_nlp_api.py::test_nlp_charts_uses_self_focus_ext_not_self_focus_for_neuro_self_focus
-   * - TC-INTEGRATION-111
+   * - TC-INTEGRATION-113
      - REQ-PAGE-RUNS-01
      - GET /runs with zero persisted runs renders the empty-state message, not an error.
      - Integration
      - Medium
      - Automated
      - tests/integration/test_runs_api.py::test_runs_page_with_no_runs_shows_empty_state
-   * - TC-INTEGRATION-112
+   * - TC-INTEGRATION-114
      - REQ-PAGE-RUNS-01
      - GET /runs with multiple runs pre-selects the one with the latest started_at and shows its summary.
      - Integration
      - Medium
      - Automated
      - tests/integration/test_runs_api.py::test_runs_page_selects_most_recently_started_run_by_default
-   * - TC-INTEGRATION-113
+   * - TC-INTEGRATION-115
      - REQ-PAGE-RUNS-01
      - GET /runs/summary?run_id=... for a run with responses returns the populated summary fragment.
      - Integration
      - Medium
      - Automated
      - tests/integration/test_runs_api.py::test_run_summary_fragment_for_known_run_returns_populated_table
-   * - TC-INTEGRATION-114
+   * - TC-INTEGRATION-116
      - REQ-PAGE-RUNS-01
      - GET /runs/summary?run_id=... for a run with no persisted responses returns 404, not a 500 or an empty table.
      - Integration
      - Medium
      - Automated
      - tests/integration/test_runs_api.py::test_run_summary_fragment_for_unknown_run_returns_404_with_message
-   * - TC-INTEGRATION-115
+   * - TC-INTEGRATION-117
      - REQ-CORP-JUDGE-01
      - GET /runs with runs present shows the self-critic-vs-teacher-judging comparison form.
      - Integration
      - Medium
      - Automated
      - tests/integration/test_runs_api.py::test_runs_page_renders_the_judging_comparison_picker
-   * - TC-INTEGRATION-116
+   * - TC-INTEGRATION-118
      - REQ-CORP-JUDGE-01
      - GET /runs/judging_comparison for a self-critic run and a teacher-judged run renders both
      - Integration
      - Medium
      - Automated
      - tests/integration/test_runs_api.py::test_judging_comparison_fragment_shows_pass_rates_and_delta
-   * - TC-INTEGRATION-117
+   * - TC-INTEGRATION-119
      - REQ-CORP-JUDGE-01
      - GET /runs/judging_comparison where one run_id has no persisted responses returns 404, not a 500.
      - Integration
      - Medium
      - Automated
      - tests/integration/test_runs_api.py::test_judging_comparison_fragment_for_unknown_run_returns_404_with_message
-   * - TC-INTEGRATION-118
+   * - TC-INTEGRATION-120
      - REQ-OPS-ST-02
      - GET /status returns all three checks verbatim plus an all_ok flag that is False when any one service is down.
      - Integration
      - Low
      - Automated
      - tests/integration/test_status_api.py::test_status_json_reports_all_three_services_and_an_overall_flag
-   * - TC-INTEGRATION-119
+   * - TC-INTEGRATION-121
      - REQ-OPS-ST-02
      - all_ok flips to True only when every service reports ok.
      - Integration
      - Low
      - Automated
      - tests/integration/test_status_api.py::test_status_json_all_ok_true_when_every_service_is_up
-   * - TC-INTEGRATION-120
+   * - TC-INTEGRATION-122
      - REQ-OPS-ST-02
      - A down spaCy alone (Ollama/NLTK both up) is enough to flip all_ok to False -- confirms spaCy is a real
      - Integration
      - Low
      - Automated
      - tests/integration/test_status_api.py::test_status_json_all_ok_false_when_only_spacy_is_down
-   * - TC-INTEGRATION-121
+   * - TC-INTEGRATION-123
      - REQ-OPS-ST-02
      - GET /status/widget renders one badge per service, with the ok/fail CSS class and a human-readable label matching each check's actual state.
      - Integration
@@ -3261,68 +3436,68 @@ E2E
      - Automated
      - tests/e2e/test_experiments_e2e.py::test_sweep_min_max_bounds_are_real_per_parameter_not_a_fixed_fake_range[chromium-Temperature-0-2]
    * - TC-E2E-009
-     - REQ-GEN-UI-05
-     - Checking self-critic disables the (now-irrelevant) teacher_model select and reveals the 'ignored while self-critic is on' hint.
-     - E2E
-     - Medium
-     - Automated
-     - tests/e2e/test_experiments_e2e.py::test_self_critic_checkbox_disables_teacher_model_and_shows_hint[chromium]
-   * - TC-E2E-010
-     - REQ-GEN-UI-05
-     - RAG mode/Top-K start disabled and only become editable once 'Enable RAG' is checked.
-     - E2E
-     - Medium
-     - Automated
-     - tests/e2e/test_experiments_e2e.py::test_rag_enabled_checkbox_enables_rag_mode_and_top_k[chromium]
-   * - TC-E2E-011
-     - REQ-GEN-UI-05
-     - 'Exclude archetype from prompt' only makes sense in Tuned mode -- switching away disables it and clears any existing check, rather than silently submitting a no-op checked value.
-     - E2E
-     - Medium
-     - Automated
-     - tests/e2e/test_experiments_e2e.py::test_non_tuned_prompt_mode_disables_and_unchecks_exclude_archetype[chromium]
-   * - TC-E2E-012
-     - REQ-GEN-UI-05
-     - Regression test: archetypes are now a checkbox list (not a required <select>); JS validation
-     - E2E
-     - Medium
-     - Automated
-     - tests/e2e/test_experiments_e2e.py::test_submitting_with_no_archetypes_selected_is_blocked_by_js[chromium]
-   * - TC-E2E-013
-     - REQ-GEN-UI-01
-     - Changing a real form field triggers a real htmx round-trip to /experiments/preview against the live server, and the setup summary panel reflects the new selection -- not just the bare task count.
-     - E2E
-     - Medium
-     - Automated
-     - tests/e2e/test_experiments_e2e.py::test_preview_panel_updates_live_when_a_field_changes[chromium]
-   * - TC-E2E-014
-     - REQ-PAGE-NLP-02
-     - Regression test for the reported bug: fixed by tabs.js explicitly calling
-     - E2E
-     - High
-     - Automated
-     - tests/e2e/test_tabs_chart_resize_e2e.py::test_charts_in_the_default_and_a_switched_tab_both_render_at_full_container_width[chromium]
-   * - TC-E2E-015
      - REQ-GEN-UI-04
      - Regression test: the explicit min/max fields' own min/max *attributes*
      - E2E
      - High
      - Automated
      - tests/e2e/test_experiments_e2e.py::test_sweep_min_max_bounds_are_real_per_parameter_not_a_fixed_fake_range[chromium-Top P-0-1]
-   * - TC-E2E-016
+   * - TC-E2E-010
      - REQ-GEN-UI-04
      - Regression test: the explicit min/max fields' own min/max *attributes*
      - E2E
      - High
      - Automated
      - tests/e2e/test_experiments_e2e.py::test_sweep_min_max_bounds_are_real_per_parameter_not_a_fixed_fake_range[chromium-Frequency penalty--2-2]
-   * - TC-E2E-017
+   * - TC-E2E-011
      - REQ-GEN-UI-04
      - Regression test: the explicit min/max fields' own min/max *attributes*
      - E2E
      - High
      - Automated
      - tests/e2e/test_experiments_e2e.py::test_sweep_min_max_bounds_are_real_per_parameter_not_a_fixed_fake_range[chromium-Presence penalty--2-2]
+   * - TC-E2E-012
+     - REQ-GEN-UI-05
+     - Checking self-critic disables the (now-irrelevant) teacher_model select and reveals the 'ignored while self-critic is on' hint.
+     - E2E
+     - Medium
+     - Automated
+     - tests/e2e/test_experiments_e2e.py::test_self_critic_checkbox_disables_teacher_model_and_shows_hint[chromium]
+   * - TC-E2E-013
+     - REQ-GEN-UI-05
+     - RAG mode/Top-K start disabled and only become editable once 'Enable RAG' is checked.
+     - E2E
+     - Medium
+     - Automated
+     - tests/e2e/test_experiments_e2e.py::test_rag_enabled_checkbox_enables_rag_mode_and_top_k[chromium]
+   * - TC-E2E-014
+     - REQ-GEN-UI-05
+     - 'Exclude archetype from prompt' only makes sense in Tuned mode -- switching away disables it and clears any existing check, rather than silently submitting a no-op checked value.
+     - E2E
+     - Medium
+     - Automated
+     - tests/e2e/test_experiments_e2e.py::test_non_tuned_prompt_mode_disables_and_unchecks_exclude_archetype[chromium]
+   * - TC-E2E-015
+     - REQ-GEN-UI-05
+     - Regression test: archetypes are now a checkbox list (not a required <select>); JS validation
+     - E2E
+     - Medium
+     - Automated
+     - tests/e2e/test_experiments_e2e.py::test_submitting_with_no_archetypes_selected_is_blocked_by_js[chromium]
+   * - TC-E2E-016
+     - REQ-GEN-UI-01
+     - Changing a real form field triggers a real htmx round-trip to /experiments/preview against the live server, and the setup summary panel reflects the new selection -- not just the bare task count.
+     - E2E
+     - Medium
+     - Automated
+     - tests/e2e/test_experiments_e2e.py::test_preview_panel_updates_live_when_a_field_changes[chromium]
+   * - TC-E2E-017
+     - REQ-PAGE-NLP-02
+     - Regression test for the reported bug: fixed by tabs.js explicitly calling
+     - E2E
+     - High
+     - Automated
+     - tests/e2e/test_tabs_chart_resize_e2e.py::test_charts_in_the_default_and_a_switched_tab_both_render_at_full_container_width[chromium]
 
 Legacy RAG
 ~~~~~~~~~~

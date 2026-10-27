@@ -6,85 +6,90 @@
 #
 accessible-pygments==0.0.5
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   furo
 alabaster==0.7.16
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   sphinx
+allure-pytest==2.16.2
+    # via -r requirements-linux.in
+allure-python-commons==2.16.2
+    # via allure-pytest
 altair==6.1.0
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   streamlit
 annotated-doc==0.0.4
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   fastapi
     #   typer
 annotated-types==0.7.0
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   pydantic
 anyio==4.13.0
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   httpx
     #   openai
     #   starlette
     #   streamlit
 astroid==4.0.4
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   pylint
 asttokens==3.0.1
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   stack-data
 attrs==26.1.0
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
+    #   allure-python-commons
     #   jsonschema
     #   referencing
 babel==2.18.0
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   sphinx
 beautifulsoup4==4.15.0
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   furo
 blinker==1.9.0
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   streamlit
 blis==1.3.3
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   thinc
 cachetools==7.1.4
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   streamlit
 catalogue==2.0.10
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   spacy
     #   srsly
     #   thinc
 certifi==2026.5.20
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   httpcore
     #   httpx
     #   py2neo
     #   requests
 charset-normalizer==3.4.7
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   requests
 click==8.4.1
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   huggingface-hub
     #   nltk
     #   spacy
@@ -93,173 +98,175 @@ click==8.4.1
     #   uvicorn
 cloudpathlib==0.25.0
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   weasel
 confection==1.3.3
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   spacy
     #   thinc
     #   weasel
 contourpy==1.3.3
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   matplotlib
+coverage[toml]==7.17.0
+    # via pytest-cov
 cycler==0.12.1
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   matplotlib
 cymem==2.0.13
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   preshed
     #   spacy
     #   thinc
 decorator==5.3.1
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   ipython
 dill==0.4.1
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   pylint
 distro==1.9.0
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   openai
 docutils==0.20.1
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   myst-parser
     #   sphinx
     #   sphinx-rtd-theme
 executing==2.2.1
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   stack-data
 faiss-cpu==1.14.2
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   -r requirements-linux.in
 faker==40.19.1
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   -r requirements-linux.in
 fastapi==0.141.1
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   -r requirements-linux.in
 filelock==3.29.0
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   huggingface-hub
     #   torch
     #   triton
 fonttools==4.63.0
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   matplotlib
 fsspec==2026.4.0
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   huggingface-hub
     #   torch
 ftfy==6.3.1
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   textdescriptives
 furo==2025.12.19
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   -r requirements-linux.in
 gitdb==4.0.12
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   gitpython
 gitpython==3.1.50
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   streamlit
 greenlet==3.5.5
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   playwright
     #   sqlalchemy
 h11==0.16.0
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   httpcore
     #   uvicorn
 hdbscan==0.8.43
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   -r requirements-linux.in
 hf-xet==1.5.0
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   huggingface-hub
 httpcore==1.0.9
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   httpx
 httptools==0.8.0
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   streamlit
 httpx==0.28.1
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   huggingface-hub
     #   ollama
     #   openai
     #   weasel
 huggingface-hub==1.17.0
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   sentence-transformers
     #   tokenizers
     #   transformers
 idna==3.17
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   anyio
     #   httpx
     #   requests
 imagesize==2.0.0
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   sphinx
 iniconfig==2.3.0
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   pytest
 interchange==2021.0.4
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   py2neo
 ipython==9.14.1
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   pyvis
 ipython-pygments-lexers==1.1.1
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   ipython
 isort==8.0.1
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   pylint
 itsdangerous==2.2.0
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   streamlit
 jedi==0.20.0
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   ipython
 jinja2==3.1.6
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   -r requirements-linux.in
     #   altair
     #   myst-parser
@@ -271,118 +278,118 @@ jinja2==3.1.6
     #   torch
 jiter==0.15.0
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   openai
 joblib==1.5.3
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   hdbscan
     #   nltk
     #   pynndescent
     #   scikit-learn
 jsonpickle==4.1.2
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   pyvis
 jsonschema==4.26.0
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   altair
 jsonschema-specifications==2025.9.1
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   jsonschema
 kiwisolver==1.5.0
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   matplotlib
 levenshtein==0.27.3
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   python-levenshtein
 llvmlite==0.47.0
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   numba
     #   pynndescent
 loguru==0.7.3
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   -r requirements-linux.in
 markdown-it-py==3.0.0
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   -r requirements-linux.in
     #   mdit-py-plugins
     #   myst-parser
     #   rich
 markupsafe==3.0.3
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   jinja2
 matplotlib==3.10.9
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   -r requirements-linux.in
     #   seaborn
     #   wordcloud
 matplotlib-inline==0.2.2
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   ipython
 mccabe==0.7.0
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   pylint
 mdit-py-plugins==0.6.1
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   myst-parser
 mdurl==0.1.2
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   markdown-it-py
 monotonic==1.6
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   py2neo
 mpmath==1.3.0
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   sympy
 murmurhash==1.0.15
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   preshed
     #   spacy
     #   thinc
 myst-parser==2.0.0
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   -r requirements-linux.in
 narwhals==2.21.2
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   altair
     #   plotly
 networkx==3.6.1
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   pyvis
     #   torch
 nltk==3.9.4
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   -r requirements-linux.in
     #   textblob
 numba==0.65.1
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   pynndescent
     #   umap-learn
 numpy==2.4.6
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   -r requirements-linux.in
     #   blis
     #   contourpy
@@ -409,7 +416,7 @@ numpy==2.4.6
     #   wordcloud
 numpy-typing-compat==20260602.2.4
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   optype
 nvidia-cublas-cu12==12.4.5.8
     # via
@@ -447,19 +454,19 @@ nvidia-nvtx-cu12==12.4.127
     # via torch
 ollama==0.6.2
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   -r requirements-linux.in
 openai==2.38.0
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   -r requirements-linux.in
 optype[numpy]==0.18.0
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   scipy-stubs
 packaging==26.2
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   altair
     #   faiss-cpu
     #   huggingface-hub
@@ -475,28 +482,28 @@ packaging==26.2
     #   weasel
 pandas==3.0.3
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   -r requirements-linux.in
     #   seaborn
     #   streamlit
     #   textdescriptives
 pandas-stubs==3.0.5.260730
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   -r requirements-linux.in
 pansi==2024.11.0
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   py2neo
 parso==0.8.7
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   jedi
 pexpect==4.9.0
     # via ipython
 pillow==12.2.0
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   matplotlib
     #   pansi
     #   streamlit
@@ -504,57 +511,59 @@ pillow==12.2.0
     #   wordcloud
 platformdirs==4.10.0
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   pylint
 playwright==1.64.1
     # via pytest-playwright
 plotly==6.7.0
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   -r requirements-linux.in
 pluggy==1.6.0
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
+    #   allure-python-commons
     #   pytest
+    #   pytest-cov
 pockets==0.9.1
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   sphinxcontrib-napoleon
 preshed==3.0.13
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   -r requirements-linux.in
     #   spacy
     #   thinc
 prompt-toolkit==3.0.52
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   ipython
 protobuf==7.35.0
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   streamlit
 psutil==7.2.2
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   ipython
 ptyprocess==0.7.0
     # via pexpect
 pure-eval==0.2.3
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   stack-data
 py2neo==2021.2.4
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   -r requirements-linux.in
 pyarrow==24.0.0
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   streamlit
 pydantic==2.13.4
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   fastapi
     #   ollama
     #   openai
@@ -564,17 +573,17 @@ pydantic==2.13.4
     #   weasel
 pydantic-core==2.46.4
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   pydantic
 pydeck==0.9.2
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   streamlit
 pyee==14.0.0
     # via playwright
 pygments==2.20.0
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   accessible-pygments
     #   furo
     #   ipython
@@ -585,102 +594,106 @@ pygments==2.20.0
     #   sphinx
 pylint==4.0.5
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   -r requirements-linux.in
 pynndescent==0.6.0
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   umap-learn
 pyparsing==3.3.2
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   matplotlib
 pyphen==0.18.1
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   textdescriptives
 pytest==9.0.3
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   -r requirements-linux.in
+    #   allure-pytest
+    #   pytest-cov
     #   pytest-html
     #   pytest-metadata
     #   pytest-playwright
+pytest-cov==7.1.0
+    # via -r requirements-linux.in
 pytest-html==4.2.0
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   -r requirements-linux.in
 pytest-metadata==3.1.1
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   pytest-html
 pytest-playwright==0.10.0
     # via -r requirements-linux.in
 python-dateutil==2.9.0.post0
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   matplotlib
     #   pandas
 python-levenshtein==0.27.3
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   -r requirements-linux.in
 python-multipart==0.0.30
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   streamlit
 python-slugify==9.1.3
     # via pytest-playwright
 pytz==2026.2
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   interchange
 pyvis==0.3.2
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   -r requirements-linux.in
 pyyaml==6.0.3
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   huggingface-hub
     #   myst-parser
     #   transformers
 rapidfuzz==3.14.5
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   levenshtein
 referencing==0.37.0
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   jsonschema
     #   jsonschema-specifications
 regex==2026.5.9
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   nltk
     #   transformers
 requests==2.34.2
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   spacy
     #   sphinx
     #   streamlit
 rich==15.0.0
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   typer
 rpds-py==2026.5.1
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   jsonschema
     #   referencing
 safetensors==0.7.0
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   transformers
 scikit-learn==1.8.0
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   -r requirements-linux.in
     #   hdbscan
     #   pynndescent
@@ -688,7 +701,7 @@ scikit-learn==1.8.0
     #   umap-learn
 scipy==1.17.1
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   hdbscan
     #   pynndescent
     #   scikit-learn
@@ -696,23 +709,23 @@ scipy==1.17.1
     #   umap-learn
 scipy-stubs==1.18.0.1
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   -r requirements-linux.in
 seaborn==0.13.2
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   -r requirements-linux.in
 sentence-transformers==5.5.1
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   -r requirements-linux.in
 shellingham==1.5.4
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   typer
 six==1.17.0
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   interchange
     #   pockets
     #   py2neo
@@ -720,44 +733,44 @@ six==1.17.0
     #   sphinxcontrib-napoleon
 smart-open==8.0.1
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   weasel
 smmap==5.0.3
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   gitdb
 sniffio==1.3.1
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   openai
 snowballstemmer==3.1.1
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   sphinx
 soupsieve==2.9.2
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   beautifulsoup4
 spacy[lookups]==3.8.16
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   -r requirements-linux.in
     #   textdescriptives
 spacy-legacy==3.0.12
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   spacy
 spacy-loggers==1.0.5
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   spacy
 spacy-lookups-data==1.0.5
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   spacy
 sphinx==7.4.7
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   -r requirements-linux.in
     #   furo
     #   myst-parser
@@ -769,132 +782,132 @@ sphinx==7.4.7
     #   sphinxcontrib-serializinghtml
 sphinx-autodoc-typehints==1.25.2
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   -r requirements-linux.in
 sphinx-basic-ng==1.0.0b2
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   furo
 sphinx-rtd-theme==2.0.0
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   -r requirements-linux.in
 sphinxcontrib-applehelp==1.0.4
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   -r requirements-linux.in
     #   sphinx
 sphinxcontrib-devhelp==1.0.2
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   -r requirements-linux.in
     #   sphinx
 sphinxcontrib-htmlhelp==2.0.1
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   -r requirements-linux.in
     #   sphinx
 sphinxcontrib-jquery==4.1
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   sphinx-rtd-theme
 sphinxcontrib-jsmath==1.0.1
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   -r requirements-linux.in
     #   sphinx
 sphinxcontrib-napoleon==0.7
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   -r requirements-linux.in
 sphinxcontrib-plantuml==0.31
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   -r requirements-linux.in
 sphinxcontrib-qthelp==1.0.3
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   -r requirements-linux.in
     #   sphinx
 sphinxcontrib-serializinghtml==1.1.9
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   -r requirements-linux.in
     #   sphinx
 sqlalchemy==2.0.52
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   -r requirements-linux.in
 srsly==2.5.3
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   spacy
     #   thinc
     #   weasel
 stack-data==0.6.3
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   ipython
 starlette==1.2.1
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   fastapi
     #   streamlit
 streamlit==1.58.0
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   -r requirements-linux.in
 sympy==1.13.1
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   torch
 tenacity==9.1.4
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   streamlit
 text-unidecode==1.3
     # via python-slugify
 textblob==0.20.0
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   -r requirements-linux.in
 textdescriptives==2.8.2
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   -r requirements-linux.in
 thinc==8.3.13
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   spacy
 threadpoolctl==3.6.0
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   scikit-learn
 tokenizers==0.22.2
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   transformers
 toml==0.10.2
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   streamlit
 tomlkit==0.15.0
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   pylint
 torch==2.5.1
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   -r requirements-linux.in
     #   sentence-transformers
     #   torchvision
 torchvision==0.20.1
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   -r requirements-linux.in
 tqdm==4.67.3
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   huggingface-hub
     #   nltk
     #   openai
@@ -904,25 +917,25 @@ tqdm==4.67.3
     #   umap-learn
 traitlets==5.15.1
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   ipython
     #   matplotlib-inline
 transformers==5.9.0
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   sentence-transformers
 triton==3.1.0
     # via torch
 typer==0.25.1
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   huggingface-hub
     #   spacy
     #   transformers
     #   weasel
 typing-extensions==4.15.0
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   altair
     #   anyio
     #   beautifulsoup4
@@ -942,53 +955,53 @@ typing-extensions==4.15.0
     #   typing-inspection
 typing-inspection==0.4.2
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   fastapi
     #   pydantic
 umap-learn==0.5.12
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   -r requirements-linux.in
 urllib3==2.7.0
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   py2neo
     #   requests
 uvicorn==0.48.0
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   -r requirements-linux.in
     #   streamlit
 wasabi==1.1.3
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   spacy
     #   thinc
     #   weasel
 watchdog==6.0.0
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   streamlit
 wcwidth==0.8.1
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   ftfy
     #   prompt-toolkit
 weasel==1.0.0
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   spacy
 websockets==16.0
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   streamlit
 wordcloud==1.9.6
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   -r requirements-linux.in
 wrapt==2.3.0
     # via
-    #   -c /tmp/claude-1000/-home-rmn-devs-code-nn-lab/601765e7-fbfe-492b-83da-186c6b3ac638/scratchpad/win-base.txt
+    #   -c requirements-base.txt
     #   smart-open
 
 # The following packages are considered to be unsafe in a requirements file:
