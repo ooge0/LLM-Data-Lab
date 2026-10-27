@@ -247,14 +247,78 @@ still a reasonable thing to do for a specific investigation::
    pytest tests --ignore=tests/e2e -v      # unit + integration + legacy_rag
    pytest tests/e2e -v                     # Playwright E2E -- ALWAYS a separate invocation
    pytest tests/legacy_rag/test_rag.py::test_valid_domains -v   # one test
+
+   # tox envs (Windows):
    tox -e py312                            # full run: pytest + coverage + Allure + pytest-html
    tox -e e2e                              # Playwright E2E tox env (installs chromium first)
-   tox -e lint                             # ruff + mypy against the live, in-scope codebase
+   tox -e lint                             # ruff + mypy + black --check
+   tox -e format                           # apply black (the fixing counterpart of lint's --check)
+   tox -e traceability                     # requirement-traceability gate (no tests executed)
+   tox -e docs                             # Sphinx docs build only
+   tox -e full                             # tests + traceability + Sphinx docs in one call (Windows)
+
+   # tox envs (Ubuntu only):
+   tox -e linux-full                       # unit + integration + e2e + traceability in one run
+
+**Full test + artifacts + Sphinx docs pipeline — Windows 11 (verified 2026-10-27):**
+
+Run from the repo root, in the activated ``.venv``. Steps must be executed in this order:
+``generate_test_results_rst`` reads the ``junit.xml`` that pytest produces -- run it before
+pytest and it exits with "no junit.xml found."
+
+.. code-block:: powershell
+
+   # Step 1: run tests, generate all report artifacts
+   pytest `
+     --html=results/pytest_test_results/pytest_report.html --self-contained-html `
+     --junitxml=results/pytest_test_results/junit.xml `
+     --alluredir=results/allure-results --clean-alluredir `
+     --cov=core --cov=api --cov=cli --cov=web --cov=utils `
+     --cov-report=term-missing `
+     --cov-report=html:results/coverage_html `
+     --cov-report=json:results/coverage.json `
+     tests --ignore=tests/e2e -v
+
+   # Step 2: regenerate QA RST pages from the live test suite + junit.xml results
+   python -m utils.generate_qa_roster         # docs/source/_qa_test_roster.rst
+   python -m utils.generate_test_results_rst  # docs/source/qa/test_results.rst
+
+   # Step 3: build Sphinx docs (reads the freshly regenerated RST files)
+   sphinx-build docs/source docs/source/_build/html
+
+One-liner (PowerShell semicolons, runs all three steps sequentially)::
+
+   pytest --html=results/pytest_test_results/pytest_report.html --self-contained-html --junitxml=results/pytest_test_results/junit.xml --alluredir=results/allure-results --clean-alluredir --cov=core --cov=api --cov=cli --cov=web --cov=utils --cov-report=term-missing --cov-report=html:results/coverage_html --cov-report=json:results/coverage.json tests --ignore=tests/e2e -v; python -m utils.generate_qa_roster; python -m utils.generate_test_results_rst; sphinx-build docs/source docs/source/_build/html
+
+.. warning::
+   **Ubuntu equivalent — NOT VERIFIED on Linux** (``requirements-linux.txt`` gap noted in section 2
+   still applies; treat as aspirational until a real Ubuntu run confirms it):
+
+   .. code-block:: bash
+
+      # Step 1: run tests, generate all report artifacts
+      pytest \
+        --html=results/pytest_test_results/pytest_report.html --self-contained-html \
+        --junitxml=results/pytest_test_results/junit.xml \
+        --alluredir=results/allure-results --clean-alluredir \
+        --cov=core --cov=api --cov=cli --cov=web --cov=utils \
+        --cov-report=term-missing \
+        --cov-report=html:results/coverage_html \
+        --cov-report=json:results/coverage.json \
+        tests --ignore=tests/e2e -v
+
+      # Step 2: regenerate QA RST pages
+      python -m utils.generate_qa_roster
+      python -m utils.generate_test_results_rst
+
+      # Step 3: build Sphinx docs
+      sphinx-build docs/source docs/source/_build/html
 
 ``tests/e2e`` must never share a process with the rest of the suite: ``pytest-playwright``'s sync
 driver leaves the main-thread asyncio event loop unusable for anything that later calls
 ``asyncio.run()`` directly -- confirmed empirically, not a theoretical concern (see :doc:`06-qa-testing-strategy`).
-``tox -e py312``/``linux``/``win32`` all already pass ``--ignore=tests/e2e`` for exactly this reason.
+``tox -e py312`` (Windows) and ``tox -e linux-full`` (Ubuntu) both pass ``--ignore=tests/e2e``
+for the unit/integration run and invoke Playwright in a separate process for exactly this reason.
 
 7. Generating and viewing reports
 ---------------------------------------
@@ -279,8 +343,19 @@ driver leaves the main-thread asyncio event loop unusable for anything that late
      - ``allure serve results/allure-results`` (live) or
        ``allure generate results/allure-results -o results/allure-report --clean`` (static copy)
 
-The full, generated test roster (every test file, every test name, every docstring) is
-:doc:`../qa`'s own **Test roster** section -- regenerated via ``python utils/list_tests.py``.
+Two QA utility scripts feed the Sphinx QA section with live, generated data (both run from the
+repo root, after a pytest run that produced ``results/pytest_test_results/junit.xml``):
+
+- ``python -m utils.generate_qa_roster`` -- rewrites ``docs/source/_qa_test_roster.rst``, the
+  full test roster table (every test file, module docstring, test name) from the live collectible
+  suite. Idempotent; safe to run without a prior pytest run since it only needs to collect, not execute.
+- ``python -m utils.generate_test_results_rst`` -- rewrites ``docs/source/qa/test_results.rst``
+  from the latest ``junit.xml``; this is the one QA page with actual pass/fail numbers rather than
+  just what exists. **Requires a prior pytest run** -- exits with a clear message if ``junit.xml``
+  is not yet present.
+
+Run both after every pytest run that should update the published docs, then rebuild Sphinx
+(see the full pipeline in section 6 above).
 
 8. Manual verification checklist
 --------------------------------------
@@ -330,14 +405,22 @@ raw ``curl`` against the API, then inspecting the resulting JSONL/SQLite directl
      - ``pytest tests --ignore=tests/e2e -v``
    * - Run E2E only
      - ``pytest tests/e2e -v``
-   * - Full suite + coverage + Allure + HTML report
+   * - Full suite + coverage + Allure + HTML report (Windows)
      - ``tox -e py312``
-   * - Lint + type-check
+   * - Full suite + coverage + Allure + HTML report (Ubuntu)
+     - ``tox -e linux-full``
+   * - Lint + type-check + format check
      - ``tox -e lint``
-   * - Format
-     - ``black .``
-   * - Build docs
-     -  ``sphinx-build docs/source docs/source/_build/html`` or ``cd docs/source && make html``
+   * - Apply black formatting
+     - ``tox -e format``
+   * - Requirement-traceability gate
+     - ``tox -e traceability``
+   * - Tests + traceability + Sphinx docs in one call (Windows)
+     - ``tox -e full``
+   * - Build docs only
+     - ``tox -e docs`` or ``sphinx-build docs/source docs/source/_build/html``
+   * - Tests + regenerate QA RST + build docs (verified Windows pipeline, section 6)
+     - ``pytest ... tests --ignore=tests/e2e -v; python -m utils.generate_qa_roster; python -m utils.generate_test_results_rst; sphinx-build docs/source docs/source/_build/html``
    * - Serve docs with working search
      - ``python utils/serve_docs.py``
    * - Regenerate a dependency lock file

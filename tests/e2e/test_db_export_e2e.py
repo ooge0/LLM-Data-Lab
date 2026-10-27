@@ -138,7 +138,7 @@ def test_bulk_export_button_is_disabled_until_a_row_is_checked(
     pre-checked) so clicking it before selecting anything is a no-op at the browser level.
     JS must enable it when the first checkbox is checked and disable it again when unchecked.
     """
-    db_export = DbExportPage(page, live_server).open()
+    DbExportPage(page, live_server).open()
 
     btn = page.locator("#export-selected-btn")
     assert btn.is_disabled(), "button should be disabled on load when no rows are checked"

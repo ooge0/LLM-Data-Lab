@@ -25,7 +25,6 @@ whole request down just because the graph database happens to be offline.
 import configparser
 import subprocess
 import sys
-from pathlib import Path
 
 from fastapi import APIRouter, Request
 from fastapi.concurrency import run_in_threadpool
@@ -83,8 +82,8 @@ def _neo4j_cli_command(subcommand: str) -> tuple[bool, str]:
         return False, output.strip() or f"neo4j {subcommand} exited with code {result.returncode}."
     except FileNotFoundError:
         return False, (
-            f"'neo4j' not found in PATH.  "
-            f"Make sure Neo4j's bin/ directory is on your PATH, then retry."
+            "'neo4j' not found in PATH.  "
+            "Make sure Neo4j's bin/ directory is on your PATH, then retry."
         )
     except subprocess.TimeoutExpired:
         return False, f"neo4j {subcommand} timed out after 45 s."

@@ -625,6 +625,41 @@ server, NLTK data directory, or spaCy model being present.
    * - ``test_status_widget_renders_a_badge_per_service_with_ok_fail_classes``
      - GET /status/widget renders one badge per service, with the ok/fail CSS class and a human-readable label matching each check's actual state.
 
+``tests/integration/test_template_echo.py`` (5 tests)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Template-echo regression test -- every locally installed Ollama model,
+requires Ollama running.
+
+The smoke probe's own example placeholder (``{"text": "<one sentence
+here>"}``) makes qwen echo it back (20/20 in the 2026-10-27 prompt-echo
+experiment; the concrete-example and no-example variants gave 0/20). So the
+placeholder in the prompt, not the model, drives that echo. This test checks
+the other direction: with a control prompt that has no placeholder, no
+installed model may return a catalogued template echo.
+
+Models come from what Ollama reports as installed, not from a fixed list, so a
+newly pulled model is tested without editing this file. Starts with the models
+already downloaded; more test datasets (unique prompts per model) are a
+planned extension, not part of this test yet.
+
+.. list-table::
+   :widths: 45 55
+   :header-rows: 1
+
+   * - Test
+     - Description
+   * - ``test_installed_model_does_not_echo_a_template_with_a_control_prompt[tinyllama:latest]``
+     - No response to a placeholder-free control prompt may be a catalogued template echo. Failures show every echoed response, so the model and text are visible in the report. A model that echoes here would be a model property, not a prompt effect.
+   * - ``test_installed_model_does_not_echo_a_template_with_a_control_prompt[mistral:7b-instruct-q4_K_M]``
+     - No response to a placeholder-free control prompt may be a catalogued template echo. Failures show every echoed response, so the model and text are visible in the report. A model that echoes here would be a model property, not a prompt effect.
+   * - ``test_installed_model_does_not_echo_a_template_with_a_control_prompt[phi3:latest]``
+     - No response to a placeholder-free control prompt may be a catalogued template echo. Failures show every echoed response, so the model and text are visible in the report. A model that echoes here would be a model property, not a prompt effect.
+   * - ``test_installed_model_does_not_echo_a_template_with_a_control_prompt[llama3:latest]``
+     - No response to a placeholder-free control prompt may be a catalogued template echo. Failures show every echoed response, so the model and text are visible in the report. A model that echoes here would be a model property, not a prompt effect.
+   * - ``test_installed_model_does_not_echo_a_template_with_a_control_prompt[qwen:latest]``
+     - No response to a placeholder-free control prompt may be a catalogued template echo. Failures show every echoed response, so the model and text are visible in the report. A model that echoes here would be a model property, not a prompt effect.
+
 ``tests/legacy_rag/test_contract.py`` (9 tests)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -1465,7 +1500,7 @@ drift).
    * - ``test_compare_judging_modes_without_run_metadata_reports_unknown_labels_not_a_crash``
      - list_runs() returning nothing for a run_id (e.g. metadata not yet indexed) degrades to self_critic=None/teacher_model=None rather than raising.
 
-``tests/unit/test_model_fuzz_catalog.py`` (12 tests)
+``tests/unit/test_model_fuzz_catalog.py`` (14 tests)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 LLM model failure catalog -- unit-level, no Ollama required.
@@ -1495,6 +1530,10 @@ marker.
      - tinyllama:latest, run-1792697949526, 2026-10-25. 38% of rows (24/63) returned exactly this string -- the most common confirmed FORMAT_ERROR pattern in this project's real data.
    * - ``test_fuzz_tinyllama_output_tag_variant``
      - tinyllama:latest, run-1792697949526, 2026-10-25. Shorter variant of the same template-echo pattern: a single bare <output> tag.
+   * - ``test_fuzz_qwen_one_sentence_here_placeholder``
+     - qwen:latest, tests/integration/test_model_smoke.py, 2026-10-27. qwen returned the example shape from the smoke probe's own system prompt verbatim, {"text": "<one sentence here>"}, in 8 of 9 probe runs on this date (temperature 0.1, so the rate is intermittent, not fixed). Controlled experiment, 2026-10-27, 20 runs per variant: with the placeholder example 20/20 echoed; with a concrete example ("The sky is blue.") 0/20; with no example 0/20; with the placeholder plus an explicit "do not copy the template" line still 20/20. So the placeholder in the prompt drives the echo, and an explicit instruction does not stop it. Other installed models did not echo under the placeholder prompt. Layer 0 classifies it FORMAT_ERROR by the same placeholder rule. The smoke test reports it as a known pattern (xfail with this reason), not a red failure.
+   * - ``test_fuzz_tinyllama_without_example_uses_wrong_key``
+     - tinyllama:latest, prompt-echo experiment, 2026-10-27, no-example variant. 14 of 20 runs returned {"color": "blue"}: valid JSON with no "text" key. Layer 0 must call this SCHEMA_ERROR, not VALID, because the required field is missing.
    * - ``test_fuzz_angle_bracket_placeholder_with_spaces``
      - Generic placeholder variant: any single XML-tag-like string with internal spaces. Not confirmed from a specific run but structurally identical to the tinyllama pattern and caught by the same fullmatch regex.
    * - ``test_fuzz_empty_text_field``
@@ -1930,8 +1969,8 @@ an in-memory SQLite database (``:memory:``, no file left behind).
    * - ``test_opening_a_database_created_before_last_synced_at_existed_self_heals``
      - A pre-2026-08-25 database's runs table lacks last_synced_at entirely -- confirmed by building one by hand (bypassing SQLiteRepo's current schema) rather than assumed. Opening it through SQLiteRepo must not raise OperationalError; it should transparently add the column.
 
-``tests/unit/test_status_checks.py`` (6 tests)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+``tests/unit/test_status_checks.py`` (12 tests)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Unit tests for :mod:`core.services.status_checks` -- the minimal
 Ollama/NLTK/spaCy reachability checks that replace the legacy sidebar's
@@ -1959,6 +1998,18 @@ directory, or spaCy model is present.
      - Description is missing
    * - ``test_check_spacy_reports_not_installed_without_downloading``
      - Missing model is named in detail, not silently downloaded -- matches check_nltk's honest-not-silent convention.
+   * - ``test_check_neo4j_reports_running_when_bolt_query_answers``
+     - Description is missing
+   * - ``test_check_neo4j_reports_not_running_when_connection_fails``
+     - Description is missing
+   * - ``test_check_gds_reports_loaded_with_version``
+     - Description is missing
+   * - ``test_check_gds_reports_not_loaded_when_procedure_is_missing``
+     - The exact failure seen on Ubuntu: Procedure.ProcedureNotFound must read as 'not loaded', not a crash.
+   * - ``test_check_apoc_reports_loaded_with_version``
+     - Description is missing
+   * - ``test_check_apoc_reports_not_loaded_when_neo4j_is_down``
+     - Description is missing
 
 ``tests/unit/test_structured_judge.py`` (12 tests)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
