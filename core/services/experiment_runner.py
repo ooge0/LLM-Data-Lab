@@ -421,6 +421,7 @@ class ExperimentRunner:
         total_tasks: int,
     ) -> None:
         """Background-thread body: iterate the full grid, judge and persist each response."""
+        terminal: Optional[RunProgressEvent] = None
         try:
             if not self._try_bridge(loop, queue, RunProgressEvent(stage="started", total_tasks=total_tasks)):
                 return
@@ -455,25 +456,25 @@ class ExperimentRunner:
                                     loop, queue, run, config, student, archetype, bias, v_val, step, total_tasks
                                 )
             except _StopRequested:
-                self._try_bridge(
-                    loop,
-                    queue,
-                    RunProgressEvent(stage="stopped", run_id=run.run_id, step=step, total_tasks=total_tasks, done=True),
+                terminal = RunProgressEvent(
+                    stage="stopped", run_id=run.run_id, step=step, total_tasks=total_tasks, done=True
                 )
-                return
-
-            self._try_bridge(
-                loop,
-                queue,
-                RunProgressEvent(stage="done", run_id=run.run_id, step=step, total_tasks=total_tasks, done=True),
-            )
+            else:
+                terminal = RunProgressEvent(
+                    stage="done", run_id=run.run_id, step=step, total_tasks=total_tasks, done=True
+                )
         except Exception as exc:
             logger.exception(f"ExperimentRunner: run failed: {exc}")
             self._save_partial_run(locals().get("run"), locals().get("step", 0))
-            self._try_bridge(loop, queue, RunProgressEvent(stage="error", error=str(exc), done=True))
+            terminal = RunProgressEvent(stage="error", error=str(exc), done=True)
         finally:
+            # Clear the flag BEFORE publishing the terminal event: a consumer that sees done=True
+            # must also see runner.running == False. Publishing first left a window where a
+            # consumer reading `running` right after `done` still saw True (test_request_stop_*).
             with self._lock:
                 self._running = False
+            if terminal is not None:
+                self._try_bridge(loop, queue, terminal)
 
     def _run_one(
         self,
