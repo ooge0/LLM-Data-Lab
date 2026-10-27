@@ -17,7 +17,14 @@ from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 
 from api._paths import TEMPLATES_DIR
-from core.services.status_checks import check_nltk, check_ollama, check_spacy
+from core.services.status_checks import (
+    check_apoc,
+    check_gds,
+    check_neo4j,
+    check_nltk,
+    check_ollama,
+    check_spacy,
+)
 
 router = APIRouter(prefix="/status", tags=["status"])
 templates = Jinja2Templates(directory=str(TEMPLATES_DIR))
@@ -25,6 +32,11 @@ templates = Jinja2Templates(directory=str(TEMPLATES_DIR))
 
 def _checks() -> list[dict]:
     return [check_ollama(), check_nltk(), check_spacy()]
+
+
+def _graph_checks() -> list[dict]:
+    """Neo4j, then the two plugins that only answer when Neo4j is up."""
+    return [check_neo4j(), check_gds(), check_apoc()]
 
 
 @router.get("")
@@ -47,4 +59,8 @@ def status_json() -> dict:
 @router.get("/widget", response_class=HTMLResponse)
 def status_widget(request: Request) -> HTMLResponse:
     """Render the same checks as a small HTML fragment for htmx to embed."""
-    return templates.TemplateResponse(request, "_status_widget.html", {"services": _checks()})
+    return templates.TemplateResponse(
+        request,
+        "_status_widget.html",
+        {"services": _checks(), "graph_services": _graph_checks()},
+    )

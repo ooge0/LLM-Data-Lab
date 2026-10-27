@@ -113,7 +113,10 @@ async def neo4j_start(request: Request) -> HTMLResponse:
             request, "_neo4j_controls.html", {"neo4j_ok": neo4j_ok, "error": error}
         )
 
-    return await run_in_threadpool(_start)
+    response = await run_in_threadpool(_start)
+    # Tells the sidebar status widget to refresh now, not on its next poll.
+    response.headers["HX-Trigger"] = "status-changed"
+    return response
 
 
 @router.post("/neo4j/stop", response_class=HTMLResponse)
@@ -129,7 +132,10 @@ async def neo4j_stop(request: Request) -> HTMLResponse:
             request, "_neo4j_controls.html", {"neo4j_ok": neo4j_ok, "error": error}
         )
 
-    return await run_in_threadpool(_stop)
+    response = await run_in_threadpool(_stop)
+    # Tells the sidebar status widget to refresh now, not on its next poll.
+    response.headers["HX-Trigger"] = "status-changed"
+    return response
 
 
 @router.get("", response_class=HTMLResponse)

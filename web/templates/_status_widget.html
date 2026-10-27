@@ -1,7 +1,20 @@
-<div id="service-status" class="status-widget">
-  {% for s in services %}
-  <span class="status-badge {{ 'status-ok' if s.ok else 'status-fail' }}" title="{{ s.detail }}">
-    {{ s.name }}
-  </span>
-  {% endfor %}
+{# Refreshes itself every 10 s and immediately after a Neo4j start/stop (HX-Trigger: status-changed).
+   The root carries the hx-* attributes so every swap keeps the polling alive. #}
+<div id="service-status" class="status-group"
+     hx-get="/status/widget" hx-trigger="every 10s, status-changed from:body" hx-swap="outerHTML">
+  <div class="status-widget">
+    {% for s in services %}
+    <span class="status-badge {{ 'status-ok' if s.ok else 'status-fail' }}" title="{{ s.detail }}">
+      {{ s.name }}
+    </span>
+    {% endfor %}
+  </div>
+  <hr class="status-divider">
+  <div class="status-widget status-widget-single">
+    {% for s in graph_services %}
+    <span class="status-badge {{ 'status-ok' if s.ok else 'status-fail' }}" title="{{ s.detail }}">
+      {{ s.name }}
+    </span>
+    {% endfor %}
+  </div>
 </div>

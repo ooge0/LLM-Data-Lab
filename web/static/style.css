@@ -581,10 +581,22 @@ hr {
 }
 
 /* --- Service status widget (Ollama/NLTK reachability, see /status) --- */
+.status-group {
+  margin: 0.75rem 0 1.25rem;
+}
 .status-widget {
   display: flex;
+  flex-wrap: wrap;
   gap: 0.6rem;
-  margin: 0.75rem 0 1.25rem;
+  margin: 0 0 0.6rem;
+}
+.status-widget.status-widget-single {
+  flex-wrap: nowrap;
+}
+.status-divider {
+  border: 0;
+  border-top: 1px solid var(--border);
+  margin: 0.4rem 0 0.8rem;
 }
 .status-badge {
   display: inline-block;

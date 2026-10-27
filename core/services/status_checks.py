@@ -26,6 +26,7 @@ this module reports what is actually true right now and never mutates
 local state as a side effect of being asked.
 """
 
+import configparser
 from urllib.parse import urlsplit, urlunsplit
 
 import nltk
@@ -121,3 +122,57 @@ def check_spacy() -> dict:
     if SPACY_MODEL_NAME in spacy.util.get_installed_models():
         return {"name": "spaCy", "ok": True, "detail": f"{SPACY_MODEL_NAME} installed"}
     return {"name": "spaCy", "ok": False, "detail": f"{SPACY_MODEL_NAME} not installed"}
+
+
+def _neo4j_connection() -> tuple[str, tuple[str, str]]:
+    """Return ``(uri, (user, password))`` from ``config/config.ini``'s ``[neo4j]`` section."""
+    cfg = configparser.ConfigParser()
+    cfg.read(config_loader_short.ROOT_DIR / "config" / "config.ini")
+    return cfg["neo4j"]["uri"], (cfg["neo4j"]["user"], cfg["neo4j"]["password"])
+
+
+def _check_plugin(name: str, query: str) -> dict:
+    """
+    Run a one-row ``RETURN <plugin>.version()`` query against Neo4j.
+
+    A missing plugin, a server that is not running and bad credentials all
+    fail the same way here -- the query raises -- so ``ok`` means "the
+    procedure is registered and answered", not "the plugin's jar exists".
+    """
+    from py2neo import Graph
+
+    try:
+        uri, auth = _neo4j_connection()
+        version = next(iter(Graph(uri, auth=auth).run(query).data()[0].values()))
+        return {"name": name, "ok": True, "detail": f"version {version}"}
+    except Exception as e:
+        return {"name": name, "ok": False, "detail": f"{type(e).__name__}: {e}"}
+
+
+def check_neo4j() -> dict:
+    """
+    Check whether the Neo4j server answers a bolt query.
+
+    Returns
+    -------
+    dict
+        ``{"name", "ok", "detail"}``. The sidebar shows only ``name``, coloured by ``ok``.
+    """
+    from py2neo import Graph
+
+    try:
+        uri, auth = _neo4j_connection()
+        Graph(uri, auth=auth).run("RETURN 1")
+        return {"name": "Neo4j", "ok": True, "detail": uri}
+    except Exception as e:
+        return {"name": "Neo4j", "ok": False, "detail": f"{type(e).__name__}: {e}"}
+
+
+def check_gds() -> dict:
+    """Check whether the Graph Data Science plugin is loaded (``gds.version()`` answers)."""
+    return _check_plugin("GDS", "RETURN gds.version() AS version")
+
+
+def check_apoc() -> dict:
+    """Check whether the APOC plugin is loaded (``apoc.version()`` answers)."""
+    return _check_plugin("APOC", "RETURN apoc.version() AS version")

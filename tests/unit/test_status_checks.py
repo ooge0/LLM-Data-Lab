@@ -11,9 +11,18 @@ directory, or spaCy model is present.
 import pytest
 import nltk
 import ollama
+import py2neo
 import spacy.util
 
-from core.services.status_checks import SPACY_MODEL_NAME, check_nltk, check_ollama, check_spacy
+from core.services.status_checks import (
+    SPACY_MODEL_NAME,
+    check_apoc,
+    check_gds,
+    check_neo4j,
+    check_nltk,
+    check_ollama,
+    check_spacy,
+)
 
 pytestmark = pytest.mark.req("REQ-OPS-ST-01")
 
@@ -100,3 +109,76 @@ def test_check_spacy_reports_not_installed_without_downloading(monkeypatch):
     monkeypatch.setattr(spacy.util, "get_installed_models", lambda: [])
     result = check_spacy()
     assert result == {"name": "spaCy", "ok": False, "detail": f"{SPACY_MODEL_NAME} not installed"}
+
+
+class _FakeGraph:
+    """Stands in for py2neo.Graph: answers ``run`` from a canned row, or raises when ``error`` is set."""
+
+    error: Exception | None = None
+    row: dict = {}
+
+    def __init__(self, uri, auth=None):
+        self.uri = uri
+
+    def run(self, query):
+        if _FakeGraph.error is not None:
+            raise _FakeGraph.error
+        return _FakeRun([_FakeGraph.row])
+
+
+class _FakeRun:
+    def __init__(self, rows):
+        self._rows = rows
+
+    def data(self):
+        return self._rows
+
+
+@pytest.fixture
+def fake_graph(monkeypatch):
+    """Patch py2neo.Graph (imported lazily inside the checks) and reset the canned state per test."""
+    _FakeGraph.error = None
+    _FakeGraph.row = {}
+    monkeypatch.setattr(py2neo, "Graph", _FakeGraph)
+    return _FakeGraph
+
+
+def test_check_neo4j_reports_running_when_bolt_query_answers(fake_graph):
+    result = check_neo4j()
+    assert result["name"] == "Neo4j"
+    assert result["ok"] is True
+
+
+def test_check_neo4j_reports_not_running_when_connection_fails(fake_graph):
+    fake_graph.error = ConnectionRefusedError("bolt down")
+    result = check_neo4j()
+    assert result["ok"] is False
+    assert "ConnectionRefusedError" in result["detail"]
+
+
+def test_check_gds_reports_loaded_with_version(fake_graph):
+    fake_graph.row = {"version": "2026.05.0"}
+    result = check_gds()
+    assert result == {"name": "GDS", "ok": True, "detail": "version 2026.05.0"}
+
+
+def test_check_gds_reports_not_loaded_when_procedure_is_missing(fake_graph):
+    """The exact failure seen on Ubuntu: Procedure.ProcedureNotFound must read as 'not loaded', not a crash."""
+    fake_graph.error = RuntimeError("Procedure.ProcedureNotFound: gds.version")
+    result = check_gds()
+    assert result["name"] == "GDS"
+    assert result["ok"] is False
+    assert "ProcedureNotFound" in result["detail"]
+
+
+def test_check_apoc_reports_loaded_with_version(fake_graph):
+    fake_graph.row = {"version": "2026.05.0"}
+    result = check_apoc()
+    assert result == {"name": "APOC", "ok": True, "detail": "version 2026.05.0"}
+
+
+def test_check_apoc_reports_not_loaded_when_neo4j_is_down(fake_graph):
+    fake_graph.error = ConnectionRefusedError("bolt down")
+    result = check_apoc()
+    assert result["name"] == "APOC"
+    assert result["ok"] is False
