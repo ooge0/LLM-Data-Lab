@@ -48,12 +48,24 @@ def test_fuzz_qwen_one_sentence_here_placeholder():
     """qwen:latest, tests/integration/test_model_smoke.py, 2026-10-27.
     qwen returned the example shape from the smoke probe's own system prompt verbatim,
     {"text": "<one sentence here>"}, in 8 of 9 probe runs on this date (temperature 0.1,
-    so the rate is intermittent, not fixed). The probe's example invites the echo, so this
-    is partly prompt-induced, not only a model property. Layer 0 classifies it FORMAT_ERROR
-    by the same placeholder rule.
+    so the rate is intermittent, not fixed). Controlled experiment, 2026-10-27, 20 runs per
+    variant: with the placeholder example 20/20 echoed; with a concrete example ("The sky is
+    blue.") 0/20; with no example 0/20; with the placeholder plus an explicit "do not copy the
+    template" line still 20/20. So the placeholder in the prompt drives the echo, and an explicit
+    instruction does not stop it. Other installed models did not echo under the placeholder prompt.
+    Layer 0 classifies it FORMAT_ERROR by the same placeholder rule.
     The smoke test reports it as a known pattern (xfail with this reason), not a red failure.
     """
     assert classify_response(json.dumps({"text": "<one sentence here>"})) == ResponseClassification.FORMAT_ERROR
+
+
+@pytest.mark.req("REQ-CASC-L0-01")
+def test_fuzz_tinyllama_without_example_uses_wrong_key():
+    """tinyllama:latest, prompt-echo experiment, 2026-10-27, no-example variant.
+    14 of 20 runs returned {"color": "blue"}: valid JSON with no "text" key. Layer 0 must
+    call this SCHEMA_ERROR, not VALID, because the required field is missing.
+    """
+    assert classify_response('{"color": "blue"}') == ResponseClassification.SCHEMA_ERROR
 
 
 @pytest.mark.req("REQ-CASC-L0-04")
