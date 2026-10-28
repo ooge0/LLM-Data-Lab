@@ -674,7 +674,10 @@ class ExperimentRunner:
         try:
             import shutil
 
-            src = self._repository.path_for(run.run_id)
+            path_for = getattr(self._repository, "path_for", None)
+            if path_for is None:
+                return
+            src = path_for(run.run_id)
             if not src.exists() or src.stat().st_size == 0:
                 return
             dst = src.parent / f"lab_export_{run.run_id}_partial_failed_at_step_{step}.jsonl"

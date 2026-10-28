@@ -70,7 +70,7 @@ async def models_list_fragment(request: Request) -> HTMLResponse:
 
 
 @router.get("/pull/stream")
-async def models_pull_stream(model: str = "") -> JSONResponse:
+async def models_pull_stream(model: str = ""):  # type: ignore[return]
     """
     SSE endpoint: streams pull progress from ``ollama.Client().pull(name, stream=True)``.
 

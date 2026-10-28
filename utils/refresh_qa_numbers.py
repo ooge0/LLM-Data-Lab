@@ -30,6 +30,7 @@ from __future__ import annotations
 import re
 import subprocess
 import sys
+from collections.abc import Sequence
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parent.parent
@@ -43,7 +44,7 @@ TESTS_DIR = REPO / "tests"
 # 1. Collect test counts
 # ---------------------------------------------------------------------------
 
-def _collect(extra_args: list[str] = ()) -> int:
+def _collect(extra_args: Sequence[str] = ()) -> int:
     """Return number of tests collected for the given subset."""
     result = subprocess.run(
         [sys.executable, "-m", "pytest", "--collect-only", "-q", "--tb=no", *extra_args],

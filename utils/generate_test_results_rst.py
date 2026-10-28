@@ -82,7 +82,7 @@ def parse_junit(path: pathlib.Path) -> dict:
         "failed": int(suite.get("failures", 0)),
         "error": int(suite.get("errors", 0)),
         "skipped": int(suite.get("skipped", 0)),
-        "duration": float(suite.get("time", sum(c["duration"] for c in cases))),
+        "duration": float(suite.get("time", sum(c["duration"] for c in cases))),  # type: ignore[misc, arg-type]
     }
     totals["passed"] = totals["total"] - totals["failed"] - totals["error"] - totals["skipped"]
     return {"generated": generated, "totals": totals, "cases": cases}

@@ -40,7 +40,7 @@ _client = OllamaClient()
 def _available_models() -> list[str]:
     """Return model names from the local Ollama instance, sorted."""
     try:
-        return sorted(m.model for m in ollama.Client().list().models)
+        return sorted(m.model for m in ollama.Client().list().models if m.model)
     except Exception:
         return []
 
@@ -83,11 +83,11 @@ async def model_probe_run(request: Request) -> HTMLResponse:
     user_prompt = str(form.get("user_prompt", "")).strip()
     bias_text = str(form.get("bias_text", "")).strip()
     try:
-        temperature = float(form.get("temperature", 0.7))
+        temperature = float(str(form.get("temperature", "0.7")))
     except (ValueError, TypeError):
         temperature = 0.7
     try:
-        max_tokens = int(form.get("max_tokens", 256))
+        max_tokens = int(str(form.get("max_tokens", "256")))
     except (ValueError, TypeError):
         max_tokens = 256
 
