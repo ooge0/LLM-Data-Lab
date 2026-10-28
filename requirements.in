@@ -34,7 +34,11 @@ sentence-transformers>=3.0.0
 # spaCy/TextDescriptives (added 2026-08-24): dependency-distance-based syntactic complexity
 # (core/analysis/syntactic_complexity.py). CLAUDE.md SS7 named both as preferred, validated
 # libraries from the start but neither had actually been wired into any code until this feature.
+# en-core-web-sm pinned via direct URL (spaCy models are not on PyPI; this is the official
+# pip-installable form documented in the spaCy project setup guide). Version 3.8.0 is compatible
+# with spacy>=3.8.0. To upgrade: bump the version in the URL and re-run pip-compile.
 spacy>=3.8.0
+en-core-web-sm @ https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.8.0/en_core_web_sm-3.8.0-py3-none-any.whl
 textdescriptives>=2.8.0
 loguru>=0.7.2
 python-Levenshtein>=0.25.0

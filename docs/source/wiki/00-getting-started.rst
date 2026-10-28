@@ -42,8 +42,14 @@ avoid the two copies drifting apart.
     pip install torch torchvision --index-url https://download.pytorch.org/whl/cu121 --no-cache-dir
     pip install -r requirements-base.txt
     python -c "import nltk; nltk.download('vader_lexicon'); nltk.download('punkt'); nltk.download('punkt_tab'); nltk.download('brown'); nltk.download('averaged_perceptron_tagger_eng')"
-    python -m spacy download en_core_web_sm
     copy config\config.ini.example config\config.ini
+
+.. note::
+   ``en_core_web_sm`` (the spaCy model used for dependency-distance metrics) is **installed
+   automatically** via ``pip install -r requirements-base.txt`` -- it is pinned in
+   ``requirements-base.txt`` as a direct URL to the spaCy GitHub release (``en-core-web-sm==3.8.0``).
+   No separate ``python -m spacy download`` step is needed. To upgrade the model: bump the version
+   in ``requirements.in``'s ``en-core-web-sm @`` line and re-run ``pip-compile``.
 
 **Ubuntu**::
 
@@ -55,7 +61,6 @@ avoid the two copies drifting apart.
     pip install --upgrade pip
     pip install -r requirements-base.txt -r requirements-linux.txt
     python -c "import nltk; nltk.download('vader_lexicon'); nltk.download('punkt'); nltk.download('punkt_tab'); nltk.download('brown'); nltk.download('averaged_perceptron_tagger_eng')"
-    python -m spacy download en_core_web_sm
     cp config/config.ini.example config/config.ini
 
 .. warning::
@@ -78,6 +83,7 @@ avoid the two copies drifting apart.
 **Verify the install**::
 
     python -c "import fastapi, sqlalchemy, torch; print('torch CUDA available:', torch.cuda.is_available())"
+    python -c "import spacy; nlp = spacy.load('en_core_web_sm'); print('spaCy model OK:', nlp.meta['name'])"
 
 Dependency changes always go through ``requirements.in`` -> ``pip-compile`` -- never hand-edit a
 generated ``requirements-*.txt`` file (see :doc:`02-tools-and-stack`).

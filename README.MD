@@ -187,12 +187,11 @@ pip install -r requirements-base.txt
 python -c "import nltk; nltk.download('vader_lexicon'); nltk.download('punkt'); nltk.download('punkt_tab'); nltk.download('brown'); nltk.download('averaged_perceptron_tagger_eng')"
 ```
 
-**5. Download the spaCy model** (required by `core/analysis/syntactic_complexity.py`'s
-`dependency_distance` metric -- the small English model, matching this project's "weak machine"
-CPU-friendly stance, the same reasoning behind picking `all-MiniLM-L6-v2` for embeddings):
-```bash
-python -m spacy download en_core_web_sm
-```
+**5. ~~Download the spaCy model~~** — *no longer a separate step* (as of 2026-10-28):
+`en_core_web_sm` is now pinned in `requirements-base.txt` as a direct URL and installed
+automatically in step 4 above. The model is `en_core_web_sm-3.8.0`, used by
+`core/analysis/syntactic_complexity.py`'s `dependency_distance` metric. To upgrade: bump
+the version in `requirements.in`'s `en-core-web-sm @` line and re-run `pip-compile`.
 
 **6. Create `config/config.ini`** (required -- not just for Neo4j):
 ```bash
