@@ -16,7 +16,7 @@
     } catch (e) {}
   })();
   </script>
-  <title>nn_lab -- Knowledge Graph (Failure-Mode)</title>
+  <title>nn_lab -- Knowledge graph (failure-mode)</title>
   <link rel="stylesheet" href="/static/style.css">
   <script src="/static/vendor/htmx/htmx.min.js"></script>
 </head>
@@ -24,7 +24,7 @@
 <div class="app-shell">
   {% include "_nav.html" %}
   <main>
-  <h1>Knowledge Graph -- Failure-Mode Analysis</h1>
+  <h1>Knowledge graph -- Failure-mode analysis</h1>
 
   <div hx-get="/knowledge_graph/neo4j/status" hx-trigger="load" hx-swap="outerHTML">
     <div id="neo4j-controls"><span class="text-muted" style="font-size:var(--text-sm)">Checking Neo4j...</span></div>
